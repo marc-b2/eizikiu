@@ -8,22 +8,28 @@ public class NetListener implements Runnable {
 	
 	LinkedList<ConnectionToClient> connectionList;
 	LinkedList<User> userList;
+	
+	EZKlogger output;
 
 	NetListener(LinkedList<ConnectionToClient> connectionList, LinkedList<User> userList){
 		this.connectionList = connectionList;
 		this.userList = userList;
+		
+		output = new EZKlogger();
+		// Logging in Datei anschalten
+		output.setFileOutput(true);
 	}
 	
 	@Override
 	public void run() {
 		
-		System.out.println("NetListener.run() --> ...succesfully!");
+		output.log("NetListener.run() --> ...succesfully!");
 
 		while(true) {
 			
 			try {
 				ServerSocket listener = new ServerSocket(1234);
-				System.out.println("NetListener.run() --> ServerSocket aufgebaut\n");
+				output.info("NetListener.run() --> ServerSocket aufgebaut\n");
 
 				Socket socket = listener.accept(); // wait for connection
 				
@@ -36,7 +42,6 @@ public class NetListener implements Runnable {
 				e.printStackTrace();
 				}
 		}
-
 	}
 
 }

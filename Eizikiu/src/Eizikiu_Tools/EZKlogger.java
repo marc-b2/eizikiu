@@ -5,10 +5,11 @@ import java.util.Date;
 
 public class EZKlogger {
 	
-	private int loglevel;
+	private static int loglevel = 2;
+	private static String logfile = "eizikiu.log";
+	
 	private boolean consoleOutput;
 	private boolean fileOutput;
-	private String logfile;
 	private FileWriter fw;
 	private BufferedWriter bw;
 	private PrintWriter fileOut;
@@ -16,39 +17,38 @@ public class EZKlogger {
 	
 	// Konstruktor
 	public EZKlogger(){
-		loglevel = 1;
 		consoleOutput = true;
 		fileOutput = false;
-		logfile = null;
 		fw = null;
 		bw = null;
 		fileOut = null;		
 	}
 	
 	// Setter
-	public void setLoglevel(int loglevel){
-		this.loglevel = loglevel;
+	public static void setLoglevel(int newLoglevel){
+		loglevel = newLoglevel;
+	}
+	
+	public static void setLogfile(String newLogfile) {
+		logfile = newLogfile;
 	}
 	
 	public void setConsoleOutput(boolean consoleOutput) {
 		this.consoleOutput = consoleOutput;
 	}
 	
-	public void setFileOutput(boolean fileOutput) throws IOException {
-		if (!this.fileOutput) {
-			date = new Date();
-			logfile = "eizikiu.log";
-			fw = new FileWriter(logfile, true); // 'true' bewirkt, dass neuer String in datei angehangen wird
-		    bw = new BufferedWriter(fw);
-		    fileOut = new PrintWriter(bw);
-		}else {
-			closeFileOutput();
+	public void setFileOutput(boolean fileOutput) {
+		try {
+			if (!this.fileOutput && fileOutput) {
+				initFileOutput();
+			}
+			if (this.fileOutput && !fileOutput){
+				closeFileOutput();
+			}
+		}catch(IOException e){
+			e.printStackTrace();
 		}
 		this.fileOutput = fileOutput;
-	}
-	
-	public void setLogfile(String logfile) {
-		this.logfile = logfile;
 	}
 	
 	// Logging-Methoden
@@ -60,22 +60,42 @@ public class EZKlogger {
 		}
 	}
 	
-	public void debug(String message) {
-		
+	public void log(String message) {
+			
 		if(loglevel >=1) {
 			if(consoleOutput) {System.out.println(message);}
 			if(fileOutput) {fileOut.println(date.toString() + ": " + message);}
 		}
 	}
 	
-	public void closeFileOutput() throws IOException {
+	public void debug(String message) {
+		
+		if(loglevel >=2) {
+			if(consoleOutput) {System.out.println(message);}
+			if(fileOutput) {fileOut.println(date.toString() + ": " + message);}
+		}
+	}
+	
+	// stream handling
+	private void initFileOutput() throws IOException{
+		if(fw==null){
+			date = new Date();
+			fw = new FileWriter(logfile, true); // 'true' bewirkt, dass neuer String in datei angehangen wird
+		    bw = new BufferedWriter(fw);
+		    fileOut = new PrintWriter(bw);
+		}
+	}
+	
+	private void closeFileOutput() throws IOException {
 		if(!(fw == null)) {
 			fileOut.flush();
 			fileOut.close();
-			//bw.flush();
+			fileOut = null;
 			bw.close();
-			//fw.flush();
+			bw = null;
 			fw.close();
+			fw = null;
+			date = null;
 		}
 	}
 }

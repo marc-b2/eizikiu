@@ -10,8 +10,9 @@ public class Eizikiu_Client {
 	
 		User user = null;
 		String text;
-//		Message message;
 		KeyboardListener keyli;
+		EZKlogger output = new EZKlogger();
+		EZKlogger.setLoglevel(0);
 		OutputStreamSet netOutput;
 		InputStreamSet netInput;
 		
@@ -33,19 +34,19 @@ public class Eizikiu_Client {
 			while (!login) {
 				user = new User(null, null);
 				// get user name and password
-				System.out.print("Type in user name: ");
+				output.info("Type in user name: ");
 				text = keyboardIn.nextLine();
-				System.out.println("\n");
+				output.info("\n");
 				user.setName(text);
 //				netOutput.sendString(text);
 				
-				System.out.print("Type in user password: ");
+				output.info("Type in user password: ");
 				text = keyboardIn.nextLine();
-				System.out.println("\n");
+				output.info("\n");
 				user.setPassword(text);
 //				netOutput.sendString(text);
 				
-//				System.out.println("user: " + user.getName() + " ---- password: " + user.getPassword() + ".");
+				output.debug("user: " + user.getName() + " ---- password: " + user.getPassword() + ".");
 				
 				// send to server
 				netOutput.sendUser(user);
@@ -55,12 +56,12 @@ public class Eizikiu_Client {
 				if (answer.getMessage().equals("userValid") && answer.getSenderName().equals("Server")) {
 					login = true;
 				}else{
-					System.out.println("\n\nThe password is wrong or the user name you entered is already in use.");
-					System.out.println("Please try again!\n\n");
+					output.info("\n\nThe password is wrong or the user name you entered is already in use.");
+					output.info("Please try again!\n\n");
 				}
 			}
 
-			System.out.println("Eizikiu_Client.main() -> You successfully logged in to the server!");
+			output.info("Eizikiu_Client.main() -> You successfully logged in to the server!");
 			
 			keyli = new KeyboardListener(socket, netOutput, user);
 			Thread keyliThread = new Thread(keyli);
@@ -75,9 +76,9 @@ public class Eizikiu_Client {
 				
 				if(!message.getMessage().equals("exit")){
 					if(!message.getSenderName().equals(user.getName())){
-						System.out.println(message);
+						output.info(message.toString());
 					}else{
-						message.printOwn();
+						message.printOwn(output);
 					}
 				}else{
 					exit = true;
