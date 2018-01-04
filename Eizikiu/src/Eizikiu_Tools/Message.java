@@ -44,8 +44,9 @@ public class Message implements Serializable{
 	// Methoden
 	@Override
 	public String toString(){
-		
-		String output = date.toString() + " [" + senderName + "]: " + message; 
+		String output = "Error in Message.toString()";
+		if (type == 1) {output = date.toString() + " [" + senderName + "]: " + message;}
+		else {output = date.toString() + " TYPE = " + type + " [" + senderName + "]: " + message;}
 		return output;
 	}
 	
