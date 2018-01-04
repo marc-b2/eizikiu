@@ -10,9 +10,9 @@ public class Eizikiu_Server {
 		
 		// Variablen der main()
 		Scanner keyboardIn = new Scanner(System.in);
-		EZKlogger output = new EZKlogger();
+		
 		// Logging in Datei anschalten
-		output.setFileOutput(true);
+		EZKlogger.setFileOutput(true);
 		
 		// globale Listen anlegen
 		LinkedList<User> userList = new LinkedList<>();
@@ -25,12 +25,12 @@ public class Eizikiu_Server {
 		netListener = new NetListener(connectionList, userList);
 		Thread NLThread = new Thread(netListener);
 		NLThread.setDaemon(true);
-		output.log("Eizikiu_Server.main() -> NetListener started...");
+		EZKlogger.log("Eizikiu_Server.main() -> NetListener started...");
 		NLThread.start();
 				
-		output.info("Eizikiu_Server.main() -> Press Return to stop Server!");
+		EZKlogger.info("Eizikiu_Server.main() -> Press Return to stop Server!");
 		keyboardIn.nextLine();
-		output.info("Eizikiu_Server.main() -> You pressed Return");
+		EZKlogger.info("Eizikiu_Server.main() -> You pressed Return");
 		
 		// connections schliessen
 		for(ConnectionToClient x : connectionList){
@@ -39,7 +39,7 @@ public class Eizikiu_Server {
 		
 		// io schliessen
 		keyboardIn.close();
-		output.setFileOutput(false);
+		EZKlogger.setFileOutput(false);
 	}
 
 }

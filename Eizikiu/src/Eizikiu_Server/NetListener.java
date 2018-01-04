@@ -9,27 +9,21 @@ public class NetListener implements Runnable {
 	LinkedList<ConnectionToClient> connectionList;
 	LinkedList<User> userList;
 	
-	EZKlogger output;
-
 	NetListener(LinkedList<ConnectionToClient> connectionList, LinkedList<User> userList){
 		this.connectionList = connectionList;
 		this.userList = userList;
-		
-		output = new EZKlogger();
-		// Logging in Datei anschalten
-		output.setFileOutput(true);
 	}
 	
 	@Override
 	public void run() {
 		
-		output.log("NetListener.run() --> ...succesfully!");
+		EZKlogger.log("NetListener.run() --> ...succesfully!");
 
 		while(true) {
 			
 			try {
 				ServerSocket listener = new ServerSocket(1234);
-				output.info("NetListener.run() --> ServerSocket aufgebaut\n");
+				EZKlogger.info("NetListener.run() --> ServerSocket aufgebaut\n");
 
 				Socket socket = listener.accept(); // wait for connection
 				

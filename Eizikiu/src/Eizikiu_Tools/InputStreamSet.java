@@ -16,11 +16,9 @@ public class InputStreamSet {
 	public void setupStreams(){
 		try {
 			in = socket.getInputStream();
-//			System.out.println("InputStream set up");
 			oin = new ObjectInputStream(in);
-//			System.out.println("ObjectInputStream set up");
 
-			System.out.println("InputStreamSet.setupStreams() -> inbound streams set up");
+			EZKlogger.debug("InputStreamSet.setupStreams() -> inbound streams set up");
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -55,7 +53,7 @@ public class InputStreamSet {
 		try {
 			user = (User) oin.readObject();
 			
-			System.out.println("InputStreamSet.receiveUser() -> " + user.getName() + " ---- " + user.getPassword());
+			EZKlogger.debug("InputStreamSet.receiveUser() -> " + user.getName() + " ---- " + user.getPassword());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

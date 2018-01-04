@@ -11,22 +11,22 @@ public class Eizikiu_Client {
 		User user = null;
 		String text;
 		KeyboardListener keyli;
-		EZKlogger output = new EZKlogger();
-		EZKlogger.setLoglevel(0);
 		OutputStreamSet netOutput;
 		InputStreamSet netInput;
-		
+
+		EZKlogger.setLoglevel(0);
+
 		try {
 			Socket socket = new Socket("localhost", 1234);
 			
-			System.out.println("Eizikiu_Client.main() -> server found");
+			EZKlogger.log("Eizikiu_Client.main() -> server found");
 			
 			netInput = new InputStreamSet(socket);
 			netOutput = new OutputStreamSet(socket);
 			netInput.setupStreams();
 			netOutput.setupStreams();
 			
-			System.out.println("Eizikiu_Client.main() -> connection to server established\n\n");
+			EZKlogger.log("Eizikiu_Client.main() -> connection to server established\n\n");
 						
 			// password check
 			Scanner keyboardIn = new Scanner(System.in);
@@ -34,19 +34,17 @@ public class Eizikiu_Client {
 			while (!login) {
 				user = new User(null, null);
 				// get user name and password
-				output.info("Type in user name: ");
+				EZKlogger.info("Type in user name: ");
 				text = keyboardIn.nextLine();
-				output.info("\n");
+				EZKlogger.info("\n");
 				user.setName(text);
-//				netOutput.sendString(text);
 				
-				output.info("Type in user password: ");
+				EZKlogger.info("Type in user password: ");
 				text = keyboardIn.nextLine();
-				output.info("\n");
+				EZKlogger.info("\n");
 				user.setPassword(text);
-//				netOutput.sendString(text);
 				
-				output.debug("user: " + user.getName() + " ---- password: " + user.getPassword() + ".");
+				EZKlogger.debug("user: " + user.getName() + " ---- password: " + user.getPassword() + ".");
 				
 				// send to server
 				netOutput.sendUser(user);
@@ -56,12 +54,12 @@ public class Eizikiu_Client {
 				if (answer.getMessage().equals("userValid") && answer.getSenderName().equals("Server")) {
 					login = true;
 				}else{
-					output.info("\n\nThe password is wrong or the user name you entered is already in use.");
-					output.info("Please try again!\n\n");
+					EZKlogger.info("\n\nThe password is wrong or the user name you entered is already in use.");
+					EZKlogger.info("Please try again!\n\n");
 				}
 			}
 
-			output.info("Eizikiu_Client.main() -> You successfully logged in to the server!");
+			EZKlogger.info("Eizikiu_Client.main() -> You successfully logged in to the server!");
 			
 			keyli = new KeyboardListener(socket, netOutput, user);
 			Thread keyliThread = new Thread(keyli);
@@ -76,16 +74,15 @@ public class Eizikiu_Client {
 				
 				if(!message.getMessage().equals("exit")){
 					if(!message.getSenderName().equals(user.getName())){
-						output.info(message.toString());
+						EZKlogger.info(message.toString());
 					}else{
-						message.printOwn(output);
+						message.printOwn();
 					}
 				}else{
 					exit = true;
 				}
 			}
 			
-//			conThread.interrupt();
 			netInput.closeStreams();
 			netOutput.closeStreams();
 			socket.close();

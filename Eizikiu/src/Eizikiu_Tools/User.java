@@ -21,24 +21,24 @@ public class User implements Serializable{
 	
 	public void addTo(LinkedList<User> userList){
 		if(userList.add(this)){
-			System.out.println(name + ".addTo() -> new user [" + name + "] added");
+			EZKlogger.log(name + ".addTo() -> new user [" + name + "] added");
 		}
 	}
 
 	public void removeFrom(LinkedList<User> userList){
 		if(userList.remove(this)){
-			System.out.println(name + ".removeFrom() -> user [" + name + "] deleted");
+			EZKlogger.log(name + ".removeFrom() -> user [" + name + "] deleted");
 		}
 	}
 	
 	public void logIn(){
 		status = true;
-		System.out.println(name + ".logIn() -> [" + name + "] logged in");
+		EZKlogger.log(name + ".logIn() -> [" + name + "] logged in");
 	}
 	
 	public void logOut(){
 		status = false;
-		System.out.println(name + ".logOut() -> [" + name + "] logged out");
+		EZKlogger.log(name + ".logOut() -> [" + name + "] logged out");
 	}
 	
 	public String getName() {
@@ -72,5 +72,4 @@ public class User implements Serializable{
 	public void setConnection(ConnectionToClient connection){
 		this.connection = connection;
 	}
-
 }

@@ -12,8 +12,8 @@ public class ConnectionToClient implements Runnable{
 	InputStreamSet netInput;
 	Socket socket;
 	User user;
-	EZKlogger output;
 	
+	// Konstruktoren
 	public ConnectionToClient(){}
 	
 	public ConnectionToClient(Socket socket, LinkedList<ConnectionToClient> connectionList, LinkedList<User> userList){
@@ -23,11 +23,9 @@ public class ConnectionToClient implements Runnable{
 		this.user = new User("name", "password");
 		this.netInput = new InputStreamSet(socket);
 		this.netOutput = new OutputStreamSet(socket);
-		output = new EZKlogger();
-		// Logging in Datei anschalten
-		output.setFileOutput(true);
 	}
 	
+	// Methoden
 	@Override
 	public void run() {
 		
@@ -37,29 +35,29 @@ public class ConnectionToClient implements Runnable{
 				netOutput.setupStreams();
 				netInput.setupStreams();
 				
-				output.log("ConnectionToClient.run() -> connection to new user established");
+				EZKlogger.log("ConnectionToClient.run() -> connection to new user established");
 				
 				// password check
 				boolean userValid = false;
 				while(!userValid){
 					user = netInput.receiveUser();
-					output.debug("ConnectionToClient.run() -> password check -> user object received");
-					output.debug("ConnectionToClient.run() -> password check -> " + user.getName() + " ---- " + user.getPassword());
+					EZKlogger.debug("ConnectionToClient.run() -> password check -> user object received");
+					EZKlogger.debug("ConnectionToClient.run() -> password check -> " + user.getName() + " ---- " + user.getPassword());
 					
 					boolean nameIsInUserList = false;
 					for(User x : userList){
 						if(x.getName().equals(user.getName())){
 							nameIsInUserList = true;
-							output.debug("ConnectionToClient.run() -> password check -> name is in user list");
+							EZKlogger.debug("ConnectionToClient.run() -> password check -> name is in user list");
 							if(!x.isStatus()){	
-								output.debug("ConnectionToClient.run() -> password check -> pw in list: " + x.getPassword() + " ----- pw client: " + user.getPassword());
+								EZKlogger.debug("ConnectionToClient.run() -> password check -> pw in list: " + x.getPassword() + " ----- pw client: " + user.getPassword());
 								if(x.getPassword().equals(user.getPassword())){
 									userValid = true;
 									user = x;
-									output.debug("ConnectionToClient.run() -> password check -> password correct");
+									EZKlogger.debug("ConnectionToClient.run() -> password check -> password correct");
 								}
 							}else{
-								output.debug("ConnectionToClient.run() -> password check -> user allready logged in");
+								EZKlogger.debug("ConnectionToClient.run() -> password check -> user allready logged in");
 							}
 						}
 					}
@@ -67,7 +65,7 @@ public class ConnectionToClient implements Runnable{
 					if(!nameIsInUserList){
 						userValid = true;
 						user.addTo(userList);
-						output.log("ConnectionToClient.run() -> password check -> new user" + user.getName() + "added to user list");
+						EZKlogger.log("ConnectionToClient.run() -> password check -> new user" + user.getName() + "added to user list");
 					}
 					
 					if(userValid){
@@ -76,10 +74,10 @@ public class ConnectionToClient implements Runnable{
 						user.setConnection(this);
 						netOutput.sendMessage(new Message("userValid", "Server"));
 						
-						output.debug("ConnectionToClient.run() -> password check -> user valid\n");
+						EZKlogger.debug("ConnectionToClient.run() -> password check -> user valid\n");
 					}else{
 						netOutput.sendMessage(new Message("userNotValid", "Server"));
-						output.debug("ConnectionToClient.run() -> password check -> user NOT valid\n");
+						EZKlogger.debug("ConnectionToClient.run() -> password check -> user NOT valid\n");
 					}
 				}
 				
@@ -135,7 +133,7 @@ public class ConnectionToClient implements Runnable{
 				netOutput.closeStreams();
 				socket.close();
 
-				output.debug("ConnectionToClient.run() -> connection to [" + user.getName() + "] terminated\n");
+				EZKlogger.debug("ConnectionToClient.run() -> connection to [" + user.getName() + "] terminated\n");
 
 			}catch(IOException e){
 				e.printStackTrace();

@@ -49,8 +49,8 @@ public class Message implements Serializable{
 		return output;
 	}
 	
-	public void printOwn(EZKlogger output){
-		output.info(date.toString() + " [YOU]: " + message);
+	public void printOwn(){
+		EZKlogger.info(date.toString() + " [YOU]: " + message);
 	}
 
 }

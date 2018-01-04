@@ -16,11 +16,9 @@ public class OutputStreamSet {
 	public void setupStreams(){
 		try {
 			out = socket.getOutputStream();
-//			System.out.println("OutputStream set up");
 			oout = new ObjectOutputStream(out);
-//			System.out.println("ObjectOutputStream set up");
 
-			System.out.println("OutputStreamSet.setupStreams() -> outbound streams set up");
+			EZKlogger.debug("OutputStreamSet.setupStreams() -> outbound streams set up");
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -45,7 +43,7 @@ public class OutputStreamSet {
 
 	public void sendUser(User user){
 		try{
-			System.out.println("OutputStreamSet.sendUser() -> " + user.getName() + " ---- " + user.getPassword());
+			EZKlogger.debug("OutputStreamSet.sendUser() -> " + user.getName() + " ---- " + user.getPassword());
 			oout.writeObject(user);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -74,8 +72,6 @@ public class OutputStreamSet {
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
+		}	
 	}
-
 }

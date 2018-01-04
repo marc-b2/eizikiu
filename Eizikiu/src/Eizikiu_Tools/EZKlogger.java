@@ -8,14 +8,14 @@ public class EZKlogger {
 	private static int loglevel = 2;
 	private static String logfile = "eizikiu.log";
 	
-	private boolean consoleOutput;
-	private boolean fileOutput;
-	private FileWriter fw;
-	private BufferedWriter bw;
-	private PrintWriter fileOut;
-	private Date date;
+	private static boolean consoleOutput = true;
+	private static boolean fileOutput = false;
+	private static FileWriter fw = null;
+	private static BufferedWriter bw = null;
+	private static PrintWriter fileOut = null;
+	private static Date date = new Date();
 	
-	// Konstruktor
+	/*/ Konstruktor
 	public EZKlogger(){
 		consoleOutput = true;
 		fileOutput = false;
@@ -23,7 +23,7 @@ public class EZKlogger {
 		bw = null;
 		fileOut = null;		
 	}
-	
+	*/
 	// Setter
 	public static void setLoglevel(int newLoglevel){
 		loglevel = newLoglevel;
@@ -33,43 +33,40 @@ public class EZKlogger {
 		logfile = newLogfile;
 	}
 	
-	public void setConsoleOutput(boolean consoleOutput) {
-		this.consoleOutput = consoleOutput;
+	public static void setConsoleOutput(boolean newConsoleOutput) {
+		consoleOutput = newConsoleOutput;
 	}
 	
-	public void setFileOutput(boolean fileOutput) {
+	public static void setFileOutput(boolean newFileOutput) {
 		try {
-			if (!this.fileOutput && fileOutput) {
+			if (!fileOutput && newFileOutput) {
 				initFileOutput();
 			}
-			if (this.fileOutput && !fileOutput){
+			if (fileOutput && !newFileOutput){
 				closeFileOutput();
 			}
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-		this.fileOutput = fileOutput;
+		fileOutput = newFileOutput;
 	}
 	
 	// Logging-Methoden
-	public void info(String message) {
-		
+	public static void info(String message) {
 		if(loglevel >=0) {
 			if(consoleOutput) {System.out.println(message);}
 			if(fileOutput) {fileOut.println(date.toString() + ": " + message);}
 		}
 	}
 	
-	public void log(String message) {
-			
+	public static void log(String message) {
 		if(loglevel >=1) {
 			if(consoleOutput) {System.out.println(message);}
 			if(fileOutput) {fileOut.println(date.toString() + ": " + message);}
 		}
 	}
 	
-	public void debug(String message) {
-		
+	public static void debug(String message) {
 		if(loglevel >=2) {
 			if(consoleOutput) {System.out.println(message);}
 			if(fileOutput) {fileOut.println(date.toString() + ": " + message);}
@@ -77,16 +74,15 @@ public class EZKlogger {
 	}
 	
 	// stream handling
-	private void initFileOutput() throws IOException{
-		if(fw==null){
-			date = new Date();
-			fw = new FileWriter(logfile, true); // 'true' bewirkt, dass neuer String in datei angehangen wird
+	private static void initFileOutput() throws IOException{
+		if(fileOut == null){
+			fw = new FileWriter(logfile, true); // 'true' bewirkt, dass neuer String in Datei angehangen wird
 		    bw = new BufferedWriter(fw);
 		    fileOut = new PrintWriter(bw);
 		}
 	}
 	
-	private void closeFileOutput() throws IOException {
+	private static void closeFileOutput() throws IOException {
 		if(!(fw == null)) {
 			fileOut.flush();
 			fileOut.close();
@@ -95,7 +91,6 @@ public class EZKlogger {
 			bw = null;
 			fw.close();
 			fw = null;
-			date = null;
 		}
 	}
 }
