@@ -2,6 +2,7 @@ package Eizikiu_GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class RegistryGUI extends JFrame implements ActionListener {
 	public RegistryGUI(){
