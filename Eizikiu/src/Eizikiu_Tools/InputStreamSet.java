@@ -25,15 +25,15 @@ public class InputStreamSet {
 		}
 	}
 	
-	public Object receive(){
-		Object object = new Object();
-		try {
-			object = oin.readObject();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return object;
-	}
+//	public Object receive(){
+//		Object object = new Object();
+//		try {
+//			object = oin.readObject();
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		return object;
+//	}
 	
 	public Message receiveMessage() throws EOFException{
 		Message message = new Message("","");
@@ -41,8 +41,7 @@ public class InputStreamSet {
 			message = (Message) oin.readObject();
 		} catch (EOFException e) {
 			throw e;
-		}
-		catch(Exception e){
+		} catch(Exception e){
 			e.printStackTrace();
 		}
 		return message;
@@ -60,29 +59,29 @@ public class InputStreamSet {
 		return user;
 	}
 	
-	public String receiveString(){
-		String string = new String();
-		try {
-			string = (String) oin.readObject();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return string;
-	}
+//	public String receiveString(){
+//		String string = new String();
+//		try {
+//			string = (String) oin.readObject();
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		return string;
+//	}
 	
-	public boolean isAvailable(){
-		try{
-//			System.out.println("InputStreamSet.isAvailable() -> " + oin.available());
-//			if(oin.available() == 1){
-				if(oin.readByte() == 42){
-					return true;
-//				}
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return false;
-	}
+//	public boolean isAvailable(){
+//		try{
+////			System.out.println("InputStreamSet.isAvailable() -> " + oin.available());
+////			if(oin.available() == 1){
+//				if(oin.readByte() == 42){
+//					return true;
+////				}
+//			}
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		return false;
+//	}
 
 	public void closeStreams(){
 		try {

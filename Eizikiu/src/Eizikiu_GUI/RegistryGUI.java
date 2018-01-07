@@ -2,9 +2,13 @@ package Eizikiu_GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class RegistryGUI extends JFrame implements ActionListener {
+	
+	private static final long serialVersionUID = -1497279100646705689L;
+	
 	public RegistryGUI(){
 		super();
 		
@@ -35,15 +39,18 @@ public class RegistryGUI extends JFrame implements ActionListener {
 		
 	}
 	
-	public void actionPerformed(){
+	@Override
+	public void actionPerformed(ActionEvent arg0){
 		
 	}
+	
 	public static void main(String[] args){
 		RegistryGUI Registrierung = new RegistryGUI();
 		Registrierung.setSize(300,150);
 		Registrierung.setLocation(800,300);
 		Registrierung.setVisible(true);
 	}
-}
 
 }
+
+
