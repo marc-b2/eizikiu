@@ -1,19 +1,12 @@
 package Eizikiu_Server;
 
 import java.net.*;
-import java.util.*;
 import Eizikiu_Tools.*;
 
 public class NetListener implements Runnable {
 	
-	LinkedList<ConnectionToClient> connectionList;
-	LinkedList<User> userList;
-	
-	NetListener(LinkedList<ConnectionToClient> connectionList, LinkedList<User> userList){
-		this.connectionList = connectionList;
-		this.userList = userList;
-	}
-	
+	public NetListener() {}
+
 	@Override
 	public void run() {
 		
@@ -27,14 +20,14 @@ public class NetListener implements Runnable {
 
 				Socket socket = listener.accept(); // wait for connection
 				
-				Thread x = new Thread(new ConnectionToClient(socket, connectionList, userList));
+				Thread x = new Thread(new ConnectionToClient(socket));
 				x.start();
 				
 				listener.close();
 				
 			} catch (Exception e) {
 				e.printStackTrace();
-				}
+			}
 		}
 	}
 

@@ -10,15 +10,71 @@ public class User implements Serializable{
 	private String name;
 	private String password;
 	private transient ConnectionToClient connection;
-	private boolean status;
+	private transient LinkedList<Room> rooms;
+	private transient boolean status;
+	private boolean banned;
 	
+	// Konstruktor
 	public User(String name, String password){
 		this.name = name;
 		this.password = password;
-		status = false;
 		connection = new ConnectionToClient();
+		rooms = new LinkedList<Room>();
+		status = false;
+		banned = false;
 	}
 	
+	// Getter
+	public String getName() {
+		return name;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public ConnectionToClient getConnection() {
+		return connection;
+	}
+	
+	public LinkedList<Room> getRooms() {
+		return rooms;
+	}
+	
+	public boolean isStatus() {
+		return status;
+	}
+
+	public boolean isBanned() {
+		return banned;
+	}
+	
+	// Setter
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setConnection(ConnectionToClient connection){
+		this.connection = connection;
+	}
+	
+	public void setRooms(LinkedList<Room> rooms) {
+		this.rooms = rooms;
+	}
+	
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+	
+	public void setBanned(boolean banned) {
+		this.banned = banned;
+	}
+	
+	// Methoden
 	public void addTo(LinkedList<User> userList){
 		if(userList.add(this)){
 			EZKlogger.log(name + ".addTo() -> new user [" + name + "] added");
@@ -39,37 +95,5 @@ public class User implements Serializable{
 	public void logOut(){
 		status = false;
 		EZKlogger.log(name + ".logOut() -> [" + name + "] logged out");
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getPassword() {
-		return password;
-	}
-	
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public boolean isStatus() {
-		return status;
-	}
-
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
-	
-	public ConnectionToClient getConnection(){
-		return connection;
-	}
-	
-	public void setConnection(ConnectionToClient connection){
-		this.connection = connection;
 	}
 }

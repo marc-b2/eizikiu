@@ -16,7 +16,7 @@ public class Message implements Serializable{
 	 * 
 	 * 		unidirectional			client -> server			server -> client
 	 * 		--------------			----------------			----------------
-	 * 0 -	exit			10 -	register request	20 -	
+	 * 0 -	exit			10 -	register request	20 -	warning
 	 * 1 -	standard		11 -	login request		21 -	
 	 * 2 -					12 -	user credentials	22 -	
 	 * 3 -					13 -						23 -	

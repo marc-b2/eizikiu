@@ -17,6 +17,11 @@ public class Room {
 		return userList;
 	}
 	
+	// Setter
+	public void setUserList(LinkedList<User> userList){
+		this.userList = userList;
+	}
+	
 	// Methoden
 	public boolean addUser(User user){
 		return userList.add(user);
