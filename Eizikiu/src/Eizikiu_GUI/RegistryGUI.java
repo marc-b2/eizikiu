@@ -1,56 +1,91 @@
 package Eizikiu_GUI;
 
 import javax.swing.*;
-import java.awt.*;
+
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class RegistryGUI extends JFrame implements ActionListener {
+	public static final long serialVersionUID = -11111111;
 	
-	private static final long serialVersionUID = -1497279100646705689L;
+	private JTextField textfieldName = new JTextField();
+	JPasswordField password = new JPasswordField();
+	JPasswordField passwordRepeat = new JPasswordField();
+	
+	private int height = 25;
+	private int width = 500;
+	private Dimension d = new Dimension(width, height);
+	
+	
 	
 	public RegistryGUI(){
+		
 		super();
 		
 		setTitle("Eizikiu Registry");
+		this.setSize(300,200);
+		this.setLocation(800,300);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		this.getContentPane().add(initComponents());
+		
+		
+		
+		this.setVisible(true);
+		
+	}
+	@Override
+	public void actionPerformed(ActionEvent e){
+		if(e.getActionCommand().equals("REGISTER")){
+			if (password.getPassword().equals(passwordRepeat.getPassword())){
+				
+				/* @Mark: hier sollte dann die Message erzeugt werden und abgeschickt (Login)
+				 *
+				 **/
+				
+			}
+		}
+	}
+	
+	private Box initComponents(){
+		//JPanel als Container
+		Box panel = new Box(BoxLayout.Y_AXIS);
+		
+		// initialisiere die Beschriftung
 		JLabel text1 = new JLabel("Geben sie den gewünschten Usernamen an:");
 		JLabel text2 = new JLabel("Geben sie ihr Password an:");
 		JLabel text3 = new JLabel("Wiederholen sie ihr Passwort");
-				
-		JTextField textfieldName = new JTextField();
-		JTextField textfieldPassword = new JTextField();
-		JTextField textfieldPasswordRepeat = new JTextField();
+		
+		//initialisiere Textfelder
+		textfieldName.setMaximumSize(d);
+		
+		password.setMaximumSize(d);
+		
+		passwordRepeat.setMaximumSize(d);
 		
 		JButton register = new JButton();
+		register.setText("Registrieren");
+		register.addActionListener(this);
+		register.setActionCommand("REGISTER");
 		
-		this.setLayout(new FlowLayout());
+		// dem Container hinzufügen
+		panel.add(text1);
+		panel.add(textfieldName);
+		panel.add(text2);
+		panel.add(password);
+		panel.add(text3);
+		panel.add(passwordRepeat);
+		panel.add(register);
+
 		
-		this.add(text1);
-		this.add(textfieldName);
-		this.add(text2);
-		this.add(textfieldPassword);
-		this.add(text3);
-		this.add(textfieldPasswordRepeat);
-		this.add(register);
-		
-		this.pack();
-		
+		return panel;
 	}
-	
-	@Override
-	public void actionPerformed(ActionEvent arg0){
-		
-	}
-	
 	public static void main(String[] args){
 		RegistryGUI Registrierung = new RegistryGUI();
-		Registrierung.setSize(300,150);
-		Registrierung.setLocation(800,300);
-		Registrierung.setVisible(true);
+		
 	}
-
 }
 
 
