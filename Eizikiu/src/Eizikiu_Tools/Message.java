@@ -10,6 +10,7 @@ public class Message implements Serializable{
 	private String message;
 	private String senderName;
 	private int type;
+	private int roomID;
 	
 	/*	message types:
 	 * ###############
