@@ -19,7 +19,7 @@ public class User implements Serializable{
 		this.name = name;
 		this.password = password;
 		connection = new ConnectionToClient();
-		rooms = new LinkedList<Room>();
+		rooms = new LinkedList<>();
 		status = false;
 		banned = false;
 	}
@@ -89,11 +89,14 @@ public class User implements Serializable{
 	
 	public void logIn(){
 		status = true;
+		rooms = new LinkedList<>();
 		EZKlogger.log(name + ".logIn() -> [" + name + "] logged in");
 	}
 	
 	public void logOut(){
+		// TODO: exit all rooms
 		status = false;
+		rooms = null;
 		EZKlogger.log(name + ".logOut() -> [" + name + "] logged out");
 	}
 }

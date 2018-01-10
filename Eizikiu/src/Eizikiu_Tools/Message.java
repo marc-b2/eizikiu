@@ -15,22 +15,22 @@ public class Message implements Serializable{
 	/*	message types:
 	 * ###############
 	 * 
-	 * 		unidirectional			client -> server			server -> client
-	 * 		--------------			----------------			----------------
-	 * 0 -	exit			10 -	register request	20 -	warning
-	 * 1 -	standard		11 -	login request		21 -	
-	 * 2 -					12 -	user credentials	22 -	
-	 * 3 -					13 -						23 -	
-	 * 4 -					14 -						24 -	
-	 * 5 -					15 -						25 -	
-	 * 6 -					16 -						26 -	
-	 * 7 -					17 -						27 -	
-	 * 8 -	positive ACK	18 -						28 -	
-	 * 9 -	negative ACK	19 -						29 -	
+	 * 		unidirectional				client -> server				server -> client
+	 * 		--------------				----------------				----------------
+	 * 0 -	exit				10 -	register request		20 -	service message
+	 * 1 -	standard public		11 -	login request			21 -	
+	 * 2 -						12 -	user credentials		22 -	
+	 * 3 -						13 -	join priv chat request	23 -	priv chat ACK
+	 * 4 -						14 -	leave priv chat request	24 -	priv chat NAK
+	 * 5 -						15 -	join room request		25 -	join room ACK
+	 * 6 -						16 -	leave room request		26 -	join room NAK
+	 * 7 -						17 -	room list request		27 -	room list	
+	 * 8 -	ACK					18 -	user list request		28 -	user list
+	 * 9 -	NAK					19 -							29 -	warning
 	 */
 	
 	// Konstruktor
-	public Message(String message, String senderName) {
+	public Message(String message, String senderName) { // deprecated
 		
 		this.message = message;
 		this.senderName = senderName;
@@ -38,25 +38,39 @@ public class Message implements Serializable{
 		date = new java.util.Date();
 	}
 	
-	public Message(String message, String senderName, int type) {
+	public Message(String message, String senderName, int roomID) {
+		
+		this.message = message;
+		this.senderName = senderName;
+		this.type = 1;
+		this.roomID = roomID;
+		date = new java.util.Date();
+	}
+	
+	public Message(String message, String senderName, int type, int roomID) {
 		
 		this.message = message;
 		this.senderName = senderName;
 		this.type = type;
+		this.roomID = roomID;
 		date = new java.util.Date();
 	}
 	
 	// Getter
-	public String getMessage(){
+	public String getMessage() {
 		return message;
 	}
 	
-	public String getSenderName(){
+	public String getSenderName() {
 		return senderName;
 	}
 	
-	public int getType(){
+	public int getType() {
 		return type;
+	}
+	
+	public int getRoomID() {
+		return roomID;
 	}
 	
 	// Methoden
