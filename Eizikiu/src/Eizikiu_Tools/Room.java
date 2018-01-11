@@ -91,5 +91,10 @@ public class Room implements Serializable{
 			return false;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "ID: " + ID + " name: " + name;
+	}
 }
 

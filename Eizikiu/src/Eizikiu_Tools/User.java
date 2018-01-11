@@ -75,6 +75,11 @@ public class User implements Serializable{
 	}
 	
 	// functions
+	@Override
+	public String toString() {
+		return "name: " + name + " password: " + password + " logged in: " + status + " is banned: " + banned;
+	}
+	
 	public void addTo(LinkedList<User> userList){
 		if(userList.add(this)){
 			EZKlogger.log(name + ".addTo() -> new user [" + name + "] added");

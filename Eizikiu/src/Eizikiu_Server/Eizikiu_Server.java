@@ -1,6 +1,7 @@
 package Eizikiu_Server;
 
 import java.util.*;
+import java.io.*;
 
 import Eizikiu_Tools.*;
 
@@ -13,10 +14,12 @@ public class Eizikiu_Server {
 	
 	public static void main(String[] args) {
 		
-		Scanner keyboardIn = new Scanner(System.in);
-		
 		// switch on logging to file
 		EZKlogger.setFileOutput(true);
+		
+		EZKlogger.info("**************** server started ****************");
+		
+		Scanner keyboardIn = new Scanner(System.in);
 		
 		// create global lists
 		globalUserList = new LinkedList<>();
@@ -24,8 +27,47 @@ public class Eizikiu_Server {
 		publicRooms = new LinkedList<>();
 		privateRooms = new LinkedList<>();
 		
-		// create default room
-		publicRooms.add(new Room("default"));
+		// load 'globalUserList' and 'publicRooms' from file
+		try {
+			// users
+			FileInputStream readFromFile = new FileInputStream("Eizikiu.users");
+			ObjectInputStream loadUsers = new ObjectInputStream(readFromFile);
+			globalUserList = (LinkedList<User>) loadUsers.readObject();
+			loadUsers.close();
+			
+			EZKlogger.log("reading 'globalUserList' from file successful!");
+			EZKlogger.debug("********************************************************");
+			EZKlogger.debug("users loaded:");
+			for(User x : globalUserList) {
+				// set transient objects != null
+				x.setConnection(new ConnectionToClient());
+				x.setRooms(new LinkedList<>());
+				x.setStatus(false);
+				EZKlogger.debug(x.toString());
+			}
+			EZKlogger.debug("********************************************************");
+
+			// rooms
+			readFromFile = new FileInputStream("Eizikiu.rooms");
+			ObjectInputStream loadRooms = new ObjectInputStream(readFromFile);
+			publicRooms = (LinkedList<Room>) loadRooms.readObject();
+			loadRooms.close();
+			
+			EZKlogger.log("reading 'publicRooms' from file successful!");
+			EZKlogger.debug("********************************************************");
+			EZKlogger.debug("rooms loaded:");
+			for(Room x : publicRooms) {
+				// set transient objects != null
+				x.setUserList(new LinkedList<User>());
+				EZKlogger.debug(x.toString());
+			}
+			EZKlogger.debug("********************************************************");
+		} catch (Exception e){
+			e.printStackTrace();
+			
+			// create default room
+			publicRooms.add(new Room("default"));
+		}
 		
 		// create NetListener and start as thread (daemon)
 		NetListener netListener;
@@ -44,6 +86,27 @@ public class Eizikiu_Server {
 			x.shutdown();
 		}
 		
+		// save 'globalUserList' and 'publicRooms' to file
+		try {
+			// users
+			FileOutputStream saveToFile = new FileOutputStream("Eiziku.users");
+			ObjectOutputStream saveUsers = new ObjectOutputStream(saveToFile);
+			saveUsers.writeObject(globalUserList);
+			saveUsers.close();
+			
+			EZKlogger.log("writing 'globalUserList' to file successful!");
+			
+			// rooms
+			saveToFile = new FileOutputStream("Eiziku.rooms");
+			ObjectOutputStream saveRooms = new ObjectOutputStream(saveToFile);
+			saveRooms.writeObject(publicRooms);
+			saveRooms.close();
+			
+			EZKlogger.log("writing 'publicRooms' to file successful!");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		// close IO
 		keyboardIn.close();
 		EZKlogger.setFileOutput(false);
