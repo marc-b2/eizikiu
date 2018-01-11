@@ -29,7 +29,7 @@ public class Message implements Serializable{
 	 * 9 -	NAK					19 -							29 -	warning
 	 */
 	
-	// Konstruktor
+	// constructor
 	public Message(String message, String senderName) { // deprecated
 		
 		this.message = message;
@@ -56,7 +56,7 @@ public class Message implements Serializable{
 		date = new java.util.Date();
 	}
 	
-	// Getter
+	// getter
 	public String getMessage() {
 		return message;
 	}
@@ -73,7 +73,7 @@ public class Message implements Serializable{
 		return roomID;
 	}
 	
-	// Methoden
+	// functions
 	@Override
 	public String toString(){
 		String output = "Error in Message.toString()";

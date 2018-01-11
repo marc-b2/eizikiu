@@ -9,10 +9,12 @@ public class InputStreamSet {
 	InputStream in;
 	ObjectInputStream oin;
 	
+	// constructor
 	public InputStreamSet(Socket socket){
 		this.socket = socket;
 	}
 	
+	// functions
 	public void setupStreams(){
 		try {
 			in = socket.getInputStream();

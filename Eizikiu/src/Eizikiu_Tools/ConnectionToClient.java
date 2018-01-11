@@ -1,5 +1,6 @@
 package Eizikiu_Tools;
 
+import Eizikiu_Server.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
@@ -15,21 +16,21 @@ public class ConnectionToClient implements Runnable {
 	private Socket socket;
 	private User user;
 	
-	// Konstruktoren
+	// constructors
 	public ConnectionToClient(){}
 	
 	public ConnectionToClient(Socket socket) {
-		this.connectionList = Eizikiu_Server.Eizikiu_Server.getConnectionList();
-		this.globalUserList = Eizikiu_Server.Eizikiu_Server.getGlobalUserList();
-		this.publicRooms = Eizikiu_Server.Eizikiu_Server.getPublicRooms();
-		this.privateRooms = Eizikiu_Server.Eizikiu_Server.getPrivateRoooms();
+		this.connectionList = Eizikiu_Server.getConnectionList();
+		this.globalUserList = Eizikiu_Server.getGlobalUserList();
+		this.publicRooms = Eizikiu_Server.getPublicRooms();
+		this.privateRooms = Eizikiu_Server.getPrivateRoooms();
 		this.socket = socket;
 		this.user = new User("name", "password");
 		this.netInput = new InputStreamSet(socket);
 		this.netOutput = new OutputStreamSet(socket);
 	}
 	
-	// Methoden
+	// functions
 	@Override
 	public void run() {
 		
@@ -222,8 +223,8 @@ public class ConnectionToClient implements Runnable {
 					// receive user credential messages until user name entered by client is unique 
 					nameIsInUserList = true;
 					do {
-//						message = netInput.receiveMessage();
-//						messageType = message.getType();
+						message = netInput.receiveMessage();
+						messageType = message.getType();
 						if(messageType == 12) {
 							user.setName(message.getSenderName());
 							user.setPassword(message.getMessage());
@@ -258,8 +259,8 @@ public class ConnectionToClient implements Runnable {
 					// receive user credential messages until user name entered by client is in list 
 					nameIsInUserList = false;
 					do {
-//						message = netInput.receiveMessage();
-//						messageType = message.getType();
+						message = netInput.receiveMessage();
+						messageType = message.getType();
 						if(messageType == 12) {
 							user.setName(message.getSenderName());
 							user.setPassword(message.getMessage());
@@ -318,10 +319,6 @@ public class ConnectionToClient implements Runnable {
 		}
 	}
 	
-	public User getUser() {
-		return user;
-	}
-	
 	public void shutdown() {
 		netOutput.sendMessage(new Message("connection shut down by server", "Server---------->"));
 		netOutput.sendMessage(new Message("exit", "Server"));
@@ -331,4 +328,9 @@ public class ConnectionToClient implements Runnable {
 //		socket.close();
 	}
 
+	// getter
+	public User getUser() {
+		return user;
+	}
+	
 }

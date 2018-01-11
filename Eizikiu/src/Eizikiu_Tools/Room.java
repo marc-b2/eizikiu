@@ -3,7 +3,6 @@ package Eizikiu_Tools;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-// Kommentar
 public class Room implements Serializable{
 
 	private static final long serialVersionUID = 636461425992742159L;
@@ -14,7 +13,7 @@ public class Room implements Serializable{
 	private int ID;
 	private transient LinkedList<User> userList;
 	
-	// Konstruktor
+	// constructor
 	public Room(String name) {
 		this.name = name;
 		userList = new LinkedList<User>();
@@ -32,7 +31,7 @@ public class Room implements Serializable{
 		userList = null;
 	}
 		
-	// Getter
+	// getter
 	public String getName() {
 		return name;
 	}
@@ -45,7 +44,7 @@ public class Room implements Serializable{
 		return ID;
 	}
 	
-	// Setter
+	// setter
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -58,7 +57,7 @@ public class Room implements Serializable{
 		this.ID = ID;
 	}
 	
-	// Methoden
+	// functions
 	public boolean addUser(User user) {
 		return userList.add(user);
 	}

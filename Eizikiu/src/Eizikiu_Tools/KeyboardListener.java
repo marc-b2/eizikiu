@@ -10,12 +10,14 @@ public class KeyboardListener implements Runnable {
 	OutputStreamSet netOutput;
 	String text;
 	
+	// constructor
 	public KeyboardListener(Socket socket, OutputStreamSet netOutput, User user){
 		this.socket = socket;
 		this.user = user;
 		this.netOutput = netOutput;
 	}
 	
+	// functions
 	@Override
 	public void run() {
 

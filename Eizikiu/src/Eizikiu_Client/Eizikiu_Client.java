@@ -6,6 +6,10 @@ import Eizikiu_Tools.*;
 
 public class Eizikiu_Client {
 
+	private static LinkedList<User> globalUserList; // local copy from servers 'globalUserList', has to be updated when changes occur on server
+	private static LinkedList<Room> publicRooms; // local copy from servers 'publicRooms', has to be updated when changes occur on server
+	// rooms where this client is in will be hold in 'rooms' list owned by the Clients 'user' and will be updated on every join or leave event
+	
 	public static void main(String args[]) {
 	
 		User user = null;
@@ -95,6 +99,25 @@ public class Eizikiu_Client {
 		}
 	} 
 	
+	// getter
+	public static LinkedList<User> getGlobalUserList() {
+		return globalUserList;
+	}
+	
+	public static LinkedList<Room> getPublicRooms() {
+		return publicRooms;
+	}
+	
+	// setter
+	public static void setGlobalUserList(LinkedList<User> globalUserList) {
+		Eizikiu_Client.globalUserList = globalUserList;
+	}
+	
+	public static void setPublicRooms(LinkedList<Room> publicRooms) {
+		Eizikiu_Client.publicRooms = publicRooms;
+	}
+	
+	// functions
 	public static boolean login(String name, String pw){
 		boolean b = true;
 		

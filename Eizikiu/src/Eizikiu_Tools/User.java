@@ -14,7 +14,7 @@ public class User implements Serializable{
 	private transient boolean status;
 	private boolean banned;
 	
-	// Konstruktor
+	// constructor
 	public User(String name, String password){
 		this.name = name;
 		this.password = password;
@@ -24,7 +24,7 @@ public class User implements Serializable{
 		banned = false;
 	}
 	
-	// Getter
+	// getter
 	public String getName() {
 		return name;
 	}
@@ -49,7 +49,7 @@ public class User implements Serializable{
 		return banned;
 	}
 	
-	// Setter
+	// setter
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -74,7 +74,7 @@ public class User implements Serializable{
 		this.banned = banned;
 	}
 	
-	// Methoden
+	// functions
 	public void addTo(LinkedList<User> userList){
 		if(userList.add(this)){
 			EZKlogger.log(name + ".addTo() -> new user [" + name + "] added");

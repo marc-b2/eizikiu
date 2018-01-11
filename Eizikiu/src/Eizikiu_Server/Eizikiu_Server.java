@@ -13,22 +13,21 @@ public class Eizikiu_Server {
 	
 	public static void main(String[] args) {
 		
-		// Variablen der main()
 		Scanner keyboardIn = new Scanner(System.in);
 		
-		// Logging in Datei anschalten
+		// switch on logging to file
 		EZKlogger.setFileOutput(true);
 		
-		// globale Listen instanzieren
+		// create global lists
 		globalUserList = new LinkedList<>();
 		connectionList = new LinkedList<>();
 		publicRooms = new LinkedList<>();
 		privateRooms = new LinkedList<>();
 		
-		// default room anlegen
+		// create default room
 		publicRooms.add(new Room("default"));
 		
-		// NetListener erstellen und als Thread (Daemon) starten
+		// create NetListener and start as thread (daemon)
 		NetListener netListener;
 		netListener = new NetListener();
 		Thread NLThread = new Thread(netListener);
@@ -40,16 +39,17 @@ public class Eizikiu_Server {
 		keyboardIn.nextLine();
 		EZKlogger.info("Eizikiu_Server.main() -> You pressed Return");
 		
-		// connections schliessen
+		// close connections
 		for(ConnectionToClient x : connectionList){
 			x.shutdown();
 		}
 		
-		// io schliessen
+		// close IO
 		keyboardIn.close();
 		EZKlogger.setFileOutput(false);
 	}
 	
+	// getter
 	public static LinkedList<User> getGlobalUserList() {
 		return globalUserList;
 	}

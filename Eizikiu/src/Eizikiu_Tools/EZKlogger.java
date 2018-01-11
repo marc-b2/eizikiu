@@ -15,16 +15,7 @@ public class EZKlogger {
 	private static PrintWriter fileOut = null;
 	private static Date date = new Date();
 	
-	/*/ Konstruktor
-	public EZKlogger(){
-		consoleOutput = true;
-		fileOutput = false;
-		fw = null;
-		bw = null;
-		fileOut = null;		
-	}
-	*/
-	// Setter
+	// setter
 	public static void setLoglevel(int newLoglevel){
 		loglevel = newLoglevel;
 	}
@@ -51,7 +42,7 @@ public class EZKlogger {
 		fileOutput = newFileOutput;
 	}
 	
-	// Logging-Methoden
+	// logging methods
 	public static void info(String message) {
 		if(loglevel >=0) {
 			if(consoleOutput) {System.out.println(message);}
@@ -76,7 +67,7 @@ public class EZKlogger {
 	// stream handling
 	private static void initFileOutput() throws IOException{
 		if(fileOut == null){
-			fw = new FileWriter(logfile, true); // 'true' bewirkt, dass neuer String in Datei angehangen wird
+			fw = new FileWriter(logfile, true); // 'true' for new String gets appended
 		    bw = new BufferedWriter(fw);
 		    fileOut = new PrintWriter(bw);
 		}

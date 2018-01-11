@@ -9,10 +9,12 @@ public class OutputStreamSet {
 	OutputStream out;
 	ObjectOutputStream oout;
 	
+	// constructor
 	public OutputStreamSet(Socket socket){
 		this.socket = socket;
 	}
 	
+	// functions
 	public void setupStreams(){
 		try {
 			out = socket.getOutputStream();
