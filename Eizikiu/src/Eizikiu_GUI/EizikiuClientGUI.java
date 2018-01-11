@@ -2,7 +2,10 @@ package Eizikiu_GUI;
 
 import javax.swing.*;
 import Eizikiu_Tools.User;
+import javafx.scene.layout.Border;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -32,7 +35,7 @@ public class EizikiuClientGUI extends JFrame implements ActionListener,Runnable{
 		setBounds(x,y,width,height);
 		setTitle("Eizikiu");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
+		this.add(initComponents());
 //		outputRooms = new JList();
 //		
 //		
@@ -58,7 +61,8 @@ public class EizikiuClientGUI extends JFrame implements ActionListener,Runnable{
 //		this.add(outputUsernicknames);
 //		this.add(outputRooms);
 //		this.add(send);
-//		setVisible(true);
+		
+		setVisible(true);
 	}
 	
 	
@@ -69,13 +73,17 @@ public class EizikiuClientGUI extends JFrame implements ActionListener,Runnable{
 		 
 	}
 	
-	public void initComponents(){
+	public JPanel initComponents(){
 		panel1 = new JPanel();
+		BorderLayout borderlayout = new BorderLayout();
+		panel1.setLayout(borderlayout);
+		
 		
 		outputRooms = new JList();
 		
 		
 		toSend = new JTextArea();
+		
 		
 		
 		output = new JTextArea();
@@ -96,11 +104,13 @@ public class EizikiuClientGUI extends JFrame implements ActionListener,Runnable{
 		send.addActionListener(this);
 		send.setActionCommand("SENDEN");
 		
-		panel1.add(output);
-		panel1.add(toSend);
-		this.add(outputUsernicknames);
-		this.add(outputRooms);
-		this.add(send);
+		panel1.add(output,BorderLayout.NORTH);
+		panel1.add(toSend,BorderLayout.WEST);
+		panel1.add(outputUsernicknames,BorderLayout.CENTER);
+		panel1.add(outputRooms,BorderLayout.EAST);
+		panel1.add(send,BorderLayout.SOUTH);
+		
+		return panel1;
 	}
 	
 	public void actualizeRooms(){
