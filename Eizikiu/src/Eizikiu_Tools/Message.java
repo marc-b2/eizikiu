@@ -21,9 +21,9 @@ public class Message implements Serializable{
 	 * 1 -	standard public		11 -	login request			21 -	
 	 * 2 -						12 -	user credentials		22 -	
 	 * 3 -						13 -	join priv chat request	23 -	priv chat ACK
-	 * 4 -						14 -	leave priv chat request	24 -	priv chat NAK
+	 * 4 -						14 -	leave priv chat notif.	24 -	priv chat NAK
 	 * 5 -						15 -	join room request		25 -	join room ACK
-	 * 6 -						16 -	leave room request		26 -	join room NAK
+	 * 6 -						16 -	leave room notification	26 -	join room NAK
 	 * 7 -						17 -	room list request		27 -	room list	
 	 * 8 -	ACK					18 -	user list request		28 -	user list
 	 * 9 -	NAK					19 -							29 -	warning

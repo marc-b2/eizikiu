@@ -145,7 +145,7 @@ public class ConnectionToClient implements Runnable {
 						}
 						break;
 					
-					case 14: // leave private chat request
+					case 14: // leave private chat notification
 							 // Message(room name, senderName, 14, roomID)
 						room = null;
 						for(Room x : privateRooms) {
@@ -156,7 +156,7 @@ public class ConnectionToClient implements Runnable {
 						if(room != null) {
 							for(User x : room.getUserList()) {
 								if(!x.equals(user)) {
-									x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] has left your private chat. You may close this Window now.", "Server---------->", 20, room.getID()));
+									x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] has left your private chat. You may close this Window now.", "Server---------->", 2, room.getID()));
 								}
 								x.getRooms().remove(room);
 							}
@@ -167,28 +167,106 @@ public class ConnectionToClient implements Runnable {
 					case 15: // join room request
 							 // Message(room name, senderName, 15, roomID)
 						room = null;
-						
-						
+						// check if room still exists, if yes set 'room'
+						for(Room x : publicRooms) {
+							if(x.getID() == message.getRoomID() && message.getMessage().equals(x.getName())) room = x;
+						}
+						if(room != null) { // room exists
+							// check if user is already member
+							if(room.getUserList().contains(user)) { // user is in list
+								netOutput.sendMessage(new Message("You already joined the room [" + room.getName() + "]!", "Server---------->", 26, 0));
+							} else { // user is not in list -> regular join room request
+								     //-> send "user joined" to other members; add user to rooms user list; add room to users room list; send ACK to client 
+								if(room.getUserList().add(user)) {
+									for(User x : room.getUserList()) {
+										if(!x.equals(user)) {
+											x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] joined this room", "Server---------->", 1, room.getID()));
+										}
+									}
+								}
+								user.getRooms().add(room);
+								netOutput.sendMessage(new Message("You joined room [" + room.getName() + "]!", "Server---------->", 25, room.getID()));
+							}
+						} else { // room does not exist
+							netOutput.sendMessage(new Message("Sorry, the room [" + message.getMessage() + "] does not exist anymore!", "Server---------->", 26, 0));
+						}
 						break;
-					case 16: // leave room request
+						
+					case 16: // leave room notification
+							 // Message(room name, senderName, 15, roomID)
+						room = null;
+						// check if room still exists, if yes set 'room' 
+						for(Room x : publicRooms) {
+							if(x.getID() == message.getRoomID() && message.getMessage().equals(x.getName())) {
+								room = x;
+							}
+						}
+						if(room != null) { // regular leave room notification
+							// remove room from users room list; remove user from rooms user list; send "user left" to other members
+							user.getRooms().remove(room);
+							if(room.getUserList().remove(user)) {
+								for(User x : room.getUserList()) {
+									x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] left this room", "Server---------->", 1, room.getID()));
+								}
+							}
+						} else { // room does not exist anymore -> remove requested room from users room list if still existing 
+							for(Room x : user.getRooms()) {
+								if(x.getID() == message.getRoomID() && message.getMessage().equals(x.getName())) {
+									room = x;
+								}
+							}
+							if(room != null) {
+								user.getRooms().remove(room);
+							}
+						}
 						break;
+						
 					default: // error
+						EZKlogger.log(user.getName() + ".ConnectionToClient -> chat -> received message of unexpected type: " + messageType);
 					}
-					
 				}while(!exit);
 
-				netOutput.sendMessage(new Message("exit", "Server"));
+				netOutput.sendMessage(new Message("exit", "Server---------->", 0, 0));
 			}								
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		try {
+			// remove user from all public rooms user lists and send "user left" to other members
+			for(Room x : publicRooms) {
+				if(x.getUserList().remove(user)) {
+					for(User y : x.getUserList()) {
+						y.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] left this room", "Server---------->", 1, x.getID()));
+					}
+				}	
+			}
+			
+			// remove all private rooms where user is member and tell affected chat partners to leave and remove room from their room lists
+			LinkedList<Room> tempList = new LinkedList<>();
+			for(Room x : privateRooms) {
+				if(x.getUserList().contains(user)) {
+					tempList.add(x);
+				}
+			}
+			if(!tempList.isEmpty()) {
+				for(Room x : tempList) {
+					for(User y : x.getUserList()) {
+						if(!y.equals(user)) {
+							y.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] has left your private chat. You may close this Window now.", "Server---------->", 2, x.getID()));
+						}
+						y.getRooms().remove(x);
+					}
+					privateRooms.remove(x);
+				}
+			}
+			
+			// set 'user.status' false and delete room list
 			user.logOut();
 			
 			// "user offline" to other clients
 			for(User x : globalUserList) {
-				if(x.isStatus() && !user.equals(x)) {
+				if(x.isStatus()) {
 					x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] is offline", "Server---------->", 20, 0));
 				}
 			}
@@ -199,12 +277,12 @@ public class ConnectionToClient implements Runnable {
 			netOutput.closeStreams();
 			socket.close();
 
-			EZKlogger.debug("ConnectionToClient.run() -> connection to [" + user.getName() + "] terminated\n");
+			EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> connection terminated");
 
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		}
+	}
 	
 	public boolean loginUser() {
 		
@@ -229,12 +307,12 @@ public class ConnectionToClient implements Runnable {
 							user.setName(message.getSenderName());
 							user.setPassword(message.getMessage());
 							
-							EZKlogger.debug("ConnectionToClient.run() -> password check -> user credentials message received");
-							EZKlogger.debug("ConnectionToClient.run() -> password check -> " + message);
+							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user credentials message received");
+							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> " + message);
 							
 							for(User x : globalUserList){
 								if(x.getName().equals(user.getName())){
-									EZKlogger.debug("ConnectionToClient.run() -> password check -> name already in user list");
+									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> name already in user list");
 									// send negative ACK to client to tell client to try again
 									netOutput.sendMessage(new Message("The name '" + user.getName() + "' is already taken! Try again!", "server", 9, 0));
 									break;
@@ -243,15 +321,15 @@ public class ConnectionToClient implements Runnable {
 							// if for loop does not give 'break' name is not in list
 							nameIsInUserList = false;
 						} else {
-							// send negative ACK to client is case of wrong message type
-							EZKlogger.debug("ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
+							// send negative ACK to client in case of wrong message type
+							EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
 							netOutput.sendMessage(new Message("Sorry, network error! Try again!", "server", 9, 0));
 						}
 					} while(nameIsInUserList);
 					
 					// add new user to list
 					user.addTo(globalUserList);
-					EZKlogger.log("ConnectionToClient.run() -> password check -> new user" + user.getName() + "added to user list");
+					EZKlogger.log(user.getName() + ".ConnectionToClient.run() -> password check -> new user [" + user.getName() + "] added to global user list");
 					userValid = true;
 					break;
 	
@@ -265,25 +343,25 @@ public class ConnectionToClient implements Runnable {
 							user.setName(message.getSenderName());
 							user.setPassword(message.getMessage());
 							
-							EZKlogger.debug("ConnectionToClient.run() -> password check -> user credentials message received");
-							EZKlogger.debug("ConnectionToClient.run() -> password check -> " + message);
+							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user credentials message received");
+							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> " + message);
 							
 							for(User x : globalUserList){
 								if(x.getName().equals(user.getName())){
 									nameIsInUserList = true;
-									EZKlogger.debug("ConnectionToClient.run() -> password check -> name is in user list");
+									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> name is in user list");
 									if(!x.isStatus()){
-										EZKlogger.debug("ConnectionToClient.run() -> password check -> pw in list: " + x.getPassword() + " ----- pw client: " + user.getPassword());
+										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> pw in list: " + x.getPassword() + " ----- pw client: " + user.getPassword());
 										if(x.getPassword().equals(user.getPassword())){
 											userValid = true;
 											user = x;
-											EZKlogger.debug("ConnectionToClient.run() -> password check -> password correct");
+											EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password correct");
 										} else { // when password is wrong
-											EZKlogger.debug("ConnectionToClient.run() -> password check -> password not correct");
+											EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password not correct");
 											netOutput.sendMessage(new Message("The entered password is wrong! Try again!", "server", 9, 0));
 										}
 									}else{ // when status is true
-										EZKlogger.debug("ConnectionToClient.run() -> password check -> user allready logged in");
+										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user allready logged in");
 										netOutput.sendMessage(new Message("The user named '" + user.getName() + "' is already logged in! Try again!", "server", 9, 0));
 									}
 								}
@@ -294,13 +372,13 @@ public class ConnectionToClient implements Runnable {
 								netOutput.sendMessage(new Message("The user named '" + user.getName() + "' does not exist! Please register first!", "server", 9, 0));
 							}
 						} else { // when message type is not 12
-							EZKlogger.debug("ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
+							EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
 							netOutput.sendMessage(new Message("Sorry, unknown error! Try again!", "server", 9, 0));
 						}
 					} while(!nameIsInUserList);
 					break;
 				default:
-					EZKlogger.debug("ConnectionToClient.run() -> password check -> message type not 10 or 11");
+					EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> message type not 10 or 11");
 					netOutput.sendMessage(new Message("Sorry, unknown error! Try again!", "server", 9, 0));
 				} // switch
 			} // while (!userValid)
@@ -310,7 +388,7 @@ public class ConnectionToClient implements Runnable {
 			user.setConnection(this);
 			connectionList.add(this);
 			// send positive ACK for successful login to client
-			EZKlogger.log("ConnectionToClient.run() -> password check -> user '" + user.getName() + "' logged in");
+			EZKlogger.log(user.getName() + ".ConnectionToClient.run() -> password check -> user [" + user.getName() + "] logged in");
 			netOutput.sendMessage(new Message("Login successful!", "server", 8, 0));
 			return true;
 		} catch (Exception e) {
@@ -320,8 +398,8 @@ public class ConnectionToClient implements Runnable {
 	}
 	
 	public void shutdown() {
-		netOutput.sendMessage(new Message("connection shut down by server", "Server---------->"));
-		netOutput.sendMessage(new Message("exit", "Server"));
+		netOutput.sendMessage(new Message("connection shut down by server", "Server---------->", 20, 0));
+		netOutput.sendMessage(new Message("exit", "Server---------->", 0, 0));
 //		user.logOut();
 //		netInput.closeStreams();
 //		netOutput.closeStreams();
@@ -333,4 +411,7 @@ public class ConnectionToClient implements Runnable {
 		return user;
 	}
 	
+	public OutputStreamSet getNetOutput() {
+		return netOutput;
+	}
 }

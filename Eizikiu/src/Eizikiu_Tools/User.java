@@ -94,7 +94,6 @@ public class User implements Serializable{
 	}
 	
 	public void logOut(){
-		// TODO: exit all rooms
 		status = false;
 		rooms = null;
 		EZKlogger.log(name + ".logOut() -> [" + name + "] logged out");
