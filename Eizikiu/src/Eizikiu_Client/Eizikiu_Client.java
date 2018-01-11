@@ -94,5 +94,11 @@ public class Eizikiu_Client {
 			e.printStackTrace();
 		}
 	} 
+	
+	public static boolean login(String name, String pw){
+		boolean b = true;
+		
+		return b;
+	}
 	     
 }

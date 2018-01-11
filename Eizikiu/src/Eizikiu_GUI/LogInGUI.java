@@ -1,6 +1,9 @@
 package Eizikiu_GUI;
 
 import javax.swing.*;
+
+import Eizikiu_Client.Eizikiu_Client;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +15,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 	private JPasswordField password = new JPasswordField();
 	
 	private JButton anmeldeButton = new JButton();
+	private JButton registrierungsButton = new JButton();
 	
 	private int height = 25;
 	private int width = 500;
@@ -34,20 +38,27 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 	@Override 
 	public void actionPerformed(ActionEvent e){
 		if(e.getActionCommand().equals("ANMELDEN") && textfieldName.getText() != null && password.getPassword() != null){
-			// hier kommt wieder die Message generation hin 
+			 String name = textfieldName.getText();
+			 @SuppressWarnings("deprecation")
+			 String pw = password.getText();
+			 
+			 if(Eizikiu_Client.login(name, pw)){
+				 new EizikiuClientGUI();
+			 }
 
 		}
-		if(e.getActionCommand().equals("ANMELDEFENSTER")){
+		if(e.getActionCommand().equals("REGISTRIEREN")){
 			// hier öffnet sich das Anmeldefenster 
-			Thread t = new Thread(new LogInGUI());
-			t.start();
+//			Thread t = new Thread(new RegistryGUI());
+//			t.start();
+			new RegistryGUI();
 			this.setVisible(false);
 		}
 	}
 	
 	@Override 
 	public void run(){
-		new LogInGUI();
+		
 	}
 	
 	private Box initComponents(){
@@ -64,11 +75,19 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 		anmeldeButton.addActionListener(this);
 		anmeldeButton.setActionCommand("ANMELDEN");
 		
-		
+		registrierungsButton.setText("Registrieren");
+		registrierungsButton.addActionListener(this);
+		registrierungsButton.setActionCommand("REGISTRIEREN");
 		box.add(text1);
 		box.add(textfieldName);
 		box.add(text2);
 		box.add(password);
+		box.add(anmeldeButton);
+		box.add(registrierungsButton);
 		return box;
 	}
+
+public static void main(String[] args){
+	new LogInGUI();
+}
 }

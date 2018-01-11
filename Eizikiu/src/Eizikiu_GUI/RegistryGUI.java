@@ -95,7 +95,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	}
 	
 	public void run(){
-		new RegistryGUI();
+		
 	}
 	
 	/*public static void main(String[] args){
