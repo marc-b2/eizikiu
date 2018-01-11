@@ -6,7 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class RegistryGUI extends JFrame implements ActionListener, Runnable{
+public class RegistryGUI extends JFrame implements ActionListener {
 	public static final long serialVersionUID = -11111111;
 	
 	private JTextField textfieldName = new JTextField();
@@ -40,20 +40,13 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	public void actionPerformed(ActionEvent e){
 		if(e.getActionCommand().equals("REGISTER")){
 			if (password.getPassword().equals(passwordRepeat.getPassword())){
-			
+				
 				/* @Mark: hier sollte dann die Message erzeugt werden und abgeschickt (Login)
 				 *
 				 **/
+				
 			}
 		}
-		if(e.getActionCommand().equals("ANMELDEFENSTER")){
-			// hier öffnet sich das Anmeldefenster 
-			
-			Thread t = new Thread(new LogInGUI());
-			t.start();
-			this.setVisible(false);
-			
-		}	
 	}
 	
 	private Box initComponents(){
@@ -77,11 +70,6 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 		register.addActionListener(this);
 		register.setActionCommand("REGISTER");
 		
-		JButton anmeldeFenster = new JButton();
-		anmeldeFenster.setText("Mit bestehendem Account anmelden");
-		anmeldeFenster.addActionListener(this);
-		anmeldeFenster.setActionCommand("ANMELDEN");
-		
 		// dem Container hinzufügen
 		panel.add(text1);
 		panel.add(textfieldName);
@@ -94,15 +82,10 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 		
 		return panel;
 	}
-	
-	public void run(){
-		new RegistryGUI();
-	}
-	
-	/*public static void main(String[] args){
+	public static void main(String[] args){
 		RegistryGUI Registrierung = new RegistryGUI();
 		
-	}*/
+	}
 }
 
 

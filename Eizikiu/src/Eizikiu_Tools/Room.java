@@ -1,20 +1,40 @@
 package Eizikiu_Tools;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 // Kommentar
-public class Room {
+public class Room implements Serializable{
 
-	LinkedList<User> userList;
+	private static final long serialVersionUID = 636461425992742159L;
+	private static int IDcount = 0;
+	
+	private int ID;
+	private LinkedList<User> userList;
 	
 	// Konstruktor
-	Room(){
+	Room() {
+		ID = IDcount;
+		IDcount++;
 		userList = new LinkedList<User>();
 	}
 	
 	// Getter
-	public LinkedList<User> getUserList(){
+	public LinkedList<User> getUserList() {
 		return userList;
+	}
+	
+	public int getID() {
+		return ID;
+	}
+	
+	// Setter
+	public void setUserList(LinkedList<User> userList){
+		this.userList = userList;
+	}
+	
+	public void setID(int ID) {
+		this.ID = ID;
 	}
 	
 	// Methoden

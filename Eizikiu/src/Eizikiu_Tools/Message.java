@@ -9,7 +9,25 @@ public class Message implements Serializable{
 	private Date date;
 	private String message;
 	private String senderName;
-	private int type; // 0-exit, 1-standard chat, 2-server, 2- benutzername, 3- passwort
+	private int type;
+	private int roomID;
+	
+	/*	message types:
+	 * ###############
+	 * 
+	 * 		unidirectional			client -> server			server -> client
+	 * 		--------------			----------------			----------------
+	 * 0 -	exit			10 -	register request	20 -	warning
+	 * 1 -	standard		11 -	login request		21 -	
+	 * 2 -					12 -	user credentials	22 -	
+	 * 3 -					13 -						23 -	
+	 * 4 -					14 -						24 -	
+	 * 5 -					15 -						25 -	
+	 * 6 -					16 -						26 -	
+	 * 7 -					17 -						27 -	
+	 * 8 -	positive ACK	18 -						28 -	
+	 * 9 -	negative ACK	19 -						29 -	
+	 */
 	
 	// Konstruktor
 	public Message(String message, String senderName) {

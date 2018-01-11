@@ -25,13 +25,13 @@ public class OutputStreamSet {
 		}
 	}
 
-	public void send(Object object){
-		try{
-			oout.writeObject(object);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
+//	public void send(Object object){
+//		try{
+//			oout.writeObject(object);
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
 
 	public void sendMessage(Message message){
 		try{
@@ -50,21 +50,21 @@ public class OutputStreamSet {
 		}
 	}
 	
-	public void sendString(String string){
-		try{
-			oout.writeObject(string);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
+//	public void sendString(String string){
+//		try{
+//			oout.writeObject(string);
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
 	
-	public void sendAvailableByte(){
-		try{
-			oout.writeByte(42);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
+//	public void sendAvailableByte(){
+//		try{
+//			oout.writeByte(42);
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public void closeStreams(){
 		try {

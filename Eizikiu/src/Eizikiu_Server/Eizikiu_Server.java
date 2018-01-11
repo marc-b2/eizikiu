@@ -6,6 +6,11 @@ import Eizikiu_Tools.*;
 
 public class Eizikiu_Server {
 
+	private static LinkedList<User> userList;
+	private static LinkedList<ConnectionToClient> connectionList;
+	private static LinkedList<Room> publicRooms;
+	private static LinkedList<Room> privateRooms;
+	
 	public static void main(String[] args) {
 		
 		// Variablen der main()
@@ -14,15 +19,15 @@ public class Eizikiu_Server {
 		// Logging in Datei anschalten
 		EZKlogger.setFileOutput(true);
 		
-		// globale Listen anlegen
-		LinkedList<User> userList = new LinkedList<>();
-		LinkedList<ConnectionToClient> connectionList = new LinkedList<>();
-		LinkedList<Room> publicRooms = new LinkedList<>();
-		LinkedList<Room> privateRooms = new LinkedList<>();
+		// globale Listen instanzieren
+		userList = new LinkedList<>();
+		connectionList = new LinkedList<>();
+		publicRooms = new LinkedList<>();
+		privateRooms = new LinkedList<>();
 		
-		// NetListener erstellen und als Thread(Daemon) starten
+		// NetListener erstellen und als Thread (Daemon) starten
 		NetListener netListener;
-		netListener = new NetListener(connectionList, userList);
+		netListener = new NetListener();
 		Thread NLThread = new Thread(netListener);
 		NLThread.setDaemon(true);
 		EZKlogger.log("Eizikiu_Server.main() -> NetListener started...");
@@ -41,5 +46,20 @@ public class Eizikiu_Server {
 		keyboardIn.close();
 		EZKlogger.setFileOutput(false);
 	}
-
+	
+	public static LinkedList<User> getUserList() {
+		return userList;
+	}
+	
+	public static LinkedList<ConnectionToClient> getConnectionList() {
+		return connectionList;
+	}
+	
+	public static LinkedList<Room> getPublicRooms() {
+		return publicRooms;
+	}
+	
+	public static LinkedList<Room> getPrivateRoooms() {
+		return privateRooms;
+	}
 }
