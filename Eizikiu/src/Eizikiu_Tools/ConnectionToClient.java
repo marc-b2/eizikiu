@@ -57,6 +57,8 @@ public class ConnectionToClient implements Runnable {
 					}
 				}
 				
+				//TODO: send current room list to client
+				
 				// chat
 				do {
 					Message message = netInput.receiveMessage();
@@ -220,8 +222,8 @@ public class ConnectionToClient implements Runnable {
 					// receive user credential messages until user name entered by client is unique 
 					nameIsInUserList = true;
 					do {
-						message = netInput.receiveMessage();
-						messageType = message.getType();
+//						message = netInput.receiveMessage();
+//						messageType = message.getType();
 						if(messageType == 12) {
 							user.setName(message.getSenderName());
 							user.setPassword(message.getMessage());
@@ -256,8 +258,8 @@ public class ConnectionToClient implements Runnable {
 					// receive user credential messages until user name entered by client is in list 
 					nameIsInUserList = false;
 					do {
-						message = netInput.receiveMessage();
-						messageType = message.getType();
+//						message = netInput.receiveMessage();
+//						messageType = message.getType();
 						if(messageType == 12) {
 							user.setName(message.getSenderName());
 							user.setPassword(message.getMessage());
