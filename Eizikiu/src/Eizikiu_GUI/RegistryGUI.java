@@ -45,8 +45,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 				 *
 				 **/
 			}
-		}
-		if(e.getActionCommand().equals("ANMELDEFENSTER")){
+		}if(e.getActionCommand().equals("ANMELDEFENSTER")){
 			// hier öffnet sich das Anmeldefenster 
 			
 			Thread t = new Thread(new LogInGUI());

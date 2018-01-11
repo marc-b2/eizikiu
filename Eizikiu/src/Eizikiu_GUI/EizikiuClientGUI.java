@@ -70,7 +70,7 @@ public class EizikiuClientGUI extends JFrame implements ActionListener,Runnable{
 	}
 	
 	public void initComponents(){
-		panel1 = new JPanel(new BorderLayout());
+		panel1 = new JPanel();
 		
 		outputRooms = new JList();
 		
