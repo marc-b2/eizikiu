@@ -16,7 +16,7 @@ public class Eizikiu_Server {
 		
 		// switch on logging to file
 		EZKlogger.setFileOutput(true);
-		
+		EZKlogger.setLoglevel(2);
 		EZKlogger.info("**************** server started ****************");
 		
 		Scanner keyboardIn = new Scanner(System.in);

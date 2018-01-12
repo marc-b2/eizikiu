@@ -50,13 +50,12 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 //					new Eizikiu_Client_GUI();
 					Eizikiu_Client.chat();
 				}
-			}
+			}	
 		}
 			if(e.getActionCommand().equals("ANMELDEFENSTER")){
 			// hier öffnet sich das Anmeldefenster 
 			
-			Thread t = new Thread(new LogInGUI());
-			t.start();
+			new LogInGUI();
 			this.setVisible(false);
 			
 		}	
@@ -96,6 +95,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 		panel.add(text3);
 		panel.add(passwordRepeat);
 		panel.add(register);
+		panel.add(anmeldeFenster);
 
 		
 		return panel;
