@@ -125,7 +125,7 @@ public class Eizikiu_Server {
 		return publicRooms;
 	}
 	
-	public static LinkedList<Room> getPrivateRoooms() {
+	public static LinkedList<Room> getPrivateRooms() {
 		return privateRooms;
 	}
 }

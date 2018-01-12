@@ -23,7 +23,7 @@ public class ConnectionToClient implements Runnable {
 		this.connectionList = Eizikiu_Server.getConnectionList();
 		this.globalUserList = Eizikiu_Server.getGlobalUserList();
 		this.publicRooms = Eizikiu_Server.getPublicRooms();
-		this.privateRooms = Eizikiu_Server.getPrivateRoooms();
+		this.privateRooms = Eizikiu_Server.getPrivateRooms();
 		this.socket = socket;
 		this.user = new User("name", "password");
 		this.netInput = new InputStreamSet(socket);
