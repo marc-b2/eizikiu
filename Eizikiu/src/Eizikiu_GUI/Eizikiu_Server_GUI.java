@@ -194,33 +194,32 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	public void itemStateChanged(ItemEvent e) {
 		if(((JCheckBoxMenuItem) e.getItem()) == infoChecker) {
 			if(infoChecker.getState()== true) {
-				
-			}else {
-				
-			}
+				EZKlogger.setLoglevel(0);
+				logChecker.setState(false);
+				debugChecker.setState(false);
+			
 		}else if(((JCheckBoxMenuItem) e.getItem()) == logChecker){
 			if(logChecker.getState()== true) {
-				
-			}else {
-				
-			}
-			
+				EZKlogger.setLoglevel(1);
+				infoChecker.setState(false);
+				debugChecker.setState(false);
+		
 			
 		}else if(((JCheckBoxMenuItem) e.getItem()) == debugChecker){
 			if(debugChecker.getState()== true) {
-				
-			}else {
-				
+				EZKlogger.setLoglevel(2);
+				infoChecker.setState(false);
+				logChecker.setState(false);
 			}
-			
+		}	
 		}else if(((JCheckBoxMenuItem) e.getItem()) == safeLogToChecker){
 			if(safeLogToChecker.getState()== true) {
-				
+				EZKlogger.setFileOutput(true);
 			}else {
-				
+				EZKlogger.setFileOutput(false);
 			}
-			
 		}
+		}	
 	}
 	@Override
 	public void run() {
