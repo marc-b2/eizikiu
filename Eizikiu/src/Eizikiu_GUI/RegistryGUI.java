@@ -19,7 +19,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	private int width = 500;
 	private Dimension d = new Dimension(width, height);
 	
-	
+	private Box panel;
 	
 	public RegistryGUI(){
 		
@@ -46,7 +46,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 				@SuppressWarnings("deprecation")
 				String pw = password.getText();
 				 
-				if(Eizikiu_Client.login(name, pw)){
+				if(Eizikiu_Client.register(name, pw, this)){
 //					new Eizikiu_Client_GUI();
 					Eizikiu_Client.chat();
 				}
@@ -64,7 +64,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	
 	private Box initComponents(){
 		//JPanel als Container
-		Box panel = new Box(BoxLayout.Y_AXIS);
+		panel = new Box(BoxLayout.Y_AXIS);
 		
 		// initialisiere die Beschriftung
 		JLabel text1 = new JLabel("Geben sie den gewünschten Usernamen an:");
@@ -103,6 +103,10 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	
 	public void run(){
 		
+	}
+	
+	public Box getPanel() {
+		return panel;
 	}
 	
 	/*public static void main(String[] args){

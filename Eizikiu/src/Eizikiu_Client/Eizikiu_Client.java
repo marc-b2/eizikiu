@@ -2,7 +2,11 @@ package Eizikiu_Client;
 
 import java.net.*;
 import java.util.*;
+
+import javax.swing.JOptionPane;
+
 import Eizikiu_Tools.*;
+import Eizikiu_GUI.*;
 
 public class Eizikiu_Client {
 
@@ -12,13 +16,15 @@ public class Eizikiu_Client {
 
 	private static OutputStreamSet netOutput;
 	private static InputStreamSet netInput;
+	private static User user = null;
 	
 	public static void main(String args[]) {
-	
-		User user = null;
+
+		/*	deprecated
+		 * ************
 		String text;
 		KeyboardListener keyli;
-
+		*/
 		EZKlogger.setLoglevel(1);
 		
 		EZKlogger.log("************Eizikiu_Client.main() -> Eizikiu_Client started ************");
@@ -125,15 +131,66 @@ public class Eizikiu_Client {
 	}
 	
 	// functions
-	public static boolean login(String name, String pw) {
-		netOutput.sendMessage(new Message("login request", name, 11, 0));
-		netOutput.sendMessage(new Message(pw, name, 12, 0));
-		
-		return true;
+	public static boolean login(String name, String pw, LogInGUI gui) {
+		try {
+			// set global user credentials
+			user.setName(name);
+			user.setPassword(pw);
+			
+			// send login request
+			netOutput.sendMessage(new Message("login request", name, 11, 0));
+			// send user credentials
+			netOutput.sendMessage(new Message(pw, name, 12, 0));
+			
+			// wait for answer
+			Message message;
+			message = netInput.receiveMessage();
+			
+			// react on answer
+			if(message.getType() == 8) {
+				return true;				
+			} else if(message.getType() == 9) {
+				JOptionPane.showMessageDialog(gui.getBox(), message.getMessage(), "Error:", 0);
+				return false;
+			} else {
+				JOptionPane.showMessageDialog(gui.getBox(), "Sorry, unknown error!", "Error:", 0);
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
-	public static boolean register(String name, String pw) {
-		return true;
+	public static boolean register(String name, String pw, RegistryGUI gui) {
+		try {
+			// set global user credentials
+			user.setName(name);
+			user.setPassword(pw);
+			
+			// send register request
+			netOutput.sendMessage(new Message("register request", name, 10, 0));
+			// send user credentials
+			netOutput.sendMessage(new Message(pw, name, 12, 0));
+			
+			// wait for answer
+			Message message;
+			message = netInput.receiveMessage();
+			
+			// react on answer
+			if(message.getType() == 8) {
+				return true;				
+			} else if(message.getType() == 9) {
+				JOptionPane.showMessageDialog(gui.getPanel(), message.getMessage(), "Error:", 0);
+				return false;
+			} else {
+				JOptionPane.showMessageDialog(gui.getPanel(), "Sorry, unknown error!", "Error:", 0);
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public static void chat() {

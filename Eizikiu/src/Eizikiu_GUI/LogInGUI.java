@@ -21,6 +21,8 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 	private int width = 500;
 	private Dimension d = new Dimension(width, height);
 	
+	private Box box;
+	
 	public LogInGUI(){
 		
 		super();
@@ -42,7 +44,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 			 @SuppressWarnings("deprecation")
 			 String pw = password.getText();
 			 
-			 if(Eizikiu_Client.login(name, pw)){
+			 if(Eizikiu_Client.login(name, pw, this)){
 //				 new Eizikiu_Client_GUI();
 				 Eizikiu_Client.chat();
 			 }
@@ -63,7 +65,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 	}
 	
 	private Box initComponents(){
-		Box box = new Box(BoxLayout.Y_AXIS);
+		box = new Box(BoxLayout.Y_AXIS);
 		
 		JLabel text1 = new JLabel("Geben sie ihren Usernamen ein:");
 		JLabel text2 = new JLabel("Geben sie ihr Password ein:");
@@ -85,6 +87,10 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 		box.add(password);
 		box.add(anmeldeButton);
 		box.add(registrierungsButton);
+		return box;
+	}
+	
+	public Box getBox() {
 		return box;
 	}
 
