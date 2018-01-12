@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
 import Eizikiu_Client.Eizikiu_Client;
@@ -31,25 +32,18 @@ import Eizikiu_Tools.Room;
 import Eizikiu_Tools.User;
 
 
-public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, ItemListener{
+public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, ItemListener, Runnable{
 
 	private JFrame frmEizikiuClient;
 	private JTextArea chatOutput, chatInput;
 	JList<User> userList; 
 	JList<Room> roomList;
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker;
+	JTabbedPane listHolder, chatHolder;
 	// starten der GUI
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Eizikiu_Client_GUI window = new Eizikiu_Client_GUI();
-					window.frmEizikiuClient.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		
+		EventQueue.invokeLater(new Eizikiu_Client_GUI());
 	}
 
 	// 
@@ -65,20 +59,13 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmEizikiuClient.getContentPane().setLayout(null);
 		
-		JButton sendButton = new JButton("Send");
-		sendButton.setBounds(274, 362, 97, 60);
-		sendButton.addKeyListener(this);
-		sendButton.setActionCommand("SENDEN");
-		frmEizikiuClient.getContentPane().add(sendButton);
-		
-		chatOutput = new JTextArea();
-		chatOutput.setBorder(new LineBorder(new Color(0, 0, 0)));
-		chatOutput.setEditable(false);
-		chatOutput.setBounds(10, 30, 360, 320);
-		frmEizikiuClient.getContentPane().add(chatOutput);
+		chatHolder = new JTabbedPane();
+		chatHolder.setBounds(10,10,355,380);
+		chatHolder.add(new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
+		frmEizikiuClient.getContentPane().add(chatHolder);
 		
 		//ListenVerwaltung 
-		JTabbedPane listHolder = new JTabbedPane(JTabbedPane.TOP);
+		listHolder = new JTabbedPane(JTabbedPane.TOP);
 		listHolder.setBounds(383, 26, 160, 396);
 		frmEizikiuClient.getContentPane().add(listHolder);
 		
@@ -88,7 +75,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		DefaultListModel<User> uList = actualizeUserList();
 		userList = new JList<User>(uList);
 		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		scrollUserList.setViewportView(userList);
+		scrollUserList.setColumnHeaderView(userList);
 		
 		JScrollPane scrollRoomList = new JScrollPane();
 		listHolder.addTab("New tab", null, scrollRoomList, null);
@@ -130,6 +117,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand() == "SENDEN") {
 			// hier muss ebenfalls das absenden der Nachricht geschehen
+			
+			
 			chatInput.setText(null);
 			chatInput.repaint();
 		}
@@ -208,9 +197,5 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void newChat(int roomID) {
 		this.chatHolder.add(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
 		frmEizikiuClient.repaint();
-	}
-	
-	public JFrame getFrmEizikiuClient() {
-		return frmEizikiuClient;
 	}
 }
