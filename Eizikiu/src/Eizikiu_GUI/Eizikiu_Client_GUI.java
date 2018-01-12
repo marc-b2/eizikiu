@@ -36,6 +36,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 
 	private JFrame frmEizikiuClient;
 	private JTextArea chatOutput, chatInput;
+	DefaultListModel<Room> rList;
 	JList<User> userList; 
 	JList<Room> roomList;
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker;
@@ -60,8 +61,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.getContentPane().setLayout(null);
 		
 		chatHolder = new JTabbedPane();
-		chatHolder.setBounds(10,10,355,380);
-		chatHolder.add(new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
+		chatHolder.setBounds(10,42,355,380);
+		chatHolder.addTab(rList.getElementAt(0).getName(),new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
 		frmEizikiuClient.getContentPane().add(chatHolder);
 		
 		//ListenVerwaltung 
@@ -81,7 +82,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		listHolder.addTab("New tab", null, scrollRoomList, null);
 		
 		
-		DefaultListModel<Room> rList = actualizeRoomList();
+		rList = actualizeRoomList();
 		roomList = new JList<Room>(rList);
 		roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollRoomList.setViewportView(roomList);
@@ -109,7 +110,20 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		infoChecker = new JCheckBoxMenuItem("Activated");
 		anzeigeMenu.add(infoChecker);
 		
+		JMenu userMenu = new JMenu("User");
+		menuBar.add(userMenu);
 		
+		JMenuItem startChat= new JMenuItem("Start private chat");
+		userMenu.add(startChat);
+		
+		JMenu roomMenu = new JMenu("Room");
+		menuBar.add(roomMenu);
+		
+		JMenuItem join_Room_MenuItem = new JMenuItem("Join");
+		roomMenu.add(join_Room_MenuItem);
+		
+		
+			
 		
 	}
 	
@@ -194,8 +208,13 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		this.actualizeRoomList();
 		this.roomList.repaint();
 	}
+	
+	
 	public void newChat(int roomID) {
 		this.chatHolder.add(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
 		frmEizikiuClient.repaint();
+	}
+	public JFrame getFrmEizikiuClient() {
+		return frmEizikiuClient;
 	}
 }
