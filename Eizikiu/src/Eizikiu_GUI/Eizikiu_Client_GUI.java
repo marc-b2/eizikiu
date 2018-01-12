@@ -195,7 +195,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		this.roomList.repaint();
 	}
 	public void newChat(int roomID) {
-		
-		
+		this.chatHolder.add(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
+		frmEizikiuClient.repaint();
 	}
 }
