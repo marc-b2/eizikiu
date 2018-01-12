@@ -26,6 +26,11 @@ public class Chat_Tab extends JPanel implements ActionListener{
 	
 		this.tabID = roomID;
 		this.setBounds(10,10,355,380);
+		
+		this.add(sendButton);
+		this.add(chatInput);
+		this.add(chatOutput);
+		
 		sendButton = new JButton();
 		sendButton.setBounds(274, 362, 97, 60);
 		sendButton.addActionListener(this);
@@ -43,6 +48,7 @@ public class Chat_Tab extends JPanel implements ActionListener{
 		chatOutput.setBorder(new LineBorder(new Color(0, 0, 0)));
 		chatOutput.setEditable(false);
 		chatOutput.setBounds(10, 70, 360, 370);
+		
 		
 	}
 	@Override

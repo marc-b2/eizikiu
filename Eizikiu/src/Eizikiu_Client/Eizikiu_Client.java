@@ -292,27 +292,27 @@ public class Eizikiu_Client {
 		}
 	}
 	
-	static void privateChatRequest(String userName) {
+	public static void privateChatRequest(String userName) {
 		
 	}
 	
-	static void publicChatRequest(int roomID) {
+	public static void publicChatRequest(int roomID) {
 		
 	}
 	
-	static void chatLeave(int roomID) {
+	public static void chatLeave(int roomID) {
 		
 	}
 	
-	static void roomListRequest() {
+	public static void roomListRequest() {
 		
 	}
 	
-	static void userListRequest(int roomID) {
+	public static void userListRequest(int roomID) {
 		
 	}
 	
-	static void shutdown() {
+	public static void shutdown() {
 		
 	}
 }
