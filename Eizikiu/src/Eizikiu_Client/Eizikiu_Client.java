@@ -207,6 +207,7 @@ public class Eizikiu_Client {
 
 			String tempString = "";
 			String[] parts;
+			Room room;
 			LinkedList<Room> tempRoomList;
 			LinkedList<User> tempUserList;
 			boolean exit = false;
@@ -254,11 +255,24 @@ public class Eizikiu_Client {
 					break;
 					
 				case 28:	// receive user list
+					room = null;
 					tempUserList = new LinkedList<>(); // message is "userName1§userName2§...§userNameX"
 					tempString = message.getMessage();
 					parts = tempString.split("§");
 					for(String x : parts) {
-						
+						tempUserList.add(new User(x, "noPW"));
+					}
+					if(message.getRoomID() == 0) {
+						globalUserList = tempUserList;
+					} else {
+						for(Room x : publicRooms) {
+							if(x.getID() == message.getRoomID()) {
+								room = x;
+							}
+						}
+						if(room != null) {
+							room.setUserList(tempUserList);
+						}
 					}
 					// TODO: gui.actualizeUserJList(message.getRoomID());
 					break;
@@ -267,52 +281,54 @@ public class Eizikiu_Client {
 					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), message.getMessage(), "WARNING", 2);
 					break;
 				
-				}
-				
-				if(!message.getMessage().equals("exit")){
-					if(!message.getSenderName().equals(user.getName())){
-						EZKlogger.info(message.toString());
-					}else{
-						message.printOwn();
-					}
-				}else{
-					exit = true;
-				}
-			}
+				default: // error
+					EZKlogger.log("chat -> received message of unexpected type: " + messageType);
+				} // switch
+			} // while
 			
 			netInput.closeStreams();
 			netOutput.closeStreams();
 			socket.close();
-		} catch (EOFException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	static void privateChatRequest(String userName) {
+	static public void privateChatRequest(String userName) {
 		
 	}
 	
-	static void publicChatRequest(int roomID) {
+	static public void publicChatRequest(int roomID) {
 		
 	}
 	
-	static void chatLeave(int roomID) {
+	static public void chatLeave(int roomID) {
 		
 	}
 	
-	static void roomListRequest() {
-		
+	static public void roomListRequest() {
+		netOutput.sendMessage(new Message("room list request", user.getName(), 17, 0));
 	}
 	
-	static void userListRequest(int roomID) {
-		
+	static public void userListRequest(int roomID) {
+		netOutput.sendMessage(new Message("user list request", user.getName(), 18, roomID));
 	}
 	
-	static void shutdown() {
+	static public void sendMessage(String message, int roomID) {
+		boolean isPublic = false;
+		for(Room x : publicRooms) {
+			if(x.getID() == roomID) {
+				isPublic = true;
+			}
+		}
+		if(isPublic) {
+			netOutput.sendMessage(new Message(message, user.getName(), 1, roomID));
+		} else {
+			netOutput.sendMessage(new Message(message, user.getName(), 2, roomID));
+		}
+	}
+	
+	static public void shutdown() {
 		
 	}
 }
