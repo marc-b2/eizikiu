@@ -216,4 +216,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		this.actualizeRoomList();
 		this.roomList.repaint();
 	}
+	
+	public JFrame getFrmEizikiuClient() {
+		return frmEizikiuClient;
+	}
 }

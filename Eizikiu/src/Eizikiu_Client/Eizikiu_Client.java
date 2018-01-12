@@ -1,5 +1,8 @@
 package Eizikiu_Client;
 
+import java.awt.EventQueue;
+import java.io.EOFException;
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
@@ -16,6 +19,7 @@ public class Eizikiu_Client {
 
 	private static OutputStreamSet netOutput;
 	private static InputStreamSet netInput;
+	private static Socket socket;
 	private static User user = null;
 	
 	public static void main(String args[]) {
@@ -30,7 +34,7 @@ public class Eizikiu_Client {
 		EZKlogger.log("************Eizikiu_Client.main() -> Eizikiu_Client started ************");
 		
 		try {
-			Socket socket = new Socket("localhost", 1234);
+			socket = new Socket("localhost", 1234);
 			
 			EZKlogger.log("Eizikiu_Client.main() -> server found");
 			
@@ -41,7 +45,8 @@ public class Eizikiu_Client {
 			
 			EZKlogger.log("Eizikiu_Client.main() -> connection to server established\n\n");
 			
-			// start login GUI here
+			// start login GUI
+			new LogInGUI();
 			
 			/*	deprecated
 			 * ************
@@ -133,9 +138,8 @@ public class Eizikiu_Client {
 	// functions
 	public static boolean login(String name, String pw, LogInGUI gui) {
 		try {
-			// set global user credentials
-			user.setName(name);
-			user.setPassword(pw);
+			// create user
+			user = new User(name,pw);
 			
 			// send login request
 			netOutput.sendMessage(new Message("login request", name, 11, 0));
@@ -164,9 +168,8 @@ public class Eizikiu_Client {
 	
 	public static boolean register(String name, String pw, RegistryGUI gui) {
 		try {
-			// set global user credentials
-			user.setName(name);
-			user.setPassword(pw);
+			// create user
+			user = new User(name,pw);
 			
 			// send register request
 			netOutput.sendMessage(new Message("register request", name, 10, 0));
@@ -194,8 +197,74 @@ public class Eizikiu_Client {
 	}
 	
 	public static void chat() {
-		// start GUI
 		
+		try {
+			Eizikiu_Client_GUI gui = new Eizikiu_Client_GUI();
+			Eizikiu_Client_GUI.main(null);
+			// start GUI
+			
+			boolean exit = false;
+			while(!exit){
+				Message message = netInput.receiveMessage();
+				int messageType = message.getType();
+				
+				switch(messageType) {
+				case 0:		// exit
+					exit = true;
+					break;
+				
+				case 1:		// regular public message
+				case 2:		// regular private message
+					gui.writeMessage(message);
+					
+					break;
+				
+				case 20:	// service message -> dialog box INFO
+					break;
+				
+				case 23:	// private chat ACK -> new private chat
+					break;
+					
+				case 25:	// join room ACK -> new room
+					break;
+				
+				case 9:		// general NAK
+				case 24:	// private chat NAK 
+				case 26:	// join room NAK 	-> dialog box ERROR
+					break;
+					
+				case 27:	// receive room list
+					break;
+					
+				case 28:	// receive user list
+					break;
+				
+				case 29:	// warning -> dialog box WARNING
+					break;
+				
+				}
+				
+				if(!message.getMessage().equals("exit")){
+					if(!message.getSenderName().equals(user.getName())){
+						EZKlogger.info(message.toString());
+					}else{
+						message.printOwn();
+					}
+				}else{
+					exit = true;
+				}
+			}
+			
+			netInput.closeStreams();
+			netOutput.closeStreams();
+			socket.close();
+		} catch (EOFException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
 

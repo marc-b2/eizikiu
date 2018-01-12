@@ -65,6 +65,9 @@ public class ConnectionToClient implements Runnable {
 					Message message = netInput.receiveMessage();
 					int messageType = message.getType();
 					Room room = null;
+					LinkedList<User> tempUserList;
+					String roomList;
+					String userList;
 					
 					switch(messageType) {
 					case 0: // exit
@@ -220,7 +223,46 @@ public class ConnectionToClient implements Runnable {
 							}
 						}
 						break;
-						
+					
+					case 17: // room list request
+						roomList = "";
+						for(Room x : publicRooms) {
+							if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
+								roomList = roomList + x.getName() + "§" + x.getID();
+							} else {
+								roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
+							}
+						}
+						netOutput.sendMessage(new Message(roomList, "Server---------->", 27, 0));
+						break;
+					
+					case 18: // user list request - sends users of room with message.getRoomID in a string
+						userList = "";
+						room = null;
+						tempUserList = null;
+						if(message.getRoomID() == 0) {
+							tempUserList = globalUserList;
+						} else {
+							for(Room x : publicRooms) {
+								if(message.getRoomID() == x.getID()) {
+									tempUserList = x.getUserList();
+								}
+							}
+						}
+						if(tempUserList != null) {
+							for(User x : tempUserList) {
+								if(tempUserList.indexOf(x) == tempUserList.size()-1) { // last element
+									userList = userList + x.getName();
+								} else {
+									userList = userList + x.getName() + "§";
+								}
+							}
+							netOutput.sendMessage(new Message(userList, "Server---------->", 28, message.getRoomID()));
+						} else { // no room with specified ID existing
+							netOutput.sendMessage(new Message("Room does not exist!", "Server---------->", 9, message.getRoomID()));
+						}
+						break;
+					
 					default: // error
 						EZKlogger.log(user.getName() + ".ConnectionToClient -> chat -> received message of unexpected type: " + messageType);
 					}
