@@ -112,23 +112,17 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		JMenu dateiMenu = new JMenu("File");
 		menuBar.add(dateiMenu);
 		
+		JMenuItem menuItem = new JMenuItem("Close");
+		dateiMenu.add(menuItem);
 		
-		JMenu anzeigeMenu = new JMenu("Anzeige");
+		
+		JMenu anzeigeMenu = new JMenu("Logging");
 		menuBar.add(anzeigeMenu);
 		
-		infoChecker = new JCheckBoxMenuItem("Info");
+		infoChecker = new JCheckBoxMenuItem("Activated");
 		anzeigeMenu.add(infoChecker);
 		
-		logChecker = new JCheckBoxMenuItem("Log");
-		anzeigeMenu.add(logChecker);
 		
-		
-		
-		chatInput = new JTextArea();
-		chatInput.setBorder(new LineBorder(new Color(0, 0, 0)));
-		chatInput.setBounds(10, 362, 255, 60);
-		chatInput.addKeyListener(this);
-		frmEizikiuClient.getContentPane().add(chatInput);
 		
 	}
 	
@@ -159,20 +153,15 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			}else {
 				
 			}
-		}else if(((JCheckBoxMenuItem) e.getItem()) == logChecker){
-			if(logChecker.getState()== true) {
-				
-			}else {
-				
-			}
-			
-			
-		}else if(((JCheckBoxMenuItem) e.getItem()) == debugChecker){
-			if(debugChecker.getState()== true) {
-				
-			}else {
-				
-			}	
+		}	
+	}
+	@Override
+	public void run() {
+		try {
+			Eizikiu_Client_GUI window = new Eizikiu_Client_GUI();
+			window.frmEizikiuClient.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	public void writeString(String str) {
@@ -215,6 +204,10 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void actualizeRoomJList() {
 		this.actualizeRoomList();
 		this.roomList.repaint();
+	}
+	public void newChat(int roomID) {
+		
+		
 	}
 	
 	public JFrame getFrmEizikiuClient() {
