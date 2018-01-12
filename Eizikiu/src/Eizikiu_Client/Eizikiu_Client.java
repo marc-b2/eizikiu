@@ -206,6 +206,9 @@ public class Eizikiu_Client {
 			EventQueue.invokeLater(gui);
 
 			String tempString = "";
+			String[] parts;
+			LinkedList<Room> tempRoomList;
+			LinkedList<User> tempUserList;
 			boolean exit = false;
 			while(!exit){
 				Message message = netInput.receiveMessage();
@@ -222,34 +225,46 @@ public class Eizikiu_Client {
 					break;
 				
 				case 20:	// service message -> dialog box INFO
-					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient, message.getMessage(), "Message from Server", 1);
+					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), message.getMessage(), "Message from Server", 1);
 					break;
 				
 				case 23:	// private chat ACK -> new private chat
+					gui.newChat(message.getRoomID());
 					break;
 					
 				case 25:	// join room ACK -> new room
+					gui.newChat(message.getRoomID());
 					break;
 				
 				case 9:		// general NAK
 				case 24:	// private chat NAK 
 				case 26:	// join room NAK 	-> dialog box ERROR
-					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient, message.getMessage(), "ERROR", 0);
+					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), message.getMessage(), "ERROR", 0);
 					break;
 					
 				case 27:	// receive room list
-					tempString = message.getMessage();
-					String[] parts = tempString.split("§");
-					for(int i=0; i<parts.length; i++) {
-						
+					tempRoomList = new LinkedList<>();
+					tempString = message.getMessage(); // message is "roomName1§roomID1§roomName2§roomID2§....§roomNameX§roomIDX"
+					parts = tempString.split("§");
+					for(int i=0; i<parts.length; i+=2) {
+						tempRoomList.add(new Room(parts[i], Integer.parseInt(parts[i+1])));
 					}
+					publicRooms = tempRoomList;
+					gui.actualizeRoomJList();
 					break;
 					
 				case 28:	// receive user list
+					tempUserList = new LinkedList<>(); // message is "userName1§userName2§...§userNameX"
+					tempString = message.getMessage();
+					parts = tempString.split("§");
+					for(String x : parts) {
+						
+					}
+					// TODO: gui.actualizeUserJList(message.getRoomID());
 					break;
 				
 				case 29:	// warning -> dialog box WARNING
-					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient, message.getMessage(), "WARNING", 2);
+					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), message.getMessage(), "WARNING", 2);
 					break;
 				
 				}
@@ -275,6 +290,30 @@ public class Eizikiu_Client {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	static void privateChatRequest(String userName) {
+		
+	}
+	
+	static void publicChatRequest(int roomID) {
+		
+	}
+	
+	static void chatLeave(int roomID) {
+		
+	}
+	
+	static void roomListRequest() {
+		
+	}
+	
+	static void userListRequest(int roomID) {
+		
+	}
+	
+	static void shutdown() {
+		
 	}
 }
 
