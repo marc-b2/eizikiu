@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 import Eizikiu_Server.Eizikiu_Server;
+import Eizikiu_Tools.EZKlogger;
 import Eizikiu_Tools.Message;
 import Eizikiu_Tools.Room;
 import Eizikiu_Tools.User;
@@ -88,8 +89,11 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener{
 		
 		JList<User> userList = new JList<User>(uList);
 		// nimmt die UserListe vom Server und fügt sie in die JList ein
-		for(User u : Eizikiu_Server.getGlobalUserList()) {
-			uList.addElement(u);
+		// *********hier gab es eine NullPointerException, weil die Liste nicht existiert, wenn man die main() dieser GUI hier startet
+		if(Eizikiu_Server.getGlobalUserList() != null) {
+			for(User u : Eizikiu_Server.getGlobalUserList()) {
+				uList.addElement(u);
+			}
 		}
 		scrollUserList.setViewportView(userList);
 		
@@ -97,11 +101,16 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener{
 		listHolder.addTab("New tab", null, scrollRoomList, null);
 		
 		DefaultListModel<Room> rList = new DefaultListModel<Room>();
-		for(Room r : Eizikiu_Server.getPublicRooms()) {
-			rList.addElement(r);
+		// ******** hier das gleiche Problem...
+		if(Eizikiu_Server.getPublicRooms() != null) {
+			for(Room r : Eizikiu_Server.getPublicRooms()) {
+				rList.addElement(r);
+			}
 		}
-		for(Room r : Eizikiu_Server.getPrivateRooms()) {
-			rList.addElement(r);
+		if(Eizikiu_Server.getPrivateRooms() != null) {
+			for(Room r : Eizikiu_Server.getPrivateRooms()) {
+				rList.addElement(r);
+			}
 		}
 		JList<Room> roomList = new JList<Room>(rList);
 		scrollRoomList.setViewportView(roomList);

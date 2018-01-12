@@ -2,6 +2,8 @@ package Eizikiu_GUI;
 
 import javax.swing.*;
 
+import Eizikiu_Client.Eizikiu_Client;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,12 +42,17 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	public void actionPerformed(ActionEvent e){
 		if(e.getActionCommand().equals("REGISTER")){
 			if (password.getPassword().equals(passwordRepeat.getPassword())){
-			
-				/* @Mark: hier sollte dann die Message erzeugt werden und abgeschickt (Login)
-				 *
-				 **/
+				String name = textfieldName.getText();
+				@SuppressWarnings("deprecation")
+				String pw = password.getText();
+				 
+				if(Eizikiu_Client.login(name, pw)){
+//					new Eizikiu_Client_GUI();
+					Eizikiu_Client.chat();
+				}
 			}
-		}if(e.getActionCommand().equals("ANMELDEFENSTER")){
+		}
+			if(e.getActionCommand().equals("ANMELDEFENSTER")){
 			// hier öffnet sich das Anmeldefenster 
 			
 			Thread t = new Thread(new LogInGUI());

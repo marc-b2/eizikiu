@@ -9,17 +9,20 @@ public class Eizikiu_Client {
 	private static LinkedList<User> globalUserList; // local copy from servers 'globalUserList', has to be updated when changes occur on server
 	private static LinkedList<Room> publicRooms; // local copy from servers 'publicRooms', has to be updated when changes occur on server
 	// rooms where this client is in will be hold in 'rooms' list owned by the Clients 'user' and will be updated on every join or leave event
+
+	private static OutputStreamSet netOutput;
+	private static InputStreamSet netInput;
 	
 	public static void main(String args[]) {
 	
 		User user = null;
 		String text;
 		KeyboardListener keyli;
-		OutputStreamSet netOutput;
-		InputStreamSet netInput;
 
-		EZKlogger.setLoglevel(0);
-
+		EZKlogger.setLoglevel(1);
+		
+		EZKlogger.log("************Eizikiu_Client.main() -> Eizikiu_Client started ************");
+		
 		try {
 			Socket socket = new Socket("localhost", 1234);
 			
@@ -31,11 +34,15 @@ public class Eizikiu_Client {
 			netOutput.setupStreams();
 			
 			EZKlogger.log("Eizikiu_Client.main() -> connection to server established\n\n");
-						
+			
+			// start login GUI here
+			
+			/*	deprecated
+			 * ************
 			// password check
 			Scanner keyboardIn = new Scanner(System.in);
 			boolean login = false;
-			while (!login) {
+			 	while (!login) {
 				user = new User(null, null);
 				// get user name and password
 				EZKlogger.info("Type in user name: ");
@@ -64,7 +71,7 @@ public class Eizikiu_Client {
 			}
 
 			EZKlogger.info("Eizikiu_Client.main() -> You successfully logged in to the server!");
-			
+					
 			keyli = new KeyboardListener(socket, netOutput, user);
 			Thread keyliThread = new Thread(keyli);
 			keyliThread.setDaemon(true);
@@ -91,7 +98,7 @@ public class Eizikiu_Client {
 			netOutput.closeStreams();
 			socket.close();
 			keyboardIn.close();
-			
+			*/
 //		}catch(SocketException s){
 			
 		}catch(Exception e) {
@@ -118,11 +125,20 @@ public class Eizikiu_Client {
 	}
 	
 	// functions
-	public static boolean login(String name, String pw){
-		boolean b = true;
+	public static boolean login(String name, String pw) {
+		netOutput.sendMessage(new Message("login request", name, 11, 0));
+		netOutput.sendMessage(new Message(pw, name, 12, 0));
 		
-		return b;
+		return true;
 	}
-	     
+	
+	public static boolean register(String name, String pw) {
+		return true;
+	}
+	
+	public static void chat() {
+		// start GUI
+		
+	}
 }
 

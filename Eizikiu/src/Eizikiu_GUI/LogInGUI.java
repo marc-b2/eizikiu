@@ -43,7 +43,8 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 			 String pw = password.getText();
 			 
 			 if(Eizikiu_Client.login(name, pw)){
-				 new Eizikiu_Client_GUI();
+//				 new Eizikiu_Client_GUI();
+				 Eizikiu_Client.chat();
 			 }
 
 		}
@@ -87,7 +88,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 		return box;
 	}
 
-/*public static void main(String[] args){
+public static void main(String[] args){
 	new LogInGUI();
-}*/
+}
 }
