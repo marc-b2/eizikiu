@@ -35,23 +35,14 @@ import javax.swing.JLabel;
 
 //@Marc: Um die Dialogfenster zu erstellen braucht man nur die Methode JOptionPane.showMessageDialog(Component c (das Fenster in dem sich die Nachricht öffnen soll),
 //Object nachricht, String titel, int nachrichtentyp(ERROR_MESSAGE,INFORMATION_MESSAGE,WARNING_MESSAGE,QUESTION_MESSAGE,PLAIN_MESSAGE))
-public class Eizikiu_Server_GUI implements ItemListener, ActionListener{
+public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnable{
 
 	private JFrame frmEizikiuServer;
 	JTextArea chatOutput;
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker, safeLogToChecker;
 	
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Eizikiu_Server_GUI window = new Eizikiu_Server_GUI();
-					window.frmEizikiuServer.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		EventQueue.invokeLater(new Eizikiu_Server_GUI());
 	}
 
 	
@@ -174,6 +165,9 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener{
 		edit_Room_MenuItem.setActionCommand("EDITROOMS");
 		roomMenu.add(edit_Room_MenuItem);
 		
+		JMenuItem delete_Rooms_MenuItem = new JMenuItem("Delete");
+		roomMenu.add(delete_Rooms_MenuItem);
+		
 		// Label das als Überschrift für die Logausgabe gilt
 		JLabel lblLog = new JLabel("Log:");
 		lblLog.setBounds(12, 52, 56, 16);
@@ -226,6 +220,15 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener{
 				
 			}
 			
+		}
+	}
+	@Override
+	public void run() {
+		try {
+			Eizikiu_Server_GUI window = new Eizikiu_Server_GUI();
+			window.frmEizikiuServer.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	//Diese Methoden sollen in der Mainfunktion die System.out.print-Aufrufe ersetzen
