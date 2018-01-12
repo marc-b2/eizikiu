@@ -1,6 +1,5 @@
 package Eizikiu_GUI;
 
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,10 +7,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -22,11 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.border.LineBorder;
 
 import Eizikiu_Client.Eizikiu_Client;
-import Eizikiu_Server.Eizikiu_Server;
+import Eizikiu_Tools.EZKlogger;
 import Eizikiu_Tools.Message;
 import Eizikiu_Tools.Room;
 import Eizikiu_Tools.User;
@@ -60,9 +55,10 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmEizikiuClient.getContentPane().setLayout(null);
 		
+		Chat_Tab chatTab = new Chat_Tab(((Room)roomList.getSelectedValue()).getID());
 		chatHolder = new JTabbedPane();
 		chatHolder.setBounds(10,42,355,380);
-		chatHolder.addTab(rList.getElementAt(0).getName(),new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
+		chatHolder.addTab(rList.getElementAt(0).getName(),chatTab);
 		frmEizikiuClient.getContentPane().add(chatHolder);
 		
 		//ListenVerwaltung 
@@ -101,6 +97,9 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		menuBar.add(dateiMenu);
 		
 		JMenuItem menuItem = new JMenuItem("Close");
+		menuItem.addActionListener(this);
+		menuItem.setActionCommand("CLOSE");
+		
 		dateiMenu.add(menuItem);
 		
 		
@@ -114,17 +113,17 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		menuBar.add(userMenu);
 		
 		JMenuItem startChat= new JMenuItem("Start private chat");
+		startChat.addActionListener(this);
+		startChat.setActionCommand("PRIVATE");
 		userMenu.add(startChat);
 		
 		JMenu roomMenu = new JMenu("Room");
 		menuBar.add(roomMenu);
 		
 		JMenuItem join_Room_MenuItem = new JMenuItem("Join");
+		join_Room_MenuItem.addActionListener(this);
+		join_Room_MenuItem.setActionCommand("JOIN");
 		roomMenu.add(join_Room_MenuItem);
-		
-		
-			
-		
 	}
 	
 	@Override
@@ -135,6 +134,16 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			
 			chatInput.setText(null);
 			chatInput.repaint();
+		}
+		else if(e.getActionCommand() == "PRIVATE"){
+			Eizikiu_Client.privateChatRequest(((User)userList.getSelectedValue()).getName());
+		}
+		else if(e.getActionCommand() == "JOIN"){
+			Eizikiu_Client.publicChatRequest(((Room)roomList.getSelectedValue()).getID());
+		}
+		else if(e.getActionCommand() == "CLOSE"){
+			Eizikiu_Client.shutdown();
+			System.exit(0);
 		}
 	}
 	
@@ -152,9 +161,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void itemStateChanged(ItemEvent e) {
 		if(((JCheckBoxMenuItem) e.getItem()) == infoChecker) {
 			if(infoChecker.getState()== true) {
-				
+				EZKlogger.setLoglevel(2);
+				EZKlogger.setFileOutput(true);
 			}else {
-				
+				EZKlogger.setLoglevel(0);
+				EZKlogger.setFileOutput(false);
 			}
 		}	
 	}
@@ -211,7 +222,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	
 	
 	public void newChat(int roomID) {
-		this.chatHolder.add(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
+		this.chatHolder.addTab(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
 		frmEizikiuClient.repaint();
 	}
 	public JFrame getFrmEizikiuClient() {

@@ -329,7 +329,7 @@ public class Eizikiu_Client {
 	}
 	
 	static public void shutdown() {
-		
+	
 	}
 }
 
