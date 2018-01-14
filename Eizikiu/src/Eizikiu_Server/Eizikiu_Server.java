@@ -15,8 +15,9 @@ public class Eizikiu_Server {
 	public static void main(String[] args) {
 		
 		// switch on logging to file
-		EZKlogger.setFileOutput(true);
 		EZKlogger.setLoglevel(2);
+		EZKlogger.setFileOutput(true);
+		EZKlogger.debug();
 		EZKlogger.info("**************** server started ****************");
 		
 		Scanner keyboardIn = new Scanner(System.in);
@@ -114,18 +115,38 @@ public class Eizikiu_Server {
 	
 	// getter
 	public static LinkedList<User> getGlobalUserList() {
+		EZKlogger.debug();
 		return globalUserList;
 	}
 	
 	public static LinkedList<ConnectionToClient> getConnectionList() {
+		EZKlogger.debug();
 		return connectionList;
 	}
 	
 	public static LinkedList<Room> getPublicRooms() {
+		EZKlogger.debug();
 		return publicRooms;
 	}
 	
 	public static LinkedList<Room> getPrivateRooms() {
+		EZKlogger.debug();
 		return privateRooms;
+	}
+	
+	// functions
+	public static void createRoom(String roomName) {
+		EZKlogger.debug();
+		publicRooms.add(new Room(roomName));
+	}
+	
+	public static void editRoom(Room room, String newName) {
+		EZKlogger.debug();
+		room.setName(newName);
+	}
+	
+	public static void deleteRoom(Room room) {
+		EZKlogger.debug();
+		publicRooms.remove(room);
 	}
 }

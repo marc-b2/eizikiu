@@ -42,16 +42,19 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker, safeLogToChecker;
 	
 	public static void main(String[] args) {
+		EZKlogger.debug();
 		EventQueue.invokeLater(new Eizikiu_Server_GUI());
 	}
 
 	
 	public Eizikiu_Server_GUI() {
+		EZKlogger.debug();
 		initialize();
 	}
 
 	
 	private void initialize() {
+		EZKlogger.debug();
 		frmEizikiuServer = new JFrame();
 		frmEizikiuServer.setTitle("Eizikiu Server");
 		frmEizikiuServer.setBounds(100, 100, 600, 500);
@@ -178,6 +181,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		EZKlogger.debug();
 		if(e.getActionCommand() == "EDITROOMS") {
 			
 		}else if(e.getActionCommand()=="USERVERWALTUNG") {
@@ -192,6 +196,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	// ItemState überprüfung die die jeweiligen Checker bedient (und die Logs mitschreibt oder eben nicht)
 	@Override
 	public void itemStateChanged(ItemEvent e) {
+		EZKlogger.debug();
 		if(((JCheckBoxMenuItem) e.getItem()) == infoChecker) {
 			if(infoChecker.getState()== true) {
 				EZKlogger.setLoglevel(0);
@@ -223,6 +228,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	}
 	@Override
 	public void run() {
+		EZKlogger.debug();
 		try {
 			Eizikiu_Server_GUI window = new Eizikiu_Server_GUI();
 			window.frmEizikiuServer.setVisible(true);
@@ -232,10 +238,12 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	}
 	//Diese Methoden sollen in der Mainfunktion die System.out.print-Aufrufe ersetzen
 	public void writeMessage(Message m) {
+		EZKlogger.debug();
 		chatOutput.append(m.toString());
 	}
 	
 	public void writeLogger(String message) {
+		EZKlogger.debug();
 		chatOutput.append(message);
 	}
 }

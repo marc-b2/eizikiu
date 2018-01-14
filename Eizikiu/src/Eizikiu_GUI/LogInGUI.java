@@ -3,6 +3,7 @@ package Eizikiu_GUI;
 import javax.swing.*;
 
 import Eizikiu_Client.Eizikiu_Client;
+import Eizikiu_Tools.EZKlogger;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,6 +27,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 	public LogInGUI(){
 		
 		super();
+		EZKlogger.debug();
 		
 		setTitle("Eizikiu Registry");
 		this.setSize(300,200);
@@ -39,6 +41,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 	
 	@Override 
 	public void actionPerformed(ActionEvent e){
+		EZKlogger.debug();
 		if(e.getActionCommand().equals("ANMELDEN") && textfieldName.getText() != null && password.getPassword() != null){
 			 String name = textfieldName.getText();
 			 @SuppressWarnings("deprecation")
@@ -51,6 +54,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 
 		}
 		if(e.getActionCommand().equals("REGISTRIEREN")){
+			EZKlogger.debug();
 			// hier öffnet sich das Anmeldefenster 
 //			Thread t = new Thread(new RegistryGUI());
 //			t.start();
@@ -61,10 +65,11 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 	
 	@Override 
 	public void run(){
-		
+		EZKlogger.debug();
 	}
 	
 	private Box initComponents(){
+		EZKlogger.debug();
 		box = new Box(BoxLayout.Y_AXIS);
 		
 		JLabel text1 = new JLabel("Geben sie ihren Usernamen ein:");
@@ -91,10 +96,12 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 	}
 	
 	public Box getBox() {
+		EZKlogger.debug();
 		return box;
 	}
 
 public static void main(String[] args){
+	EZKlogger.debug();
 	new LogInGUI();
 }
 }

@@ -17,9 +17,10 @@ public class ConnectionToClient implements Runnable {
 	private User user;
 	
 	// constructors
-	public ConnectionToClient(){}
+	public ConnectionToClient(){EZKlogger.debug();}
 	
 	public ConnectionToClient(Socket socket) {
+		EZKlogger.debug();
 		this.connectionList = Eizikiu_Server.getConnectionList();
 		this.globalUserList = Eizikiu_Server.getGlobalUserList();
 		this.publicRooms = Eizikiu_Server.getPublicRooms();
@@ -33,7 +34,7 @@ public class ConnectionToClient implements Runnable {
 	// functions
 	@Override
 	public void run() {
-		
+		EZKlogger.debug();
 		boolean exit = false;
 			
 		try {
@@ -196,7 +197,7 @@ public class ConnectionToClient implements Runnable {
 						break;
 						
 					case 16: // leave room notification
-							 // Message(room name, senderName, 15, roomID)
+							 // Message(room name, senderName, 16, roomID)
 						room = null;
 						// check if room still exists, if yes set 'room' 
 						for(Room x : publicRooms) {
@@ -327,7 +328,7 @@ public class ConnectionToClient implements Runnable {
 	}
 	
 	public boolean loginUser() {
-		
+		EZKlogger.debug();
 		boolean userValid = false;
 		boolean nameIsInUserList;
 		
@@ -440,6 +441,7 @@ public class ConnectionToClient implements Runnable {
 	}
 	
 	public void shutdown() {
+		EZKlogger.debug();
 		netOutput.sendMessage(new Message("connection shut down by server", "Server---------->", 20, 0));
 		netOutput.sendMessage(new Message("exit", "Server---------->", 0, 0));
 //		user.logOut();
@@ -450,10 +452,12 @@ public class ConnectionToClient implements Runnable {
 
 	// getter
 	public User getUser() {
+		EZKlogger.debug();
 		return user;
 	}
 	
 	public OutputStreamSet getNetOutput() {
+		EZKlogger.debug();
 		return netOutput;
 	}
 }

@@ -11,11 +11,13 @@ public class OutputStreamSet {
 	
 	// constructor
 	public OutputStreamSet(Socket socket){
+		EZKlogger.debug();
 		this.socket = socket;
 	}
 	
 	// functions
 	public void setupStreams(){
+		EZKlogger.debug();
 		try {
 			out = socket.getOutputStream();
 			oout = new ObjectOutputStream(out);
@@ -27,48 +29,17 @@ public class OutputStreamSet {
 		}
 	}
 
-//	public void send(Object object){
-//		try{
-//			oout.writeObject(object);
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//	}
-
 	public void sendMessage(Message message){
+		EZKlogger.debug();
 		try{
 			oout.writeObject(message);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-
-	public void sendUser(User user){
-		try{
-			EZKlogger.debug("OutputStreamSet.sendUser() -> " + user.getName() + " ---- " + user.getPassword());
-			oout.writeObject(user);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-//	public void sendString(String string){
-//		try{
-//			oout.writeObject(string);
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//	}
-	
-//	public void sendAvailableByte(){
-//		try{
-//			oout.writeByte(42);
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//	}
-	
+		
 	public void closeStreams(){
+		EZKlogger.debug();
 		try {
 			oout.close();
 			out.close();

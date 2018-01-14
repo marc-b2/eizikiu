@@ -38,17 +38,19 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	JTabbedPane listHolder, chatHolder;
 	// starten der GUI
 	public static void main(String[] args) {
-		
+		EZKlogger.debug();
 		EventQueue.invokeLater(new Eizikiu_Client_GUI());
 	}
 
 	// 
 	public Eizikiu_Client_GUI() {
+		EZKlogger.debug();
 		initialize();
 	}
 
 	// Initialisieren der GUI
 	private void initialize() {
+		EZKlogger.debug();
 		frmEizikiuClient = new JFrame();
 		frmEizikiuClient.setTitle("Eizikiu");
 		frmEizikiuClient.setBounds(100, 100, 570, 500);
@@ -128,6 +130,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		EZKlogger.debug();
 		if(e.getActionCommand() == "SENDEN") {
 			// hier muss ebenfalls das absenden der Nachricht geschehen
 			
@@ -149,6 +152,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
+		EZKlogger.debug();
 		 int key = e.getKeyCode();
 	     if (key == KeyEvent.VK_ENTER && chatInput.getText()!= null) {
 	    	 // hier muss das Absenden der Nachricht geschehen
@@ -159,6 +163,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		}
 	}@Override
 	public void itemStateChanged(ItemEvent e) {
+		EZKlogger.debug();
 		if(((JCheckBoxMenuItem) e.getItem()) == infoChecker) {
 			if(infoChecker.getState()== true) {
 				EZKlogger.setLoglevel(2);
@@ -171,6 +176,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	}
 	@Override
 	public void run() {
+		EZKlogger.debug();
 		try {
 			Eizikiu_Client_GUI window = new Eizikiu_Client_GUI();
 			window.frmEizikiuClient.setVisible(true);
@@ -179,14 +185,17 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		}
 	}
 	public void writeString(String str) {
+		EZKlogger.debug();
 		chatOutput.append(str + "\n");
 	}
 	public void writeMessage(Message m) {
+		EZKlogger.debug();
 		chatOutput.append(m.toString() + "\n");
 	}
 	
 	// aktualisieren die Listen die den JList zu Grunde liegen
 	public DefaultListModel<User> actualizeUserList() {
+		EZKlogger.debug();
 		DefaultListModel<User> uList = new DefaultListModel<User>();
 		try {
 			for(User u : Eizikiu_Client.getGlobalUserList()) {
@@ -199,6 +208,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	}
 	
 	public DefaultListModel<Room> actualizeRoomList(){
+		EZKlogger.debug();
 		DefaultListModel<Room> rList = new DefaultListModel<Room>();
 		try {
 			for(Room r : Eizikiu_Client.getPublicRooms()) {
@@ -212,20 +222,24 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	}
 	// Methoden die dann zum Aktualisieren der Room/User Listn verwendet werden
 	public void actualizeUserJList() {
+		EZKlogger.debug();
 		this.actualizeUserList();
 		this.userList.repaint();
 	}
 	public void actualizeRoomJList() {
+		EZKlogger.debug();
 		this.actualizeRoomList();
 		this.roomList.repaint();
 	}
 	
 	
 	public void newChat(int roomID) {
+		EZKlogger.debug();
 		this.chatHolder.addTab(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
 		frmEizikiuClient.repaint();
 	}
 	public JFrame getFrmEizikiuClient() {
+		EZKlogger.debug();
 		return frmEizikiuClient;
 	}
 }

@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
+import Eizikiu_Tools.EZKlogger;
+
 
 public class Chat_Tab extends JPanel implements ActionListener{
 	private static final long serialVersionUID = 1L;
@@ -23,6 +25,7 @@ public class Chat_Tab extends JPanel implements ActionListener{
 	private JTextArea chatOutput,chatInput;
 	
 	public Chat_Tab(int roomID) {
+		EZKlogger.debug();
 	
 		this.tabID = roomID;
 		this.setBounds(10,10,355,380);
@@ -53,6 +56,7 @@ public class Chat_Tab extends JPanel implements ActionListener{
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		EZKlogger.debug();
 		if(e.getActionCommand() == "SENDEN") {
 			// hier muss ebenfalls das absenden der Nachricht geschehen
 			
@@ -65,10 +69,12 @@ public class Chat_Tab extends JPanel implements ActionListener{
 	
 
 	public int getTabID() {
+		EZKlogger.debug();
 		return tabID;
 	}
 
 	public void setTabID(int tabID) {
+		EZKlogger.debug();
 		this.tabID = tabID;
 	}
 	

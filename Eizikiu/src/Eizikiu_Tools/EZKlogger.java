@@ -43,7 +43,7 @@ public class EZKlogger {
 	}
 	
 	// logging methods
-	public static void info(String message) {
+	public static void info(String message) { // output to user
 		if(loglevel >=0) {
 			if(consoleOutput) {System.out.println(message);}
 			if(fileOutput) {fileOut.println(date.toString() + ": " + message);}
@@ -64,6 +64,15 @@ public class EZKlogger {
 		}
 	}
 	
+	public static void debug() {
+		if(loglevel >=2) {
+			String message = new Throwable().getStackTrace()[1].getClassName() + "." +
+							 new Throwable().getStackTrace()[1].getMethodName() + "():" +
+							 new Throwable().getStackTrace()[1].getLineNumber();
+			if(consoleOutput) {System.out.println(message);}
+			if(fileOutput) {fileOut.println(date.toString() + ": " + message);}
+		}
+	}
 	// stream handling
 	private static void initFileOutput() throws IOException{
 		if(fileOut == null){

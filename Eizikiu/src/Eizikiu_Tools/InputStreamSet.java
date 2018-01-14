@@ -11,11 +11,13 @@ public class InputStreamSet {
 	
 	// constructor
 	public InputStreamSet(Socket socket){
+		EZKlogger.debug();
 		this.socket = socket;
 	}
 	
 	// functions
 	public void setupStreams(){
+		EZKlogger.debug();
 		try {
 			in = socket.getInputStream();
 			oin = new ObjectInputStream(in);
@@ -27,18 +29,9 @@ public class InputStreamSet {
 		}
 	}
 	
-//	public Object receive(){
-//		Object object = new Object();
-//		try {
-//			object = oin.readObject();
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		return object;
-//	}
-	
 	public Message receiveMessage() throws EOFException{
-		Message message = new Message("","");
+		EZKlogger.debug();
+		Message message = new Message("","",0);
 		try {
 			message = (Message) oin.readObject();
 		} catch (EOFException e) {
@@ -48,44 +41,9 @@ public class InputStreamSet {
 		}
 		return message;
 	}
-	
-	public User receiveUser(){
-		User user = new User("", "");
-		try {
-			user = (User) oin.readObject();
-			
-			EZKlogger.debug("InputStreamSet.receiveUser() -> " + user.getName() + " ---- " + user.getPassword());
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return user;
-	}
-	
-//	public String receiveString(){
-//		String string = new String();
-//		try {
-//			string = (String) oin.readObject();
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		return string;
-//	}
-	
-//	public boolean isAvailable(){
-//		try{
-////			System.out.println("InputStreamSet.isAvailable() -> " + oin.available());
-////			if(oin.available() == 1){
-//				if(oin.readByte() == 42){
-//					return true;
-////				}
-//			}
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		return false;
-//	}
 
 	public void closeStreams(){
+		EZKlogger.debug();
 		try {
 			oin.close();
 			in.close();

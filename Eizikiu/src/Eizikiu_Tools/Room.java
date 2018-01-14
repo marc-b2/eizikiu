@@ -15,6 +15,7 @@ public class Room implements Serializable{
 	
 	// constructor
 	public Room(String name) {
+		EZKlogger.debug();
 		this.name = name;
 		userList = new LinkedList<User>();
 		if(name.equals("default")) {
@@ -26,6 +27,7 @@ public class Room implements Serializable{
 	}
 	
 	public Room(String name, int ID) { // for user's room list on client side
+		EZKlogger.debug();
 		this.name = name;
 		this.ID = ID;
 		userList = null;
@@ -33,40 +35,49 @@ public class Room implements Serializable{
 		
 	// getter
 	public String getName() {
+		EZKlogger.debug();
 		return name;
 	}
 	
 	public LinkedList<User> getUserList() {
+		EZKlogger.debug();
 		return userList;
 	}
 	
 	public int getID() {
+		EZKlogger.debug();
 		return ID;
 	}
 	
 	// setter
 	public void setName(String name) {
+		EZKlogger.debug();
 		this.name = name;
 	}
 	
 	public void setUserList(LinkedList<User> userList){
+		EZKlogger.debug();
 		this.userList = userList;
 	}
 	
 	public void setID(int ID) {
+		EZKlogger.debug();
 		this.ID = ID;
 	}
 	
 	// functions
 	public boolean addUser(User user) {
+		EZKlogger.debug();
 		return userList.add(user);
 	}
 	
 	public boolean removeUser(User user) {
+		EZKlogger.debug();
 		return userList.remove(user);
 	}
 	
 	public boolean removeUser(String name) {
+		EZKlogger.debug();
 		User user = null;
 		for(User x : userList) {
 			if(x.getName().equals(name)) {user = x;}
@@ -79,6 +90,7 @@ public class Room implements Serializable{
 	}
 	
 	public boolean hasUsers(User user1, User user2) { // for private chats only; tells if a room with the two handed over users already exists
+		EZKlogger.debug();
 		boolean one = false;
 		boolean two = false;
 		for(User x : userList) {
@@ -94,6 +106,7 @@ public class Room implements Serializable{
 	
 	@Override
 	public String toString() {
+		EZKlogger.debug();
 		return "ID: " + ID + " name: " + name;
 	}
 }

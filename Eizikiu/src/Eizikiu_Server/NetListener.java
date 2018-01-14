@@ -5,11 +5,11 @@ import Eizikiu_Tools.*;
 
 public class NetListener implements Runnable {
 	
-	public NetListener() {}
+	public NetListener() {EZKlogger.debug();}
 
 	@Override
 	public void run() {
-		
+		EZKlogger.debug();
 		EZKlogger.log("NetListener.run() --> ...succesfully!");
 
 		while(true) {

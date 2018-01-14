@@ -1,8 +1,6 @@
 package Eizikiu_Client;
 
 import java.awt.EventQueue;
-import java.io.EOFException;
-import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
@@ -24,14 +22,9 @@ public class Eizikiu_Client {
 	
 	public static void main(String args[]) {
 
-		/*	deprecated
-		 * ************
-		String text;
-		KeyboardListener keyli;
-		*/
-		chat();
-		
-		EZKlogger.setLoglevel(1);
+		EZKlogger.setLoglevel(2);
+		EZKlogger.setFileOutput(true);
+		EZKlogger.debug();
 		
 		EZKlogger.log("************Eizikiu_Client.main() -> Eizikiu_Client started ************");
 		
@@ -50,70 +43,6 @@ public class Eizikiu_Client {
 			// start login GUI
 			new LogInGUI();
 			
-			/*	deprecated
-			 * ************
-			// password check
-			Scanner keyboardIn = new Scanner(System.in);
-			boolean login = false;
-			 	while (!login) {
-				user = new User(null, null);
-				// get user name and password
-				EZKlogger.info("Type in user name: ");
-				text = keyboardIn.nextLine();
-				EZKlogger.info("\n");
-				user.setName(text);
-				
-				EZKlogger.info("Type in user password: ");
-				text = keyboardIn.nextLine();
-				EZKlogger.info("\n");
-				user.setPassword(text);
-				
-				EZKlogger.debug("user: " + user.getName() + " ---- password: " + user.getPassword() + ".");
-				
-				// send to server
-				netOutput.sendUser(user);
-				
-				// wait for server
-				Message answer = netInput.receiveMessage();
-				if (answer.getMessage().equals("userValid") && answer.getSenderName().equals("Server")) {
-					login = true;
-				}else{
-					EZKlogger.info("\n\nThe password is wrong or the user name you entered is already in use.");
-					EZKlogger.info("Please try again!\n\n");
-				}
-			}
-
-			EZKlogger.info("Eizikiu_Client.main() -> You successfully logged in to the server!");
-					
-			keyli = new KeyboardListener(socket, netOutput, user);
-			Thread keyliThread = new Thread(keyli);
-			keyliThread.setDaemon(true);
-			keyliThread.start();
-
-			// chat
-			boolean exit = false;
-			while(!exit){
-				
-				Message message = netInput.receiveMessage();
-				
-				if(!message.getMessage().equals("exit")){
-					if(!message.getSenderName().equals(user.getName())){
-						EZKlogger.info(message.toString());
-					}else{
-						message.printOwn();
-					}
-				}else{
-					exit = true;
-				}
-			}
-			
-			netInput.closeStreams();
-			netOutput.closeStreams();
-			socket.close();
-			keyboardIn.close();
-			*/
-//		}catch(SocketException s){
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -121,24 +50,29 @@ public class Eizikiu_Client {
 	
 	// getter
 	public static LinkedList<User> getGlobalUserList() {
+		EZKlogger.debug();
 		return globalUserList;
 	}
 	
 	public static LinkedList<Room> getPublicRooms() {
+		EZKlogger.debug();
 		return publicRooms;
 	}
 	
 	// setter
 	public static void setGlobalUserList(LinkedList<User> globalUserList) {
+		EZKlogger.debug();
 		Eizikiu_Client.globalUserList = globalUserList;
 	}
 	
 	public static void setPublicRooms(LinkedList<Room> publicRooms) {
+		EZKlogger.debug();
 		Eizikiu_Client.publicRooms = publicRooms;
 	}
 	
 	// functions
 	public static boolean login(String name, String pw, LogInGUI gui) {
+		EZKlogger.debug();
 		try {
 			// create user
 			user = new User(name,pw);
@@ -169,6 +103,7 @@ public class Eizikiu_Client {
 	}
 	
 	public static boolean register(String name, String pw, RegistryGUI gui) {
+		EZKlogger.debug();
 		try {
 			// create user
 			user = new User(name,pw);
@@ -199,7 +134,7 @@ public class Eizikiu_Client {
 	}
 	
 	public static void chat() {
-		
+		EZKlogger.debug();
 		try {
 			// start GUI
 			Eizikiu_Client_GUI gui = new Eizikiu_Client_GUI();
@@ -230,11 +165,17 @@ public class Eizikiu_Client {
 					break;
 				
 				case 23:	// private chat ACK -> new private chat
-					gui.newChat(message.getRoomID());
+					// Message('successful opened' from server, room name, 23, roomID)
+					user.getRooms().add(new Room(message.getSenderName(), message.getRoomID()));
+					gui.newChat(message.getRoomID()/*, message.getMessage()*/); // TODO: erste message mit übergeben zum Ausgeben; Raum statt ID übergeben!!!!!!!!!!!!!
 					break;
 					
 				case 25:	// join room ACK -> new room
-					gui.newChat(message.getRoomID());
+					// Message('successful opened' from server, senderName, 25, roomID)
+					for(Room x : publicRooms) {
+						if(x.getID() == message.getRoomID()) user.getRooms().add(x);
+					}
+					gui.newChat(message.getRoomID()/*, message.getMessage()*/); // TODO: erste message mit übergeben zum Ausgeben; Raum statt ID übergeben!!!!!!!!!!!!!
 					break;
 				
 				case 9:		// general NAK
@@ -294,42 +235,66 @@ public class Eizikiu_Client {
 		}
 	}
 	
-	static public void privateChatRequest(String userName) {
-		
+	public static void privateChatRequest(String userName) {
+		EZKlogger.debug();
+		// Message(name of requested chat partner, senderName, 13, 0)
+		netOutput.sendMessage(new Message(userName, user.getName(), 13, 0));
 	}
 	
-	static public void publicChatRequest(int roomID) {
-		
+	public static void publicChatRequest(int roomID) {
+		EZKlogger.debug();
+		String roomName = "";
+		for(Room x : publicRooms) {
+			if(x.getID() == roomID) roomName = x.getName();
+		}
+		// Message(room name, senderName, 15, roomID)
+		netOutput.sendMessage(new Message(roomName, user.getName(), 15, roomID));
 	}
 	
-	static public void chatLeave(int roomID) {
-		
-	}
-	
-	static public void roomListRequest() {
-		netOutput.sendMessage(new Message("room list request", user.getName(), 17, 0));
-	}
-	
-	static public void userListRequest(int roomID) {
-		netOutput.sendMessage(new Message("user list request", user.getName(), 18, roomID));
-	}
-	
-	static public void sendMessage(String message, int roomID) {
+	public static void chatLeave(int roomID) {
+		EZKlogger.debug();
 		boolean isPublic = false;
 		for(Room x : publicRooms) {
 			if(x.getID() == roomID) {
 				isPublic = true;
 			}
 		}
-		if(isPublic) {
-			netOutput.sendMessage(new Message(message, user.getName(), 1, roomID));
-		} else {
-			netOutput.sendMessage(new Message(message, user.getName(), 2, roomID));
+		
+		Room room = null;
+		for(Room x : user.getRooms()) {
+			if(x.getID() == roomID) room = x;
+		}
+		if(room != null) {
+			// Message(room name, senderName, 14(private)/16(public), roomID)
+			netOutput.sendMessage(new Message(room.getName(), user.getName(), isPublic ? 16 : 14, roomID));
+			user.getRooms().remove(room);
 		}
 	}
 	
-	static public void shutdown() {
+	public static void roomListRequest() {
+		EZKlogger.debug();
+		netOutput.sendMessage(new Message("room list request", user.getName(), 17, 0));
+	}
 	
+	public static void userListRequest(int roomID) {
+		EZKlogger.debug();
+		netOutput.sendMessage(new Message("user list request", user.getName(), 18, roomID));
+	}
+	
+	public static void sendMessage(String message, int roomID) {
+		EZKlogger.debug();
+		boolean isPublic = false;
+		for(Room x : publicRooms) {
+			if(x.getID() == roomID) {
+				isPublic = true;
+			}
+		}
+		netOutput.sendMessage(new Message(message, user.getName(), isPublic ? 1 : 2, roomID));
+	}
+	
+	public static void shutdown() {
+		EZKlogger.debug();
+		netOutput.sendMessage(new Message("exit", user.getName(), 0, 0));
 	}
 }
 

@@ -3,6 +3,7 @@ package Eizikiu_GUI;
 import javax.swing.*;
 
 import Eizikiu_Client.Eizikiu_Client;
+import Eizikiu_Tools.EZKlogger;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	public RegistryGUI(){
 		
 		super();
+		EZKlogger.debug();
 		
 		setTitle("Eizikiu Registry");
 		this.setSize(300,200);
@@ -40,6 +42,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	}
 	@Override
 	public void actionPerformed(ActionEvent e){
+		EZKlogger.debug();
 		if(e.getActionCommand().equals("REGISTER")){
 			if (password.getPassword().equals(passwordRepeat.getPassword())){
 				String name = textfieldName.getText();
@@ -62,6 +65,7 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	}
 	
 	private Box initComponents(){
+		EZKlogger.debug();
 		//JPanel als Container
 		panel = new Box(BoxLayout.Y_AXIS);
 		
@@ -102,10 +106,11 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	}
 	
 	public void run(){
-		
+		EZKlogger.debug();
 	}
 	
 	public Box getPanel() {
+		EZKlogger.debug();
 		return panel;
 	}
 	

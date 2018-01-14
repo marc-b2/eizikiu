@@ -30,16 +30,8 @@ public class Message implements Serializable{
 	 */
 	
 	// constructor
-	public Message(String message, String senderName) { // deprecated
-		
-		this.message = message;
-		this.senderName = senderName;
-		this.type = 1;
-		date = new java.util.Date();
-	}
-	
 	public Message(String message, String senderName, int roomID) {
-		
+		EZKlogger.debug();
 		this.message = message;
 		this.senderName = senderName;
 		this.type = 1;
@@ -48,7 +40,7 @@ public class Message implements Serializable{
 	}
 	
 	public Message(String message, String senderName, int type, int roomID) {
-		
+		EZKlogger.debug();
 		this.message = message;
 		this.senderName = senderName;
 		this.type = type;
@@ -58,24 +50,29 @@ public class Message implements Serializable{
 	
 	// getter
 	public String getMessage() {
+		EZKlogger.debug();
 		return message;
 	}
 	
 	public String getSenderName() {
+		EZKlogger.debug();
 		return senderName;
 	}
 	
 	public int getType() {
+		EZKlogger.debug();
 		return type;
 	}
 	
 	public int getRoomID() {
+		EZKlogger.debug();
 		return roomID;
 	}
 	
 	// functions
 	@Override
 	public String toString(){
+		EZKlogger.debug();
 		String output = "Error in Message.toString()";
 		if (type == 1) {output = date.toString() + " [" + senderName + "]: " + message;}
 		else {output = date.toString() + " TYPE = " + type + " [" + senderName + "]: " + message;}
@@ -83,6 +80,7 @@ public class Message implements Serializable{
 	}
 	
 	public void printOwn(){
+		EZKlogger.debug();
 		EZKlogger.info(date.toString() + " [YOU]: " + message);
 	}
 
