@@ -91,7 +91,7 @@ public class User implements Serializable{
 	@Override
 	public String toString() {
 		EZKlogger.debug();
-		return "name: " + name + " password: " + password + " logged in: " + status + " is banned: " + banned;
+		return "name: " + name + "  password: " + password + "  logged in: " + status + "  is banned: " + banned;
 	}
 	
 	public void addTo(LinkedList<User> userList){

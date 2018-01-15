@@ -21,8 +21,9 @@ public class Eizikiu_Client {
 	private static User user = null;
 	
 	public static void main(String args[]) {
-
+		
 		EZKlogger.setLoglevel(2);
+		EZKlogger.setLogfile("eizikiu_client.log");
 		EZKlogger.setFileOutput(true);
 		EZKlogger.debug();
 		

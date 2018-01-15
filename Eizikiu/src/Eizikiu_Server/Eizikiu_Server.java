@@ -17,9 +17,10 @@ public class Eizikiu_Server {
 		
 		// switch on logging to file
 		EZKlogger.setLoglevel(2);
+		EZKlogger.setLogfile("eizikiu_server.log");
 		EZKlogger.setFileOutput(true);
 		EZKlogger.debug();
-		EZKlogger.info("**************** server started ****************");
+		EZKlogger.log("**************** server started ****************");
 		
 		Scanner keyboardIn = new Scanner(System.in);
 		
@@ -96,7 +97,7 @@ public class Eizikiu_Server {
 		// save 'globalUserList' and 'publicRooms' to file
 		try {
 			// users
-			FileOutputStream saveToFile = new FileOutputStream("Eiziku.users");
+			FileOutputStream saveToFile = new FileOutputStream("Eizikiu.users");
 			ObjectOutputStream saveUsers = new ObjectOutputStream(saveToFile);
 			saveUsers.writeObject(globalUserList);
 			saveUsers.close();
@@ -104,7 +105,7 @@ public class Eizikiu_Server {
 			EZKlogger.log("writing 'globalUserList' to file successful!");
 			
 			// rooms
-			saveToFile = new FileOutputStream("Eiziku.rooms");
+			saveToFile = new FileOutputStream("Eizikiu.rooms");
 			ObjectOutputStream saveRooms = new ObjectOutputStream(saveToFile);
 			saveRooms.writeObject(publicRooms);
 			saveRooms.close();
