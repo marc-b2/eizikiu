@@ -235,13 +235,13 @@ public class Eizikiu_Client {
 		}
 	}
 	
-	public static void privateChatRequest(String userName) {
+	public static void privateChatRequest(String userName) throws Exception {
 		EZKlogger.debug();
 		// Message(name of requested chat partner, senderName, 13, 0)
 		netOutput.sendMessage(new Message(userName, user.getName(), 13, 0));
 	}
 	
-	public static void publicChatRequest(int roomID) {
+	public static void publicChatRequest(int roomID) throws Exception{
 		EZKlogger.debug();
 		String roomName = "";
 		for(Room x : publicRooms) {
@@ -251,7 +251,7 @@ public class Eizikiu_Client {
 		netOutput.sendMessage(new Message(roomName, user.getName(), 15, roomID));
 	}
 	
-	public static void chatLeave(int roomID) {
+	public static void chatLeave(int roomID) throws Exception{
 		EZKlogger.debug();
 		boolean isPublic = false;
 		for(Room x : publicRooms) {
@@ -271,17 +271,17 @@ public class Eizikiu_Client {
 		}
 	}
 	
-	public static void roomListRequest() {
+	public static void roomListRequest() throws Exception{
 		EZKlogger.debug();
 		netOutput.sendMessage(new Message("room list request", user.getName(), 17, 0));
 	}
 	
-	public static void userListRequest(int roomID) {
+	public static void userListRequest(int roomID) throws Exception{
 		EZKlogger.debug();
 		netOutput.sendMessage(new Message("user list request", user.getName(), 18, roomID));
 	}
 	
-	public static void sendMessage(String message, int roomID) {
+	public static void sendMessage(String message, int roomID) throws Exception{
 		EZKlogger.debug();
 		boolean isPublic = false;
 		for(Room x : publicRooms) {
@@ -292,7 +292,7 @@ public class Eizikiu_Client {
 		netOutput.sendMessage(new Message(message, user.getName(), isPublic ? 1 : 2, roomID));
 	}
 	
-	public static void shutdown() {
+	public static void shutdown() throws Exception{
 		EZKlogger.debug();
 		netOutput.sendMessage(new Message("exit", user.getName(), 0, 0));
 	}

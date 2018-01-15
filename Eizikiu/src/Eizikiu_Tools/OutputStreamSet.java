@@ -29,22 +29,14 @@ public class OutputStreamSet {
 		}
 	}
 
-	public void sendMessage(Message message){
+	public void sendMessage(Message message) throws Exception{
 		EZKlogger.debug();
-		try{
-			oout.writeObject(message);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		oout.writeObject(message);
 	}
 		
-	public void closeStreams(){
+	public void closeStreams() throws Exception{
 		EZKlogger.debug();
-		try {
-			oout.close();
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
+		oout.close();
+		out.close();	
 	}
 }

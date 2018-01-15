@@ -139,13 +139,25 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			chatInput.repaint();
 		}
 		else if(e.getActionCommand() == "PRIVATE"){
-			Eizikiu_Client.privateChatRequest(((User)userList.getSelectedValue()).getName());
+			try {
+				Eizikiu_Client.privateChatRequest(((User)userList.getSelectedValue()).getName());
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		}
 		else if(e.getActionCommand() == "JOIN"){
-			Eizikiu_Client.publicChatRequest(((Room)roomList.getSelectedValue()).getID());
+			try {
+				Eizikiu_Client.publicChatRequest(((Room)roomList.getSelectedValue()).getID());
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		}
 		else if(e.getActionCommand() == "CLOSE"){
-			Eizikiu_Client.shutdown();
+			try {
+				Eizikiu_Client.shutdown();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 			System.exit(0);
 		}
 	}

@@ -16,40 +16,28 @@ public class InputStreamSet {
 	}
 	
 	// functions
-	public void setupStreams(){
+	public void setupStreams() throws Exception{
 		EZKlogger.debug();
-		try {
-			in = socket.getInputStream();
-			oin = new ObjectInputStream(in);
+		
+		in = socket.getInputStream();
+		oin = new ObjectInputStream(in);
 
-			EZKlogger.debug("InputStreamSet.setupStreams() -> inbound streams set up");
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+		EZKlogger.debug("InputStreamSet.setupStreams() -> inbound streams set up");
 	}
 	
-	public Message receiveMessage() throws EOFException{
+	public Message receiveMessage() throws Exception{
 		EZKlogger.debug();
 		Message message = new Message("","",0);
-		try {
+		
 			message = (Message) oin.readObject();
-		} catch (EOFException e) {
-			throw e;
-		} catch(Exception e){
-			e.printStackTrace();
-		}
+		
 		return message;
 	}
 
-	public void closeStreams(){
+	public void closeStreams() throws Exception{
 		EZKlogger.debug();
-		try {
-			oin.close();
-			in.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
+		oin.close();
+		in.close();
 	}
 }

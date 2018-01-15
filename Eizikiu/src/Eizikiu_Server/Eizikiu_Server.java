@@ -12,6 +12,7 @@ public class Eizikiu_Server {
 	private static LinkedList<Room> publicRooms;
 	private static LinkedList<Room> privateRooms;
 	
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		
 		// switch on logging to file
@@ -85,7 +86,11 @@ public class Eizikiu_Server {
 		
 		// close connections
 		for(ConnectionToClient x : connectionList){
-			x.shutdown();
+			try {
+				x.shutdown();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		// save 'globalUserList' and 'publicRooms' to file

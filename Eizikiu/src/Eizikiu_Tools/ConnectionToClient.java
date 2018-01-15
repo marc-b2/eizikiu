@@ -1,7 +1,6 @@
 package Eizikiu_Tools;
 
 import Eizikiu_Server.*;
-import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
@@ -322,7 +321,7 @@ public class ConnectionToClient implements Runnable {
 
 			EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> connection terminated");
 
-		} catch(IOException e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -440,7 +439,7 @@ public class ConnectionToClient implements Runnable {
 		}
 	}
 	
-	public void shutdown() {
+	public void shutdown()  throws Exception{
 		EZKlogger.debug();
 		netOutput.sendMessage(new Message("connection shut down by server", "Server---------->", 20, 0));
 		netOutput.sendMessage(new Message("exit", "Server---------->", 0, 0));
