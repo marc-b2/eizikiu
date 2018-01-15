@@ -68,6 +68,7 @@ public class Eizikiu_Server {
 			
 			// create default room
 			publicRooms.add(new Room("default"));
+			globalUserList.add(new User("admin", "admin"));
 		}
 		
 		// create NetListener and start as thread (daemon)
