@@ -156,4 +156,48 @@ public class Eizikiu_Server {
 		EZKlogger.debug();
 		publicRooms.remove(room);
 	}
+	
+	public static void sendRoomListToAllClients() {
+		String list = makeListToString();
+		for(User x : globalUserList) {
+			if (x.isStatus()) {
+				try {
+					x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 27, 0));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @return String of 'publicRooms' to send to clients (for message type 27)
+	 */
+	public static String makeListToString(){
+		String roomList = "";
+		for(Room x : publicRooms) {
+			if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
+				roomList = roomList + x.getName() + "§" + x.getID();
+			} else {
+				roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
+			}
+		}
+		return roomList;
+	}
+	
+	/**
+	 * @param userList
+	 * @return String of passed user list to send to clients (for message type 28)
+	 */
+	public static String makeListToString(LinkedList<User> userList) {
+		String userString = "";
+		for(User x : userList) {
+			if(userList.indexOf(x) == userList.size()-1) { // last element
+				userString = userString + x.getName();
+			} else {
+				userString = userString + x.getName() + "§";
+			}
+		}
+		return userString;
+	}
 }

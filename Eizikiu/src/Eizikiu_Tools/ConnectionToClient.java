@@ -225,19 +225,11 @@ public class ConnectionToClient implements Runnable {
 						break;
 					
 					case 17: // room list request
-						roomList = "";
-						for(Room x : publicRooms) {
-							if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
-								roomList = roomList + x.getName() + "§" + x.getID();
-							} else {
-								roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
-							}
-						}
+						roomList = Eizikiu_Server.makeListToString();
 						netOutput.sendMessage(new Message(roomList, "Server---------->", 27, 0));
 						break;
 					
 					case 18: // user list request - sends users of room with message.getRoomID in a string
-						userList = "";
 						room = null;
 						tempUserList = null;
 						if(message.getRoomID() == 0) {
@@ -250,13 +242,7 @@ public class ConnectionToClient implements Runnable {
 							}
 						}
 						if(tempUserList != null) {
-							for(User x : tempUserList) {
-								if(tempUserList.indexOf(x) == tempUserList.size()-1) { // last element
-									userList = userList + x.getName();
-								} else {
-									userList = userList + x.getName() + "§";
-								}
-							}
+							userList = Eizikiu_Server.makeListToString(tempUserList);
 							netOutput.sendMessage(new Message(userList, "Server---------->", 28, message.getRoomID()));
 						} else { // no room with specified ID existing
 							netOutput.sendMessage(new Message("Room does not exist!", "Server---------->", 9, message.getRoomID()));
