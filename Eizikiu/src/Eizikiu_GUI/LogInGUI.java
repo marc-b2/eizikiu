@@ -36,7 +36,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		this.getContentPane().add(initComponents());
-		this.setVisible(true);
+		   this.setVisible(true);
 	}
 	
 	@Override 
@@ -59,7 +59,8 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 			// hier öffnet sich das Anmeldefenster 
 //			Thread t = new Thread(new RegistryGUI());
 //			t.start();
-			new Registry_GUI();
+			
+			Registry_GUI test = new Registry_GUI();
 			LogInGUI.this.dispose();
 		}
 	}

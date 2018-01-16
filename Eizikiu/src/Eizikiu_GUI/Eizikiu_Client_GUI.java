@@ -30,7 +30,8 @@ import Eizikiu_Tools.User;
 public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, ItemListener, Runnable{
 
 	private JFrame frmEizikiuClient;
-	private JTextArea chatOutput, chatInput;
+	Chat_Tab chatTab;
+	
 	DefaultListModel<Room> rList;
 	JList<User> userList; 
 	JList<Room> roomList;
@@ -46,6 +47,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public Eizikiu_Client_GUI() {
 		EZKlogger.debug();
 		initialize();
+		this.frmEizikiuClient.setVisible(true);
 	}
 
 	// Initialisieren der GUI
@@ -57,7 +59,12 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmEizikiuClient.getContentPane().setLayout(null);
 		
+		// Anlegen des ChatOut und ChatInput
+		chatTab = new Chat_Tab(1);
+		
 		//ListenVerwaltung 
+		
+		
 		listHolder = new JTabbedPane(JTabbedPane.TOP);
 		listHolder.setBounds(383, 26, 160, 396);
 		frmEizikiuClient.getContentPane().add(listHolder);
@@ -116,7 +123,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		JMenu roomMenu = new JMenu("Room");
 		menuBar.add(roomMenu);
 		
-		Chat_Tab chatTab = new Chat_Tab(((Room)roomList.getSelectedValue()).getID());
+		
 		chatHolder = new JTabbedPane();
 		chatHolder.setBounds(10,42,355,380);
 		chatHolder.addTab(rList.getElementAt(0).getName(),chatTab);
@@ -135,8 +142,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			// hier muss ebenfalls das absenden der Nachricht geschehen
 			
 			
-			chatInput.setText(null);
-			chatInput.repaint();
+			chatTab.getChatInput().setText(null);
+			chatTab.getChatInput().repaint();
 		}
 		else if(e.getActionCommand() == "PRIVATE"){
 			try {
@@ -166,11 +173,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void keyTyped(KeyEvent e) {
 		EZKlogger.debug();
 		 int key = e.getKeyCode();
-	     if (key == KeyEvent.VK_ENTER && chatInput.getText()!= null) {
+	     if (key == KeyEvent.VK_ENTER && chatTab.getChatInput().getText()!= null) {
 	    	 // hier muss das Absenden der Nachricht geschehen
 			
-	    	 chatInput.setText(null);
-	    	 chatInput.repaint();
+	    	 chatTab.getChatInput().setText(null);
+	    	 chatTab.getChatInput().repaint();
 	    	 
 		}
 	}@Override
@@ -198,11 +205,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	}
 	public void writeString(String str) {
 		EZKlogger.debug();
-		chatOutput.append(str + "\n");
+		chatTab.getChatOutput().append(str + "\n");
 	}
 	public void writeMessage(Message m) {
 		EZKlogger.debug();
-		chatOutput.append(m.toString() + "\n");
+		chatTab.getChatOutput().append(m.toString() + "\n");
 	}
 	
 	// aktualisieren die Listen die den JList zu Grunde liegen

@@ -30,9 +30,8 @@ public class Chat_Tab extends JPanel implements ActionListener{
 		this.tabID = roomID;
 		this.setBounds(10,10,355,380);
 		
-		this.add(sendButton);
-		this.add(chatInput);
-		this.add(chatOutput);
+		
+		
 		
 		sendButton = new JButton();
 		sendButton.setBounds(274, 362, 97, 60);
@@ -52,7 +51,9 @@ public class Chat_Tab extends JPanel implements ActionListener{
 		chatOutput.setEditable(false);
 		chatOutput.setBounds(10, 70, 360, 370);
 		
-		
+		this.add(sendButton);
+		this.add(chatInput);
+		this.add(chatOutput);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -66,7 +67,12 @@ public class Chat_Tab extends JPanel implements ActionListener{
 		}
 	}
 	
-	
+	public JTextArea getChatInput() {
+		return chatInput;
+	}
+	public JTextArea getChatOutput() {
+		return chatOutput;
+	}
 
 	public int getTabID() {
 		EZKlogger.debug();

@@ -49,7 +49,8 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 				@SuppressWarnings("deprecation")
 				String pw = password.getText();
 				 
-				if(Eizikiu_Client.register(name, pw, this)){
+			//	if(Eizikiu_Client.register(name, pw, this))
+				{
 //					new Eizikiu_Client_GUI();
 					Eizikiu_Client.chat();
 				}

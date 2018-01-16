@@ -13,6 +13,7 @@ import javax.swing.Box;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 
 import Eizikiu_Client.Eizikiu_Client;
+import Eizikiu_Tools.EZKlogger;
 
 import java.awt.Component;
 import javax.swing.JLabel;
@@ -46,6 +47,7 @@ public class Registry_GUI {
 	 */
 	public Registry_GUI() {
 		initialize();
+		this.frmRegister.setVisible(true);
 	}
 
 	/**
@@ -86,15 +88,26 @@ public class Registry_GUI {
 		JButton registerButton = new JButton("Register");
 		registerButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				if (passwordField_1.getPassword().equals(passwordField_2.getPassword())){
-					String name = textField.getText();
-					String pw = String.valueOf(passwordField_1.getPassword());
+				EZKlogger.debug();
+				String name = textField.getText();
+				String pw1 = String.valueOf(passwordField_1.getPassword());
+				String pw2 = String.valueOf(passwordField_2.getPassword());
+				
+				if (pw1.equals(pw2)){
+					EZKlogger.debug();
 					
-					if(Eizikiu_Client.register(name, pw, Registry_GUI.this)){
+					
+					if(Eizikiu_Client.register(name, pw1, Registry_GUI.this)){
 //						new Eizikiu_Client_GUI();
+						EZKlogger.debug();
 						Eizikiu_Client.chat();
+						Registry_GUI.this.frmRegister.dispose();
 					}
 			
+				}else {
+					EZKlogger.debug();
+					passwordField_1.setText("");
+					passwordField_2.setText("");
 				}
 			}
 		});
