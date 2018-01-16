@@ -43,23 +43,22 @@ public class ConnectionToClient implements Runnable {
 			EZKlogger.log("ConnectionToClient.run() -> connection to new user established");
 			
 			if(loginUser()) {
+				
+				// send current user list to client
+				String userListString = Eizikiu_Server.makeListToString(globalUserList);
+				netOutput.sendMessage(new Message(userListString, "Server---------->", 28, 0));
+				
+				// send current room list to client
+				String roomListString = Eizikiu_Server.makeListToString();
+				netOutput.sendMessage(new Message(roomListString, "Server---------->", 27, 0));
+				
 				// "user online" to other clients
 				for(User x : globalUserList){
 					if(x.isStatus() && !user.equals(x)){
 						x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] is online", "Server---------->", 20, 0));
 					}
 				}
-				
-				// send current user list to client
-				netOutput.sendMessage(new Message("these users are currently logged in:", "Server---------->", 20, 1));
-				for(User x : globalUserList){
-					if(x.isStatus() && !user.equals(x)){
-						netOutput.sendMessage(new Message(x.getName(), "Server---------->", 20, 1));
-					}
-				}
-				
-				//TODO: send current room list to client
-				
+								
 				// chat
 				do {
 					Message message = netInput.receiveMessage();

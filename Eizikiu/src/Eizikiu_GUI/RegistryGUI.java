@@ -2,13 +2,16 @@ package Eizikiu_GUI;
 
 import javax.swing.*;
 
-import Eizikiu_Client.Eizikiu_Client;
+
 import Eizikiu_Tools.EZKlogger;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * deprecated
+ */
 public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 	public static final long serialVersionUID = -11111111;
 	
@@ -45,14 +48,14 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 		EZKlogger.debug();
 		if(e.getActionCommand().equals("REGISTER")){
 			if (password.getPassword().equals(passwordRepeat.getPassword())){
-				String name = textfieldName.getText();
-				@SuppressWarnings("deprecation")
-				String pw = password.getText();
+//				String name = textfieldName.getText();
+//				@SuppressWarnings("deprecation")
+//				String pw = password.getText();
 				 
 			//	if(Eizikiu_Client.register(name, pw, this))
 				{
 //					new Eizikiu_Client_GUI();
-					Eizikiu_Client.chat();
+//					Eizikiu_Client.chat();
 				}
 			}	
 		}

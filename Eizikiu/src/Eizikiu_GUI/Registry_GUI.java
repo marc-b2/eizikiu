@@ -98,9 +98,7 @@ public class Registry_GUI {
 					
 					
 					if(Eizikiu_Client.register(name, pw1, Registry_GUI.this)){
-//						new Eizikiu_Client_GUI();
 						EZKlogger.debug();
-						Eizikiu_Client.chat();
 						Registry_GUI.this.frmRegister.dispose();
 					}
 			

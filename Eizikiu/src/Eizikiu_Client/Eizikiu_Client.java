@@ -1,8 +1,10 @@
 package Eizikiu_Client;
 
 import java.awt.EventQueue;
+import java.awt.TrayIcon.MessageType;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JOptionPane;
 
@@ -11,15 +13,15 @@ import Eizikiu_GUI.*;
 
 public class Eizikiu_Client {
 
-	private static LinkedList<User> globalUserList; // local copy from servers 'globalUserList', has to be updated when changes occur on server
-	private static LinkedList<Room> publicRooms; // local copy from servers 'publicRooms', has to be updated when changes occur on server
+	private static LinkedList<User> globalUserList = null; // local copy from servers 'globalUserList', has to be updated when changes occur on server
+	private static LinkedList<Room> publicRooms = null; // local copy from servers 'publicRooms', has to be updated when changes occur on server
 	// rooms where this client is in will be hold in 'rooms' list owned by the Clients 'user' and will be updated on every join or leave event
 
 	private static OutputStreamSet netOutput;
 	private static InputStreamSet netInput;
 	private static Socket socket;
 	private static User user = null;
-	private static boolean wait = true;
+	public final static CountDownLatch latch = new CountDownLatch(1);
 	
 	public static void main(String args[]) {
 		
@@ -44,8 +46,36 @@ public class Eizikiu_Client {
 			
 			// start login GUI
 			new LogInGUI();
-			while(wait) {};
-			EZKlogger.debug();
+			latch.await();
+			EZKlogger.debug("returned from LogIn/Registry GUI");
+			
+			// get globalUserList and pubicRooms
+			
+			do { // because user is already logged in and can receive messages from default room
+				EZKlogger.debug("do-while-loop get user and room list");
+				Message message = netInput.receiveMessage();
+				int messageType = message.getType();
+				if(messageType == 27) { // room list from server
+					publicRooms = new LinkedList<>();
+					String tempString = message.getMessage(); // message is "roomName1§roomID1§roomName2§roomID2§....§roomNameX§roomIDX"
+					String[] parts = tempString.split("§");
+					for(int i=0; i<parts.length; i+=2) {
+						publicRooms.add(new Room(parts[i], Integer.parseInt(parts[i+1])));
+					}
+				}
+				if(messageType == 28) { // user list from server
+					globalUserList = new LinkedList<>(); // message is "userName1§userName2§...§userNameX"
+					String tempString = message.getMessage();
+					String[] parts = tempString.split("§");
+					for(String x : parts) {
+						globalUserList.add(new User(x, "noPW"));
+					}
+				}
+			} while(publicRooms == null || globalUserList == null);
+			
+			// start GUI
+			Eizikiu_Client_GUI gui = new Eizikiu_Client_GUI();
+			EventQueue.invokeLater(gui);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -91,6 +121,7 @@ public class Eizikiu_Client {
 			
 			// react on answer
 			if(message.getType() == 8) {
+				latch.countDown();
 				return true;				
 			} else if(message.getType() == 9) {
 				JOptionPane.showMessageDialog(gui.getBox(), message.getMessage(), "Error:", 0);
@@ -122,6 +153,7 @@ public class Eizikiu_Client {
 			
 			// react on answer
 			if(message.getType() == 8) {
+				latch.countDown();
 				return true;				
 			} else if(message.getType() == 9) {
 				JOptionPane.showMessageDialog(gui.getFrame(), message.getMessage(), "ERROR", 0);
@@ -136,13 +168,9 @@ public class Eizikiu_Client {
 		}
 	}
 	
-	public static void chat() {
+	public static void chat(Eizikiu_Client_GUI gui) {
 		EZKlogger.debug();
 		try {
-			// start GUI
-			Eizikiu_Client_GUI gui = new Eizikiu_Client_GUI();
-			EventQueue.invokeLater(gui);
-
 			String tempString = "";
 			String[] parts;
 			Room room;
