@@ -57,12 +57,6 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmEizikiuClient.getContentPane().setLayout(null);
 		
-		Chat_Tab chatTab = new Chat_Tab(((Room)roomList.getSelectedValue()).getID());
-		chatHolder = new JTabbedPane();
-		chatHolder.setBounds(10,42,355,380);
-		chatHolder.addTab(rList.getElementAt(0).getName(),chatTab);
-		frmEizikiuClient.getContentPane().add(chatHolder);
-		
 		//ListenVerwaltung 
 		listHolder = new JTabbedPane(JTabbedPane.TOP);
 		listHolder.setBounds(383, 26, 160, 396);
@@ -121,6 +115,12 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		
 		JMenu roomMenu = new JMenu("Room");
 		menuBar.add(roomMenu);
+		
+		Chat_Tab chatTab = new Chat_Tab(((Room)roomList.getSelectedValue()).getID());
+		chatHolder = new JTabbedPane();
+		chatHolder.setBounds(10,42,355,380);
+		chatHolder.addTab(rList.getElementAt(0).getName(),chatTab);
+		frmEizikiuClient.getContentPane().add(chatHolder);
 		
 		JMenuItem join_Room_MenuItem = new JMenuItem("Join");
 		join_Room_MenuItem.addActionListener(this);
