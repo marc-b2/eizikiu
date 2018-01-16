@@ -145,31 +145,32 @@ public class Eizikiu_Server {
 	public static void createRoom(String roomName) {
 		EZKlogger.debug();
 		publicRooms.add(new Room(roomName));
+		sendRoomListToAllClients();
 	}
 	
 	public static void editRoom(Room room, String newName) {
 		EZKlogger.debug();
 		room.setName(newName);
+		sendRoomListToAllClients();
 	}
 	
 	public static void deleteRoom(Room room) {
 		EZKlogger.debug();
 		publicRooms.remove(room);
+		sendRoomListToAllClients();
 	}
 	
 	public static void sendRoomListToAllClients() {
 		String list = makeListToString();
-		for(User x : globalUserList) {
-			if (x.isStatus()) {
-				try {
-					x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 27, 0));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		for(ConnectionToClient x : connectionList) {
+			try {
+				x.getNetOutput().sendMessage(new Message(list, "Server", 27, 0));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
-	
+		
 	/**
 	 * @return String of 'publicRooms' to send to clients (for message type 27)
 	 */

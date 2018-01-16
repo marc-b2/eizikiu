@@ -19,6 +19,7 @@ public class Eizikiu_Client {
 	private static InputStreamSet netInput;
 	private static Socket socket;
 	private static User user = null;
+	private static boolean wait = true;
 	
 	public static void main(String args[]) {
 		
@@ -43,7 +44,8 @@ public class Eizikiu_Client {
 			
 			// start login GUI
 			new LogInGUI();
-			
+			while(wait) {};
+			EZKlogger.debug();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
