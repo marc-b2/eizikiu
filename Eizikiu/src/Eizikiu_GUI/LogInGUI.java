@@ -29,7 +29,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 		super();
 		EZKlogger.debug();
 		
-		setTitle("Eizikiu Registry");
+		setTitle("Log in to Eizikiu");
 		this.setSize(300,200);
 		this.setLocation(800,300);
 		
@@ -50,6 +50,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 			 if(Eizikiu_Client.login(name, pw, this)){
 //				 new Eizikiu_Client_GUI();
 				 Eizikiu_Client.chat();
+				 LogInGUI.this.dispose();
 			 }
 
 		}
