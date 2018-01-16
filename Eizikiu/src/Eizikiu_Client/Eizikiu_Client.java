@@ -103,7 +103,7 @@ public class Eizikiu_Client {
 		}
 	}
 	
-	public static boolean register(String name, String pw, RegistryGUI gui) {
+	public static boolean register(String name, String pw, Registry_GUI gui) {
 		EZKlogger.debug();
 		try {
 			// create user
@@ -122,10 +122,10 @@ public class Eizikiu_Client {
 			if(message.getType() == 8) {
 				return true;				
 			} else if(message.getType() == 9) {
-				JOptionPane.showMessageDialog(gui.getPanel(), message.getMessage(), "ERROR", 0);
+				JOptionPane.showMessageDialog(gui.getFrame(), message.getMessage(), "ERROR", 0);
 				return false;
 			} else {
-				JOptionPane.showMessageDialog(gui.getPanel(), "Sorry, unknown error!", "Error:", 0);
+				JOptionPane.showMessageDialog(gui.getFrame(), "Sorry, unknown error!", "Error:", 0);
 				return false;
 			}
 		} catch (Exception e) {

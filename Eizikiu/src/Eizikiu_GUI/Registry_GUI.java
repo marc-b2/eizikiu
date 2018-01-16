@@ -16,13 +16,14 @@ import Eizikiu_Client.Eizikiu_Client;
 
 import java.awt.Component;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 
 public class Registry_GUI {
 
 	private JFrame frmRegister;
 	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JPasswordField passwordField_1, passwordField_2;
+	
 
 	/**
 	 * Launch the application.
@@ -70,29 +71,29 @@ public class Registry_GUI {
 		JLabel label2 = new JLabel("Password:");
 		verticalBox.add(label2);
 		
-		textField_1 = new JTextField();
-		verticalBox.add(textField_1);
-		textField_1.setColumns(10);
+		passwordField_1 = new JPasswordField();
+		verticalBox.add(passwordField_1);
+		passwordField_1.setColumns(10);
 		
 		JLabel label3 = new JLabel("Repeat Password:");
 		verticalBox.add(label3);
 		
-		textField_2 = new JTextField();
-		verticalBox.add(textField_2);
-		textField_2.setColumns(10);
+		passwordField_2 = new JPasswordField();
+		verticalBox.add(passwordField_2);
+		passwordField_2.setColumns(10);
 		
 		
 		JButton registerButton = new JButton("Register");
 		registerButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				if (textField_1.getText().equals(textField_2.getText())){
+				if (passwordField_1.getPassword().equals(passwordField_2.getPassword())){
 					String name = textField.getText();
-					String pw = textField_1.getText();
+					String pw = String.valueOf(passwordField_1.getPassword());
 					
-					//if(Eizikiu_Client.register(name, pw, Registry_GUI.this)){
-//					//	new Eizikiu_Client_GUI();
-					//	Eizikiu_Client.chat();
-					//}
+					if(Eizikiu_Client.register(name, pw, Registry_GUI.this)){
+//						new Eizikiu_Client_GUI();
+						Eizikiu_Client.chat();
+					}
 			
 				}
 			}
@@ -107,9 +108,11 @@ public class Registry_GUI {
 			}
 		});
 		verticalBox.add(loginButton);
-		frmRegister.getContentPane().setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{textField, textField_1, textField_2, registerButton}));
+		frmRegister.getContentPane().setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{textField, passwordField_1, passwordField_2, registerButton}));
 		
 		
 	}
-
+	public JFrame getFrame() {
+		return frmRegister;
+	}
 }

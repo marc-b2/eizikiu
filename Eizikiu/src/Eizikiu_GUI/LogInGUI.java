@@ -58,8 +58,8 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 			// hier öffnet sich das Anmeldefenster 
 //			Thread t = new Thread(new RegistryGUI());
 //			t.start();
-			new RegistryGUI();
-			this.setVisible(false);
+			new Registry_GUI();
+			LogInGUI.this.dispose();
 		}
 	}
 	
