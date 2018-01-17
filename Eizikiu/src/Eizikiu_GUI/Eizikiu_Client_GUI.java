@@ -221,7 +221,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 				uList.addElement(u);
 			}return uList;
 		}catch(Exception e){
-			this.writeString("Es sind keine User angemeldet");
+			this.writeString("Es sind keine User angemeldet" + "\n");
 			return uList;
 		}
 	}
@@ -235,7 +235,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			}
 			return rList;
 		}catch(Exception e) {
-			this.writeString("Es sind keine Räume vorhanden");
+			this.writeString("Es sind keine Räume vorhanden" + "\n");
 			return rList;
 		}
 	}

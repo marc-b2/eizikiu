@@ -1,7 +1,6 @@
 package Eizikiu_GUI;
 
 import java.awt.EventQueue;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -9,11 +8,11 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JFrame;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import java.awt.BorderLayout;
+
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
+import Eizikiu_Client.Eizikiu_Client;
 import Eizikiu_Server.Eizikiu_Server;
 import Eizikiu_Tools.EZKlogger;
 import Eizikiu_Tools.Message;
@@ -24,11 +23,10 @@ import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JList;
-import javax.swing.JToolBar;
-import javax.swing.JToggleButton;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 
@@ -40,6 +38,11 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	private JFrame frmEizikiuServer;
 	JTextArea chatOutput;
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker, safeLogToChecker;
+	JList<Room> roomList;
+	JList<User> userList;
+	DefaultListModel<Room> rList;
+	DefaultListModel<User>uList;
+	
 	
 	public static void main(String[] args) {
 		EZKlogger.debug();
@@ -50,6 +53,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	public Eizikiu_Server_GUI() {
 		EZKlogger.debug();
 		initialize();
+		frmEizikiuServer.setVisible(true);
 	}
 
 	
@@ -76,45 +80,29 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		JScrollPane scrollUserList = new JScrollPane();
 		listHolder.addTab("New tab", null, scrollUserList, null);
 		
-		//Einrichten der Listen:
+//Einrichten der Listen:
 		
-		//Erstellt ListModel auf das dann durch JList zugegriffen wird
-		DefaultListModel<User> uList = new DefaultListModel<User>();
+//Erstellt ListModel auf das dann durch JList zugegriffen wird
+		uList = actualizeUserList();
+		userList = new JList<User>(uList);
 		
-		JList<User> userList = new JList<User>(uList);
-		// nimmt die UserListe vom Server und fügt sie in die JList ein
-		// *********hier gab es eine NullPointerException, weil die Liste nicht existiert, wenn man die main() dieser GUI hier startet
-		if(Eizikiu_Server.getGlobalUserList() != null) {
-			for(User u : Eizikiu_Server.getGlobalUserList()) {
-				uList.addElement(u);
-			}
-		}
-		scrollUserList.setViewportView(userList);
+		rList =actualizeRoomList();
+		roomList = new JList<Room>(rList);
 		
+// Als Scrollable		
 		JScrollPane scrollRoomList = new JScrollPane();
+		scrollRoomList.setViewportView(roomList);
+		scrollUserList.setViewportView(userList);
 		listHolder.addTab("New tab", null, scrollRoomList, null);
 		
-		DefaultListModel<Room> rList = new DefaultListModel<Room>();
-		// ******** hier das gleiche Problem...
-		if(Eizikiu_Server.getPublicRooms() != null) {
-			for(Room r : Eizikiu_Server.getPublicRooms()) {
-				rList.addElement(r);
-			}
-		}
-		if(Eizikiu_Server.getPrivateRooms() != null) {
-			for(Room r : Eizikiu_Server.getPrivateRooms()) {
-				rList.addElement(r);
-			}
-		}
-		JList<Room> roomList = new JList<Room>(rList);
-		scrollRoomList.setViewportView(roomList);
+		
 		
 		
 		listHolder.setTitleAt(0, "Users");
 		listHolder.setTitleAt(1, "Rooms");
 		
 		
-		// Initialisieren der Menubar und des jeweiligen Button/CheckBox
+// Initialisieren der Menubar und des jeweiligen Button/CheckBox
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 880, 25);
 		frmEizikiuServer.getContentPane().add(menuBar);
@@ -128,7 +116,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		fileMenu.add(close_File_MenuItem);
 		
 		
-		//AnzeigeMenu zum Einstellen der Logbuchmitschriebe
+//AnzeigeMenu zum Einstellen der Logbuchmitschriebe
 		JMenu anzeigeMenu = new JMenu("Window");
 		menuBar.add(anzeigeMenu);
 		
@@ -150,28 +138,38 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		anzeigeMenu.add(safeLogToChecker);
 		
 		
-		//UserMenu zum verwalten der User
+//UserMenu zum verwalten der User
 		JMenu userMenu = new JMenu("User");
-		menuBar.add(userMenu);
+		
 		
 		JMenuItem options_User_MenuItem= new JMenuItem("Options");
 		options_User_MenuItem.addActionListener(this);
 		options_User_MenuItem.setActionCommand("USERVERWALTUNG");
-		userMenu.add(options_User_MenuItem);
 		
-		//RoomMenu mit der Möglichkeit die Rooms zu editieren
+		
+//RoomMenu mit der Möglichkeit die Rooms zu editieren
 		JMenu roomMenu = new JMenu("Rooms");
 		menuBar.add(roomMenu);
 		
 		JMenuItem edit_Room_MenuItem = new JMenuItem("Edit");
 		edit_Room_MenuItem.addActionListener(this);
 		edit_Room_MenuItem.setActionCommand("EDITROOMS");
-		roomMenu.add(edit_Room_MenuItem);
+		
+		JMenuItem show_UserList_MenuItem = new JMenuItem("Edit Userlist");
+		show_UserList_MenuItem.addActionListener(this);
+		show_UserList_MenuItem.setActionCommand("EDITUSERLIST");
 		
 		JMenuItem delete_Rooms_MenuItem = new JMenuItem("Delete");
-		roomMenu.add(delete_Rooms_MenuItem);
+		delete_Rooms_MenuItem.addActionListener(this);
+		delete_Rooms_MenuItem.setActionCommand("DELETE");
 		
-		// Label das als Überschrift für die Logausgabe gilt
+		menuBar.add(userMenu);
+		userMenu.add(options_User_MenuItem);
+		
+		roomMenu.add(edit_Room_MenuItem);
+		roomMenu.add(show_UserList_MenuItem);
+		roomMenu.add(delete_Rooms_MenuItem);
+// Label das als Überschrift für die Logausgabe gilt
 		JLabel lblLog = new JLabel("Log:");
 		lblLog.setBounds(12, 52, 56, 16);
 		frmEizikiuServer.getContentPane().add(lblLog);
@@ -183,13 +181,16 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	public void actionPerformed(ActionEvent e) {
 		EZKlogger.debug();
 		if(e.getActionCommand() == "EDITROOMS") {
-			
+			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
+			Eizikiu_Server.editRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue(), newName);
 		}else if(e.getActionCommand()=="USERVERWALTUNG") {
 			
+			Eizikiu_Server_GUI.this.roomList.getSelectedValue().getUserList();
 		}else if(e.getActionCommand()=="CLOSE") {
-			
-		}else if(e.getActionCommand()=="") {
-			
+			System.exit(0);
+		}else if(e.getActionCommand()=="DELETE") {
+			Eizikiu_Server.deleteRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue());
+			this.actualizeRoomJList();
 		}
 	}
 	
@@ -236,14 +237,61 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			e.printStackTrace();
 		}
 	}
-	//Diese Methoden sollen in der Mainfunktion die System.out.print-Aufrufe ersetzen
+	
+	public void writeString(String str) {
+		this.chatOutput.append(str);
+		this.frmEizikiuServer.repaint();
+	}
+	/**
+	 * Schreibt den Inhalt String eines Message-Objekts in die Ausgabe des Servers
+	 * @param m
+	 */
 	public void writeMessage(Message m) {
 		EZKlogger.debug();
 		chatOutput.append(m.toString());
 	}
-	
+	/** Ermöglicht das Schreiben eines Strings in die Ausgabe des Servers.
+	 * 	 * @param str
+	 */
 	public void writeLogger(String message) {
 		EZKlogger.debug();
 		chatOutput.append(message);
+	}
+	public DefaultListModel<User> actualizeUserList() {
+		EZKlogger.debug();
+		DefaultListModel<User> uList = new DefaultListModel<User>();
+		try {
+			for(User u : Eizikiu_Client.getGlobalUserList()) {
+				uList.addElement(u);
+			}return uList;
+		}catch(Exception e){
+			this.writeLogger("Es sind keine User angemeldet" + "\n");
+			return uList;
+		}
+	}
+	
+	public DefaultListModel<Room> actualizeRoomList(){
+		EZKlogger.debug();
+		DefaultListModel<Room> rList = new DefaultListModel<Room>();
+		try {
+			for(Room r : Eizikiu_Client.getPublicRooms()) {
+				rList.addElement(r);
+			}
+			return rList;
+		}catch(Exception e) {
+			this.writeLogger("Es sind keine Räume vorhanden" + "\n");
+			return rList;
+		}
+	}
+	// Methoden die dann zum Aktualisieren der Room/User Listn verwendet werden
+	public void actualizeUserJList() {
+		EZKlogger.debug();
+		this.actualizeUserList();
+		this.userList.repaint();
+	}
+	public void actualizeRoomJList() {
+		EZKlogger.debug();
+		this.actualizeRoomList();
+		this.roomList.repaint();
 	}
 }

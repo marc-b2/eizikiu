@@ -51,9 +51,9 @@ public class Chat_Tab extends JPanel implements ActionListener{
 		chatOutput.setEditable(false);
 		chatOutput.setBounds(10, 70, 360, 370);
 		
-		this.add(sendButton);
-		this.add(chatInput);
 		this.add(chatOutput);
+		this.add(chatInput);
+		this.add(sendButton);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
