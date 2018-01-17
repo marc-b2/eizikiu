@@ -68,7 +68,9 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		listHolder = new JTabbedPane(JTabbedPane.TOP);
 		listHolder.setBounds(383, 26, 160, 396);
 		frmEizikiuClient.getContentPane().add(listHolder);
+
 		
+//Erstellen der Listen und den zugehörigen Scrollables		
 		JScrollPane scrollUserList = new JScrollPane();
 		listHolder.addTab("New tab", null, scrollUserList, null);
 		
@@ -80,7 +82,6 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		JScrollPane scrollRoomList = new JScrollPane();
 		listHolder.addTab("New tab", null, scrollRoomList, null);
 		
-		
 		rList = actualizeRoomList();
 		roomList = new JList<Room>(rList);
 		roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -89,7 +90,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		listHolder.setTitleAt(0, "Users");
 		listHolder.setTitleAt(1, "Rooms");
 		
-		// Menubar erstellen
+// Menubar erstellen
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 150, 25);

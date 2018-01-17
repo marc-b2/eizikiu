@@ -142,9 +142,17 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		JMenu userMenu = new JMenu("User");
 		
 		
-		JMenuItem options_User_MenuItem= new JMenuItem("Options");
-		options_User_MenuItem.addActionListener(this);
-		options_User_MenuItem.setActionCommand("USERVERWALTUNG");
+		JMenuItem warn_User_MenuItem= new JMenuItem("Warn");
+		warn_User_MenuItem.addActionListener(this);
+		warn_User_MenuItem.setActionCommand("WARN");
+		
+		JMenuItem kick_User_MenuItem= new JMenuItem("Kick");
+		kick_User_MenuItem.addActionListener(this);
+		kick_User_MenuItem.setActionCommand("KICK");
+		
+		JMenuItem bann_User_MenuItem= new JMenuItem("Bann");
+		bann_User_MenuItem.addActionListener(this);
+		bann_User_MenuItem.setActionCommand("BANN");
 		
 		
 //RoomMenu mit der Möglichkeit die Rooms zu editieren
@@ -164,7 +172,9 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		delete_Rooms_MenuItem.setActionCommand("DELETE");
 		
 		menuBar.add(userMenu);
-		userMenu.add(options_User_MenuItem);
+		userMenu.add(warn_User_MenuItem);
+		userMenu.add(kick_User_MenuItem);
+		userMenu.add(bann_User_MenuItem);
 		
 		roomMenu.add(edit_Room_MenuItem);
 		roomMenu.add(show_UserList_MenuItem);
@@ -181,16 +191,29 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	public void actionPerformed(ActionEvent e) {
 		EZKlogger.debug();
 		if(e.getActionCommand() == "EDITROOMS") {
+			
 			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
 			Eizikiu_Server.editRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue(), newName);
-		}else if(e.getActionCommand()=="USERVERWALTUNG") {
+			
+		}else if(e.getActionCommand()=="EDITUSERLIST") {
 			
 			Eizikiu_Server_GUI.this.roomList.getSelectedValue().getUserList();
+			
 		}else if(e.getActionCommand()=="CLOSE") {
 			System.exit(0);
+			
 		}else if(e.getActionCommand()=="DELETE") {
 			Eizikiu_Server.deleteRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue());
 			this.actualizeRoomJList();
+			
+		}else if(e.getActionCommand()=="WARN") {
+		
+			
+		}else if(e.getActionCommand()=="KICK") {
+			userList.getSelectedValue().logOut();
+			
+		}else if(e.getActionCommand()=="BANN") {
+			userList.getSelectedValue().setBanned(true);
 		}
 	}
 	
