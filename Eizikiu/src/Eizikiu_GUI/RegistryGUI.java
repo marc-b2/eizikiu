@@ -1,5 +1,9 @@
 package Eizikiu_GUI;
+/**
+ * ********DEPRECATED*********
+ */
 
+/*
 import javax.swing.*;
 
 import Eizikiu_Client.Eizikiu_Client;
@@ -115,10 +119,10 @@ public class RegistryGUI extends JFrame implements ActionListener, Runnable{
 		return panel;
 	}
 	
-	/*public static void main(String[] args){
+	public static void main(String[] args){
 		RegistryGUI Registrierung = new RegistryGUI();
 		
-	}*/
+	}
 }
-
+*/
 

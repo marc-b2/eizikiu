@@ -1,7 +1,6 @@
 package Eizikiu_Client;
 
 import java.awt.EventQueue;
-import java.awt.TrayIcon.MessageType;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;

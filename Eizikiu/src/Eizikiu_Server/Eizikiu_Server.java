@@ -1,9 +1,11 @@
 package Eizikiu_Server;
 
+import Eizikiu_GUI.*;
+import Eizikiu_Tools.*;
+
 import java.util.*;
 import java.io.*;
-
-import Eizikiu_Tools.*;
+import java.awt.EventQueue;
 
 public class Eizikiu_Server {
 
@@ -60,8 +62,9 @@ public class Eizikiu_Server {
 			EZKlogger.debug("********************************************************");
 			EZKlogger.debug("rooms loaded:");
 			for(Room x : publicRooms) {
-				// set transient objects != null
+				// set transient objects != null and add IDs to IDList
 				x.setUserList(new LinkedList<User>());
+				Eizikiu_Tools.Room.getIDList().add(x.getID());
 				EZKlogger.debug(x.toString());
 			}
 			EZKlogger.debug("********************************************************");
@@ -80,7 +83,12 @@ public class Eizikiu_Server {
 		NLThread.setDaemon(true);
 		EZKlogger.log("Eizikiu_Server.main() -> NetListener started...");
 		NLThread.start();
-				
+		
+		// start GUI
+		Eizikiu_Server_GUI gui = new Eizikiu_Server_GUI();
+		EventQueue.invokeLater(gui);
+		
+		
 		EZKlogger.info("Eizikiu_Server.main() -> Press Return to stop Server!");
 		keyboardIn.nextLine();
 		EZKlogger.info("Eizikiu_Server.main() -> You pressed Return");
@@ -156,7 +164,7 @@ public class Eizikiu_Server {
 	
 	public static void deleteRoom(Room room) {
 		EZKlogger.debug();
-		publicRooms.remove(room);
+		if(room.getID() != 1) publicRooms.remove(room); // not allowed to delete default room
 		sendRoomListToAllClients();
 	}
 	
@@ -202,9 +210,13 @@ public class Eizikiu_Server {
 		return userString;
 	}
 	/**
-	 * Sendet Verwarnung an den Client
+	 * sends warn message to user
 	 */
-	public static void warnUser(User u, String s) {
-		
+	public static void warnUser(User user, String message) {
+		try {
+			user.getConnection().getNetOutput().sendMessage(new Message(message, "Server", 29, 0));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.BoxLayout;
 import javax.swing.Box;
@@ -119,10 +118,9 @@ public class Registry_GUI {
 			}
 		});
 		verticalBox.add(loginButton);
-		frmRegister.getContentPane().setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{textField, passwordField_1, passwordField_2, registerButton}));
-		
-		
+		frmRegister.getContentPane().setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{textField, passwordField_1, passwordField_2, registerButton}));	
 	}
+	
 	public JFrame getFrame() {
 		return frmRegister;
 	}

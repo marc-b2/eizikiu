@@ -7,7 +7,7 @@ public class Room implements Serializable{
 
 	private static final long serialVersionUID = 636461425992742159L;
 	
-	private static int IDcount = 2; // 0 - reserved for no/all rooms; 1 - reserved for default room
+	private static LinkedList<Integer> IDList = new LinkedList<>();
 	
 	private String name;
 	private int ID;
@@ -21,8 +21,13 @@ public class Room implements Serializable{
 		if(name.equals("default")) {
 			ID = 1;
 		} else {
-			ID = IDcount;
-			IDcount++;
+			ID = 0;
+			Integer i = 2; // 0 - reserved for no/all rooms; 1 - reserved for default room
+			while(ID == 0) { // get first unused ID
+				if(!IDList.contains(i)) ID = i;
+				i++;
+			}
+			IDList.add(ID);
 		}
 	}
 	
@@ -47,6 +52,10 @@ public class Room implements Serializable{
 	public int getID() {
 		EZKlogger.debug();
 		return ID;
+	}
+	
+	public static LinkedList<Integer> getIDList() {
+		return IDList;
 	}
 	
 	// setter

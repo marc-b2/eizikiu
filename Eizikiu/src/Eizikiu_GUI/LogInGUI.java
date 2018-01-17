@@ -54,11 +54,7 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 		}
 		if(e.getActionCommand().equals("REGISTRIEREN")){
 			EZKlogger.debug();
-			// hier öffnet sich das Anmeldefenster 
-//			Thread t = new Thread(new RegistryGUI());
-//			t.start();
-			
-			Registry_GUI test = new Registry_GUI();
+			new Registry_GUI();
 			LogInGUI.this.dispose();
 		}
 	}
