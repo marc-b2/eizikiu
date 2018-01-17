@@ -201,4 +201,10 @@ public class Eizikiu_Server {
 		}
 		return userString;
 	}
+	/**
+	 * Sendet Verwarnung an den Client
+	 */
+	public static void warnUser(User u, String s) {
+		
+	}
 }

@@ -200,6 +200,9 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			Eizikiu_Server_GUI.this.roomList.getSelectedValue().getUserList();
 			
 		}else if(e.getActionCommand()=="CLOSE") {
+			for(User x : Eizikiu_Server.getGlobalUserList()) {
+				Eizikiu_Server.warnUser(x, "Server shutdown! - You disconnected.");
+			}
 			System.exit(0);
 			
 		}else if(e.getActionCommand()=="DELETE") {
@@ -207,9 +210,11 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			this.actualizeRoomJList();
 			
 		}else if(e.getActionCommand()=="WARN") {
-		
+			String newWarning= JOptionPane.showInputDialog(frmEizikiuServer,"Warn User:");
+			Eizikiu_Server.warnUser(userList.getSelectedValue(), newWarning);
 			
 		}else if(e.getActionCommand()=="KICK") {
+			Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been kicked by server! \n");
 			userList.getSelectedValue().logOut();
 			
 		}else if(e.getActionCommand()=="BANN") {
