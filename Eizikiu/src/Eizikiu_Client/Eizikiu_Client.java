@@ -93,6 +93,10 @@ public class Eizikiu_Client {
 		return publicRooms;
 	}
 	
+	public static User getUser() {
+		return user;
+	}
+	
 	// setter
 	public static void setGlobalUserList(LinkedList<User> globalUserList) {
 		EZKlogger.debug();

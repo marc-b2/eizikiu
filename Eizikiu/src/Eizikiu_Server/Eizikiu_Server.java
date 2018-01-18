@@ -4,6 +4,7 @@ import Eizikiu_GUI.*;
 import Eizikiu_Tools.*;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.io.*;
 import java.awt.EventQueue;
 
@@ -13,6 +14,7 @@ public class Eizikiu_Server {
 	private static LinkedList<ConnectionToClient> connectionList;
 	private static LinkedList<Room> publicRooms;
 	private static LinkedList<Room> privateRooms;
+	public final static CountDownLatch latch = new CountDownLatch(1);
 	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
@@ -89,9 +91,11 @@ public class Eizikiu_Server {
 		EventQueue.invokeLater(gui);
 		
 		
-		EZKlogger.info("Eizikiu_Server.main() -> Press Return to stop Server!");
-		keyboardIn.nextLine();
-		EZKlogger.info("Eizikiu_Server.main() -> You pressed Return");
+		try {
+			latch.await();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		
 		// close connections
 		for(ConnectionToClient x : connectionList){
