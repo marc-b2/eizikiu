@@ -169,10 +169,23 @@ public class Eizikiu_Server {
 	}
 	
 	public static void sendRoomListToAllClients() {
-		String list = makeListToString();
+		EZKlogger.debug();
+		String list = publicRoomsToString();
 		for(ConnectionToClient x : connectionList) {
 			try {
 				x.getNetOutput().sendMessage(new Message(list, "Server", 27, 0));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void sendUserListToAllMembersOf(Room room) {
+		EZKlogger.debug();
+		String list = makeUserListToString(room.getUserList());
+		for(User x : room.getUserList()) {
+			try {
+				x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 28, room.getID()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -182,7 +195,8 @@ public class Eizikiu_Server {
 	/**
 	 * @return String of 'publicRooms' to send to clients (for message type 27)
 	 */
-	public static String makeListToString(){
+	public static String publicRoomsToString(){
+		EZKlogger.debug();
 		String roomList = "";
 		for(Room x : publicRooms) {
 			if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
@@ -198,7 +212,8 @@ public class Eizikiu_Server {
 	 * @param userList
 	 * @return String of passed user list to send to clients (for message type 28)
 	 */
-	public static String makeListToString(LinkedList<User> userList) {
+	public static String makeUserListToString(LinkedList<User> userList) {
+		EZKlogger.debug();
 		String userString = "";
 		for(User x : userList) {
 			if(userList.indexOf(x) == userList.size()-1) { // last element
@@ -209,10 +224,32 @@ public class Eizikiu_Server {
 		}
 		return userString;
 	}
+	
+	/**
+	 * @return String of logged in users to send to clients (for message type 28)
+	 */
+	public static String onlineUsersToString() {
+		EZKlogger.debug();
+		String userString = "";
+		LinkedList<User> userList = new LinkedList<>();
+		for(User x : globalUserList) {
+			if(x.isStatus()) userList.add(x);
+		}
+		for(User x : userList) {
+			if(userList.indexOf(x) == userList.size()-1) { // last element
+				userString = userString + x.getName();
+			} else {
+				userString = userString + x.getName() + "§";
+			}
+		}
+		return userString;
+	}
+	
 	/**
 	 * sends warn message to user
 	 */
 	public static void warnUser(User user, String message) {
+		EZKlogger.debug();
 		try {
 			user.getConnection().getNetOutput().sendMessage(new Message(message, "Server", 29, 0));
 		} catch (Exception e) {

@@ -204,6 +204,7 @@ public class Eizikiu_Client {
 					// Message('successful opened' from server, senderName, 25, roomID)
 					for(Room x : publicRooms) {
 						if(x.getID() == message.getRoomID()) user.getRooms().add(x);
+						break;
 					}
 					gui.newChat(message.getRoomID()/*, message.getMessage()*/); // TODO: erste message mit übergeben zum Ausgeben; Raum statt ID übergeben!!!!!!!!!!!!!
 					break;
@@ -227,8 +228,8 @@ public class Eizikiu_Client {
 					
 				case 28:	// receive user list
 					room = null;
-					tempUserList = new LinkedList<>(); // message is "userName1§userName2§...§userNameX"
-					tempString = message.getMessage();
+					tempUserList = new LinkedList<>();
+					tempString = message.getMessage(); // message is "userName1§userName2§...§userNameX"
 					parts = tempString.split("§");
 					for(String x : parts) {
 						tempUserList.add(new User(x, "noPW"));

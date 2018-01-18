@@ -45,17 +45,17 @@ public class ConnectionToClient implements Runnable {
 			if(loginUser()) {
 				
 				// send current user list to client
-				String userListString = Eizikiu_Server.makeListToString(globalUserList);
+				String userListString = Eizikiu_Server.onlineUsersToString();
 				netOutput.sendMessage(new Message(userListString, "Server---------->", 28, 0));
 				
 				// send current room list to client
-				String roomListString = Eizikiu_Server.makeListToString();
+				String roomListString = Eizikiu_Server.publicRoomsToString();
 				netOutput.sendMessage(new Message(roomListString, "Server---------->", 27, 0));
 				
 				// "user online" to other clients
-				for(User x : globalUserList){
-					if(x.isStatus() && !user.equals(x)){
-						x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] is online", "Server---------->", 20, 0));
+				for(ConnectionToClient x : connectionList){
+					if(!this.equals(x)){
+						x.netOutput.sendMessage(new Message("[" + user.getName() + "] is online", "Server---------->", 20, 0));
 					}
 				}
 								
@@ -153,6 +153,7 @@ public class ConnectionToClient implements Runnable {
 						for(Room x : privateRooms) {
 							if(x.getID() == message.getRoomID() && message.getMessage().equals(x.getName())) { // due to message type is 14 'message' holds room name
 								room = x;
+								break;
 							}
 						}
 						if(room != null) {
@@ -178,13 +179,15 @@ public class ConnectionToClient implements Runnable {
 							if(room.getUserList().contains(user)) { // user is in list
 								netOutput.sendMessage(new Message("You already joined the room [" + room.getName() + "]!", "Server---------->", 26, 0));
 							} else { // user is not in list -> regular join room request
-								     //-> send "user joined" to other members; add user to rooms user list; add room to users room list; send ACK to client 
+								     //-> send "user joined" to other members; add user to rooms user list; add room to users room list;
+									 //   send ACK to client; send changed user list to room members
 								if(room.getUserList().add(user)) {
 									for(User x : room.getUserList()) {
 										if(!x.equals(user)) {
 											x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] joined this room", "Server---------->", 1, room.getID()));
 										}
 									}
+									Eizikiu_Server.sendUserListToAllMembersOf(room);
 								}
 								user.getRooms().add(room);
 								netOutput.sendMessage(new Message("You joined room [" + room.getName() + "]!", "Server---------->", 25, room.getID()));
@@ -204,12 +207,13 @@ public class ConnectionToClient implements Runnable {
 							}
 						}
 						if(room != null) { // regular leave room notification
-							// remove room from users room list; remove user from rooms user list; send "user left" to other members
+							// remove room from users room list; remove user from rooms user list; send "user left" to other members; send new user list to all members
 							user.getRooms().remove(room);
 							if(room.getUserList().remove(user)) {
 								for(User x : room.getUserList()) {
 									x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] left this room", "Server---------->", 1, room.getID()));
 								}
+								Eizikiu_Server.sendUserListToAllMembersOf(room);
 							}
 						} else { // room does not exist anymore -> remove requested room from users room list if still existing 
 							for(Room x : user.getRooms()) {
@@ -224,7 +228,7 @@ public class ConnectionToClient implements Runnable {
 						break;
 					
 					case 17: // room list request
-						roomList = Eizikiu_Server.makeListToString();
+						roomList = Eizikiu_Server.publicRoomsToString();
 						netOutput.sendMessage(new Message(roomList, "Server---------->", 27, 0));
 						break;
 					
@@ -241,7 +245,7 @@ public class ConnectionToClient implements Runnable {
 							}
 						}
 						if(tempUserList != null) {
-							userList = Eizikiu_Server.makeListToString(tempUserList);
+							userList = Eizikiu_Server.makeUserListToString(tempUserList);
 							netOutput.sendMessage(new Message(userList, "Server---------->", 28, message.getRoomID()));
 						} else { // no room with specified ID existing
 							netOutput.sendMessage(new Message("Room does not exist!", "Server---------->", 9, message.getRoomID()));
@@ -288,18 +292,16 @@ public class ConnectionToClient implements Runnable {
 				}
 			}
 			
-			// set 'user.status' false and delete room list
+			// set 'user.status' false; delete users room list; remove user from all rooms and send new user lists to all members
 			user.logOut();
 			
-			// "user offline" to other clients
-			for(User x : globalUserList) {
-				if(x.isStatus()) {
-					x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] is offline", "Server---------->", 20, 0));
-				}
-			}
-			
 			connectionList.remove(this);
-			
+
+			// "user offline" to other clients
+			for(ConnectionToClient x : connectionList) {
+				x.netOutput.sendMessage(new Message("[" + user.getName() + "] is offline", "Server---------->", 20, 0));
+			}
+						
 			netInput.closeStreams();
 			netOutput.closeStreams();
 			socket.close();
@@ -314,7 +316,7 @@ public class ConnectionToClient implements Runnable {
 	public boolean loginUser() {
 		EZKlogger.debug();
 		boolean userValid = false;
-		boolean nameIsInUserList;
+		boolean nameIsInUserList = true;
 		
 		try {
 			while(!userValid){
@@ -326,7 +328,6 @@ public class ConnectionToClient implements Runnable {
 	
 				case 10: // register new user and login
 					// receive user credential messages until user name entered by client is unique 
-					nameIsInUserList = true;
 					do {
 						message = netInput.receiveMessage();
 						messageType = message.getType();
@@ -337,16 +338,16 @@ public class ConnectionToClient implements Runnable {
 							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user credentials message received");
 							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> " + message);
 							
+							nameIsInUserList = false;
 							for(User x : globalUserList){
 								if(x.getName().equals(user.getName())){
 									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> name already in user list");
 									// send negative ACK to client to tell client to try again
+									nameIsInUserList = true;
 									netOutput.sendMessage(new Message("The name '" + user.getName() + "' is already taken! Try again!", "server", 9, 0));
 									break;
 								}
 							}
-							// if for loop does not give 'break' name is not in list
-							nameIsInUserList = false;
 						} else {
 							// send negative ACK to client in case of wrong message type
 							EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
@@ -411,12 +412,13 @@ public class ConnectionToClient implements Runnable {
 			} // while (!userValid)
 			
 			// user is valid now:
+			// send positive ACK for successful login to client
+			netOutput.sendMessage(new Message("Login successful!", "server", 8, 0));
+			// log in after ACK because client is awaiting ACK before new user list of default room which is send during user.login()
 			user.logIn();
 			user.setConnection(this);
 			connectionList.add(this);
-			// send positive ACK for successful login to client
 			EZKlogger.log(user.getName() + ".ConnectionToClient.run() -> password check -> user [" + user.getName() + "] logged in");
-			netOutput.sendMessage(new Message("Login successful!", "server", 8, 0));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -428,10 +430,6 @@ public class ConnectionToClient implements Runnable {
 		EZKlogger.debug();
 		netOutput.sendMessage(new Message("connection shut down by server", "Server---------->", 20, 0));
 		netOutput.sendMessage(new Message("exit", "Server---------->", 0, 0));
-//		user.logOut();
-//		netInput.closeStreams();
-//		netOutput.closeStreams();
-//		socket.close();
 	}
 
 	// getter

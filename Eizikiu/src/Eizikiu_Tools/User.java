@@ -3,6 +3,8 @@ package Eizikiu_Tools;
 import java.io.*;
 import java.util.*;
 
+import Eizikiu_Server.Eizikiu_Server;
+
 public class User implements Serializable{
 	
 	private static final long serialVersionUID = -447093848295735838L;
@@ -108,17 +110,64 @@ public class User implements Serializable{
 		}
 	}
 	
-	public void logIn(){
+	public void logIn(){ // server only
 		EZKlogger.debug();
 		status = true;
 		rooms = new LinkedList<>();
+		for(Room x : Eizikiu_Server.getPublicRooms()) { // add user to default room and send new room list to all members
+			if(x.getID() == 1) {
+				if(x.addUser(this)) Eizikiu_Server.sendUserListToAllMembersOf(x);
+				break;
+			}
+		}
 		EZKlogger.log(name + ".logIn() -> [" + name + "] logged in");
 	}
 	
-	public void logOut(){
+	public void logOut(){ // server only
 		EZKlogger.debug();
 		status = false;
 		rooms = null;
+		// remove user from all rooms; send 'user left' message and new user list to all members
+		for(Room x : Eizikiu_Server.getPublicRooms()) {
+			if(x.getUserList().contains(this)) {
+				if(x.getUserList().remove(this)) {
+					for(User y : x.getUserList()) {
+						try {
+							y.getConnection().getNetOutput().sendMessage(new Message("[" + name + "] left this room", "Server---------->", 1, x.getID()));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					Eizikiu_Server.sendUserListToAllMembersOf(x);
+				}
+			}
+		}
+		
+		Room room = null;
+		do	{
+			room = null;
+			for(Room x : Eizikiu_Server.getPrivateRooms()) {
+				if(x.getUserList().contains(this)) {
+					room = x;
+					break;
+				}
+			}
+			
+			if(room != null) {
+				for(User x : room.getUserList()) {
+					if(!x.equals(this)) {
+						try {
+							x.getConnection().getNetOutput().sendMessage(new Message("[" + name + "] has left your private chat. You may close this Window now.", "Server---------->", 2, room.getID()));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						x.getRooms().remove(room);
+					}
+				}
+				Eizikiu_Server.getPrivateRooms().remove(room);
+			}
+		} while(room != null);
+		
 		EZKlogger.log(name + ".logOut() -> [" + name + "] logged out");
 	}
 }
