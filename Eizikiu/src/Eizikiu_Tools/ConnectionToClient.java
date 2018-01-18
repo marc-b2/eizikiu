@@ -136,8 +136,8 @@ public class ConnectionToClient implements Runnable {
 								privateRooms.add(newRoom);
 								user.getRooms().add(newRoom);
 								chatPartner.getRooms().add(newRoom);
-								netOutput.sendMessage(new Message("private chat to [" + chatPartner.getName() + "] opened", newRoom.getName(), 23, newRoom.getID()));
-								chatPartner.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] opened private chat", newRoom.getName(), 23, newRoom.getID()));
+								netOutput.sendMessage(new Message(chatPartner.getName(), newRoom.getName(), 23, newRoom.getID()));
+								chatPartner.getConnection().netOutput.sendMessage(new Message(user.getName(), newRoom.getName(), 23, newRoom.getID()));
 								// due to message type is 23 'senderName' delivers room name
 							} else {
 								netOutput.sendMessage(new Message("You are already talking to [" + chatPartner.getName() + "]!", "Server---------->", 24, 0));
@@ -328,86 +328,84 @@ public class ConnectionToClient implements Runnable {
 	
 				case 10: // register new user and login
 					// receive user credential messages until user name entered by client is unique 
-					do {
-						message = netInput.receiveMessage();
-						messageType = message.getType();
-						if(messageType == 12) {
-							user.setName(message.getSenderName());
-							user.setPassword(message.getMessage());
-							
-							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user credentials message received");
-							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> " + message);
-							
-							nameIsInUserList = false;
-							for(User x : globalUserList){
-								if(x.getName().equals(user.getName())){
-									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> name already in user list");
-									// send negative ACK to client to tell client to try again
-									nameIsInUserList = true;
-									netOutput.sendMessage(new Message("The name '" + user.getName() + "' is already taken! Try again!", "server", 9, 0));
-									break;
-								}
+					message = netInput.receiveMessage();
+					messageType = message.getType();
+					if(messageType == 12) {
+						user.setName(message.getSenderName());
+						user.setPassword(message.getMessage());
+						
+						EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user credentials message received");
+						EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> " + message);
+						
+						nameIsInUserList = false;
+						for(User x : globalUserList){
+							if(x.getName().equals(user.getName())){
+								EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> name already in user list");
+								// send negative ACK to client to tell client to try again
+								nameIsInUserList = true;
+								netOutput.sendMessage(new Message("The name '" + user.getName() + "' is already taken! Try again!", "server", 9, 0));
+								break;
 							}
-						} else {
-							// send negative ACK to client in case of wrong message type
-							EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
-							netOutput.sendMessage(new Message("Sorry, network error! Try again!", "server", 9, 0));
 						}
-					} while(nameIsInUserList);
+					} else {
+						// send negative ACK to client in case of wrong message type
+						EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
+						netOutput.sendMessage(new Message("Sorry, network error! Try again!", "server", 9, 0));
+					}
 					
 					// add new user to list
-					user.addTo(globalUserList);
-					EZKlogger.log(user.getName() + ".ConnectionToClient.run() -> password check -> new user [" + user.getName() + "] added to global user list");
-					userValid = true;
+					if(!nameIsInUserList) {
+						user.addTo(globalUserList);
+						EZKlogger.log(user.getName() + ".ConnectionToClient.run() -> password check -> new user [" + user.getName() + "] added to global user list");
+						userValid = true;	
+					}					
 					break;
 	
 				case 11: // login user
 					// receive user credential messages until user name entered by client is in list 
 					nameIsInUserList = false;
-					do {
-						message = netInput.receiveMessage();
-						messageType = message.getType();
-						if(messageType == 12) {
-							user.setName(message.getSenderName());
-							user.setPassword(message.getMessage());
-							
-							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user credentials message received");
-							EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> " + message);
-							
-							for(User x : globalUserList){
-								if(x.getName().equals(user.getName())){
-									nameIsInUserList = true;
-									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> name is in user list");
-									if(!x.isStatus()){
-										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> pw in list: " + x.getPassword() + " ----- pw client: " + user.getPassword());
-										if(x.getPassword().equals(user.getPassword())){
-											userValid = true;
-											user = x;
-											EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password correct");
-										} else { // when password is wrong
-											EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password not correct");
-											netOutput.sendMessage(new Message("The entered password is wrong! Try again!", "server", 9, 0));
-										}
-									}else{ // when status is true
-										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user allready logged in");
-										netOutput.sendMessage(new Message("The user named '" + user.getName() + "' is already logged in! Try again!", "server", 9, 0));
+					message = netInput.receiveMessage();
+					messageType = message.getType();
+					if(messageType == 12) {
+						user.setName(message.getSenderName());
+						user.setPassword(message.getMessage());
+						
+						EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user credentials message received");
+						EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> " + message);
+						
+						for(User x : globalUserList){
+							if(x.getName().equals(user.getName())){
+								nameIsInUserList = true;
+								EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> name is in user list");
+								if(!x.isStatus()){
+									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> pw in list: " + x.getPassword() + " ----- pw client: " + user.getPassword());
+									if(x.getPassword().equals(user.getPassword())){
+										userValid = true;
+										user = x;
+										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password correct");
+									} else { // when password is wrong
+										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password not correct");
+										netOutput.sendMessage(new Message("The entered password is wrong! Try again!", "server", 9, 0));
 									}
+								}else{ // when status is true
+									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user allready logged in");
+									netOutput.sendMessage(new Message("The user named '" + user.getName() + "' is already logged in! Try again!", "server", 9, 0));
 								}
 							}
-							
-							if(!nameIsInUserList) {
-								EZKlogger.debug("ConnectionToClient.run() -> password check -> name is not in user list");
-								netOutput.sendMessage(new Message("The user named '" + user.getName() + "' does not exist! Please register first!", "server", 9, 0));
-							}
-						} else { // when message type is not 12
-							EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
-							netOutput.sendMessage(new Message("Sorry, unknown error! Try again!", "server", 9, 0));
 						}
-					} while(!nameIsInUserList);
+						
+						if(!nameIsInUserList) {
+							EZKlogger.debug("ConnectionToClient.run() -> password check -> name is not in user list");
+							netOutput.sendMessage(new Message("The user named '" + user.getName() + "' does not exist! Please register first!", "server", 9, 0));
+						}
+					} else { // when message type is not 12
+						EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> wrong message received, type is " + messageType);
+						netOutput.sendMessage(new Message("Sorry, unknown error 1! Try again!", "server", 9, 0));
+					}
 					break;
 				default:
 					EZKlogger.debug(message.getSenderName() + ".ConnectionToClient.run() -> password check -> message type not 10 or 11");
-					netOutput.sendMessage(new Message("Sorry, unknown error! Try again!", "server", 9, 0));
+					netOutput.sendMessage(new Message("Sorry, unknown error2! Try again!", "server", 9, 0));
 				} // switch
 			} // while (!userValid)
 			

@@ -195,9 +195,9 @@ public class Eizikiu_Client {
 					break;
 				
 				case 23:	// private chat ACK -> new private chat
-					// Message('successful opened' from server, room name, 23, roomID)
+					// Message(name of chat partner, room name, 23, roomID)
 					user.getRooms().add(new Room(message.getSenderName(), message.getRoomID()));
-					gui.newChat(message.getRoomID()/*, message.getMessage()*/); // TODO: erste message mit übergeben zum Ausgeben; Raum statt ID übergeben!!!!!!!!!!!!!
+					gui.newChat(message.getMessage(), message.getRoomID());
 					break;
 					
 				case 25:	// join room ACK -> new room
@@ -206,7 +206,7 @@ public class Eizikiu_Client {
 						if(x.getID() == message.getRoomID()) user.getRooms().add(x);
 						break;
 					}
-					gui.newChat(message.getRoomID()/*, message.getMessage()*/); // TODO: erste message mit übergeben zum Ausgeben; Raum statt ID übergeben!!!!!!!!!!!!!
+					gui.newChat(message.getRoomID());
 					break;
 				
 				case 9:		// general NAK

@@ -30,7 +30,7 @@ public class OutputStreamSet {
 	}
 
 	public void sendMessage(Message message) throws Exception{
-		EZKlogger.debug();
+		EZKlogger.debug(message.toString());
 		oout.writeObject(message);
 	}
 		
