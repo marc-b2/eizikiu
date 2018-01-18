@@ -138,8 +138,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		closeTab.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent e){
 				try {
-					Eizikiu_Client.chatLeave(((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
-					chatHolder.removeTabAt(chatHolder.getSelectedIndex());
+					if (((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID()!=0) {
+						Eizikiu_Client.chatLeave(((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
+						chatHolder.removeTabAt(chatHolder.getSelectedIndex());
+					}
+					
 				}catch(Exception exception){
 					Eizikiu_Client_GUI.this.writeString("Leaving this room is currently not possible!\n");
 				}
@@ -250,7 +253,10 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		chatTab.getChatOutput().append(m.toString() + "\n");
 	}
 	
-	// aktualisieren die Listen die den JList zu Grunde liegen
+	/**
+	 * aktualisiert die rootListe der userJList
+	 * @return
+	 */
 	public DefaultListModel<User> actualizeUserList() {
 		EZKlogger.debug();
 		DefaultListModel<User> uList = new DefaultListModel<User>();
@@ -263,7 +269,10 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			return uList;
 		}
 	}
-	
+	/**
+	 * aktualisiert die rootList der roomJList
+	 * @return
+	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
 		DefaultListModel<Room> rList = new DefaultListModel<Room>();
@@ -277,28 +286,43 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			return rList;
 		}
 	}
-	// Methoden die dann zum Aktualisieren der Room/User Listn verwendet werden
+	/**
+	 * aktualisiert die userJList
+	 */
 	public void actualizeUserJList() {
 		EZKlogger.debug();
 		this.actualizeUserList();
 		this.userList.repaint();
 	}
+	/**
+	 * aktualisiert die roomJList
+	 */
 	public void actualizeRoomJList() {
 		EZKlogger.debug();
 		this.actualizeRoomList();
 		this.roomList.repaint();
 	}
 	
-	
+	/**
+	 * öffnet einen neuen Tab mit einer Unterhaltung zu einem public room
+	 * @param roomID
+	 */
 	public void newChat(int roomID) {
 		EZKlogger.debug();
 		this.chatHolder.addTab(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab((Room)roomList.getSelectedValue()));
 		frmEizikiuClient.repaint();
 	}
+	/** 
+	 * öffnet einen neuen Tab mit einer Unterhaltung zu einem pivate room
+	 * @param nameChatPartner
+	 * @param roomID
+	 */
 	public void newChat(String nameChatPartner, int roomID) {
 		this.chatHolder.addTab("Private: " + nameChatPartner, new Chat_Tab((Room)roomList.getSelectedValue()));
 		frmEizikiuClient.repaint();
 	}
+	
+	
 	public JFrame getFrmEizikiuClient() {
 		EZKlogger.debug();
 		return frmEizikiuClient;
