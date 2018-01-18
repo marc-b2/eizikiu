@@ -284,6 +284,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	 */
 	public void writeMessage(Message m) {
 		EZKlogger.debug();
+	
 		chatOutput.append(m.toString());
 	}
 	/** Ermöglicht das Schreiben eines Strings in die Ausgabe des Servers.
