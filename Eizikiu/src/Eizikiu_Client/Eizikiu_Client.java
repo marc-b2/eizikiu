@@ -75,6 +75,8 @@ public class Eizikiu_Client {
 			// start GUI
 			Eizikiu_Client_GUI gui = new Eizikiu_Client_GUI();
 			EventQueue.invokeLater(gui);
+			// start chat
+			chat(gui);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

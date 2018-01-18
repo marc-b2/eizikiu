@@ -26,11 +26,9 @@ public class InputStreamSet {
 	}
 	
 	public Message receiveMessage() throws Exception{
-		EZKlogger.debug();
 		Message message = new Message("","",0);
-		
-			message = (Message) oin.readObject();
-		
+		message = (Message) oin.readObject();
+		EZKlogger.debug(message.toString());
 		return message;
 	}
 

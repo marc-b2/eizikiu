@@ -249,11 +249,14 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		chatTab.getChatOutput().append(str + "\n");
 	}
 	public void writeMessage(Message m) {
-		for(int i=0; i<chatHolder.getTabCount()-1;i++) {
+		EZKlogger.debug("" + chatHolder.getTabCount());
+		for(int i=0; i<chatHolder.getTabCount();i++) {
+			EZKlogger.debug("for-loop " + ((Chat_Tab) chatHolder.getComponentAt(i)).getTabRoom().getID());
 			int temp = ((Chat_Tab) chatHolder.getComponentAt(i)).getTabRoom().getID();
 			if(temp == m.getRoomID()){
 				EZKlogger.debug();
-				chatTab.getChatOutput().append(m.toString() + "\n");
+				((Chat_Tab)chatHolder.getComponentAt(i)).getChatOutput().append("["+ m.getSenderName()+"]:" + m.getMessage());
+				
 				break;
 			}
 		}

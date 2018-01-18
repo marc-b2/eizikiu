@@ -159,6 +159,10 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		JMenu roomMenu = new JMenu("Rooms");
 		menuBar.add(roomMenu);
 		
+		JMenuItem create_Room_MenuItem = new JMenuItem("Create new room");
+		create_Room_MenuItem.addActionListener(this);
+		create_Room_MenuItem.setActionCommand("CREATEROOMS");
+		
 		JMenuItem edit_Room_MenuItem = new JMenuItem("Edit");
 		edit_Room_MenuItem.addActionListener(this);
 		edit_Room_MenuItem.setActionCommand("EDITROOMS");
@@ -195,6 +199,11 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			
 			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
 			Eizikiu_Server.editRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue(), newName);
+			
+		}else if(e.getActionCommand()=="CREATEROOMS") {
+			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
+			Eizikiu_Server.createRoom(newName);
+			this.actualizeRoomList();
 			
 		}else if(e.getActionCommand()=="EDITUSERLIST") {
 			
