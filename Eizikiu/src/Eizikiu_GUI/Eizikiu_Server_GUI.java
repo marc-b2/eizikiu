@@ -63,6 +63,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		frmEizikiuServer.setTitle("Eizikiu Server");
 		frmEizikiuServer.setBounds(100, 100, 600, 500);
 		frmEizikiuServer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmEizikiuServer.setLayout(null);
 		frmEizikiuServer.getContentPane().setLayout(null);
 		
 		chatOutput = new JTextArea();
@@ -182,11 +183,12 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 // Label das als Überschrift für die Logausgabe gilt
 		JLabel lblLog = new JLabel("Log:");
 		lblLog.setBounds(12, 52, 56, 16);
-		frmEizikiuServer.getContentPane().add(lblLog);
 		
+		frmEizikiuServer.getContentPane().add(lblLog);
 		
 	}
 	
+//Steuerungsblock für alle Buttons und MenuItems
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		EZKlogger.debug();
@@ -218,6 +220,8 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			userList.getSelectedValue().logOut();
 			
 		}else if(e.getActionCommand()=="BANN") {
+			Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been permanently banned! \n");
+			userList.getSelectedValue().logOut();
 			userList.getSelectedValue().setBanned(true);
 		}
 	}
@@ -285,6 +289,10 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		EZKlogger.debug();
 		chatOutput.append(message);
 	}
+	/**
+	 * aktualisiert das DefaultListModel der UserJList
+	 * @return
+	 */
 	public DefaultListModel<User> actualizeUserList() {
 		EZKlogger.debug();
 		DefaultListModel<User> uList = new DefaultListModel<User>();
@@ -297,7 +305,10 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			return uList;
 		}
 	}
-	
+	/**
+	 * aktualisiert das DefaultListModel der RoomJList
+	 * @return
+	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
 		DefaultListModel<Room> rList = new DefaultListModel<Room>();
@@ -312,11 +323,17 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		}
 	}
 	// Methoden die dann zum Aktualisieren der Room/User Listn verwendet werden
+	/**
+	 * aktualisiert die UserJList
+	 */
 	public void actualizeUserJList() {
 		EZKlogger.debug();
 		this.actualizeUserList();
 		this.userList.repaint();
 	}
+	/**
+	 * aktualisiert die RoomJList
+	 */
 	public void actualizeRoomJList() {
 		EZKlogger.debug();
 		this.actualizeRoomList();

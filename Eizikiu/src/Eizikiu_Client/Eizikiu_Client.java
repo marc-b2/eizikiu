@@ -311,7 +311,7 @@ public class Eizikiu_Client {
 		netOutput.sendMessage(new Message("user list request", user.getName(), 18, roomID));
 	}
 	
-	public static void sendMessage(String message, int roomID) throws Exception{
+	public static void sendMessage(String message, int roomID) throws Exception{ 
 		EZKlogger.debug();
 		boolean isPublic = false;
 		for(Room x : publicRooms) {

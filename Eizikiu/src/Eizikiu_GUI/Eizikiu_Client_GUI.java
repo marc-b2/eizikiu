@@ -1,5 +1,6 @@
 package Eizikiu_GUI;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -17,7 +19,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.LineBorder;
 
 import Eizikiu_Client.Eizikiu_Client;
 import Eizikiu_Tools.EZKlogger;
@@ -35,7 +39,9 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	JList<User> userList; 
 	JList<Room> roomList;
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker;
-	JTabbedPane listHolder, chatHolder;
+	private JTabbedPane listHolder, chatHolder;
+	private JButton sendButton, closeTab;
+	private JTextArea chatInput;
 	// starten der GUI
 	public static void main(String[] args) {
 		EZKlogger.debug();
@@ -59,7 +65,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.getContentPane().setLayout(null);
 		
 		// Anlegen des ChatOut und ChatInput
-		chatTab = new Chat_Tab(1);
+		chatTab = new Chat_Tab(Eizikiu_Client.getPublicRooms().get(0));
 		
 		//ListenVerwaltung 
 		
@@ -123,9 +129,35 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		JMenu roomMenu = new JMenu("Room");
 		menuBar.add(roomMenu);
 		
+		sendButton = new JButton("Send");
+		sendButton.setBounds(260, 340, 100, 50);
+		sendButton.addActionListener(this);
+		sendButton.setActionCommand("SENDEN");
+		
+		closeTab = new JButton("Leave Conversation");
+		closeTab.setBounds(0,100,20,20);
+		closeTab.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent e){
+				try {
+					Eizikiu_Client.chatLeave(((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
+					chatHolder.removeTabAt(chatHolder.getSelectedIndex());
+				}catch(Exception exception){
+					Eizikiu_Client_GUI.this.writeString("Leaving this room is currently not possible!\n");
+				}
+					
+		}
+		});
+		
+		
+		chatInput = new JTextArea();
+		chatInput.setLineWrap(true);
+		chatInput.setBorder(new LineBorder(new Color(0, 0, 0)));
+		chatInput.setBounds(10, 340, 250, 50);
+		chatInput.setWrapStyleWord(true);
+		chatInput.addKeyListener(this);
 		
 		chatHolder = new JTabbedPane();
-		chatHolder.setBounds(10,42,355,380);
+		chatHolder.setBounds(10,30,350,300);
 		chatHolder.addTab(rList.getElementAt(0).getName(),chatTab);
 		frmEizikiuClient.getContentPane().add(chatHolder);
 		
@@ -133,6 +165,10 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		join_Room_MenuItem.addActionListener(this);
 		join_Room_MenuItem.setActionCommand("JOIN");
 		roomMenu.add(join_Room_MenuItem);
+		
+		frmEizikiuClient.add(closeTab);
+		frmEizikiuClient.add(sendButton);
+		frmEizikiuClient.add(chatInput);
 	}
 	
 	@Override
@@ -142,8 +178,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			// hier muss ebenfalls das absenden der Nachricht geschehen
 			
 			
-			chatTab.getChatInput().setText(null);
-			chatTab.getChatInput().repaint();
+			chatInput.setText(null);
+			chatInput.repaint();
 		}
 		else if(e.getActionCommand() == "PRIVATE"){
 			try {
@@ -173,11 +209,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void keyTyped(KeyEvent e) {
 		EZKlogger.debug();
 		 int key = e.getKeyCode();
-	     if (key == KeyEvent.VK_ENTER && chatTab.getChatInput().getText()!= null) {
+	     if (key == KeyEvent.VK_ENTER && chatInput.getText()!= null) {
 	    	 // hier muss das Absenden der Nachricht geschehen
 			
-	    	 chatTab.getChatInput().setText(null);
-	    	 chatTab.getChatInput().repaint();
+	    	 chatInput.setText(null);
+	    	 chatInput.repaint();
 	    	 
 		}
 	}@Override
@@ -254,11 +290,17 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	
 	public void newChat(int roomID) {
 		EZKlogger.debug();
-		this.chatHolder.addTab(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab(((Room)roomList.getSelectedValue()).getID()));
+		this.chatHolder.addTab(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab((Room)roomList.getSelectedValue()));
 		frmEizikiuClient.repaint();
 	}
 	public JFrame getFrmEizikiuClient() {
 		EZKlogger.debug();
 		return frmEizikiuClient;
+	}	
+	
+	
+	public JTabbedPane getChatHolder() {
+		return chatHolder;
 	}
+	
 }

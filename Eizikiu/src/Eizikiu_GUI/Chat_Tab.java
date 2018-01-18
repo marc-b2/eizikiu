@@ -10,74 +10,44 @@ import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 import Eizikiu_Tools.EZKlogger;
+import Eizikiu_Tools.Room;
 
 
-public class Chat_Tab extends JPanel implements ActionListener{
+public class Chat_Tab extends JPanel{
 	private static final long serialVersionUID = 1L;
 	
-	private int tabID;
-	private JButton sendButton;
-	private JTextArea chatOutput,chatInput;
+	private Room tabroom;
+	private JTextArea chatOutput;
 	
-	public Chat_Tab(int roomID) {
+	
+	
+	public Chat_Tab(Room tabroom) {
 		EZKlogger.debug();
-	
-		this.tabID = roomID;
+		this.setLayout(null);
+		this.tabroom = tabroom;
 		this.setBounds(10,10,355,380);
 		
-		
-		
-		
-		sendButton = new JButton();
-		sendButton.setBounds(274, 362, 97, 60);
-		sendButton.addActionListener(this);
-		sendButton.setActionCommand("SENDEN");
-		
-		
-		chatInput = new JTextArea();
-		chatInput.setLineWrap(true);
-		chatInput.setBorder(new LineBorder(new Color(0, 0, 0)));
-		chatInput.setBounds(10, 362, 255, 60);
-		chatInput.setWrapStyleWord(true);
-		
-		
 		chatOutput = new JTextArea();
+		chatOutput.setBounds(0, 0, 350, 300);
 		chatOutput.setBorder(new LineBorder(new Color(0, 0, 0)));
 		chatOutput.setEditable(false);
-		chatOutput.setBounds(10, 70, 360, 370);
+		
 		
 		this.add(chatOutput);
-		this.add(chatInput);
-		this.add(sendButton);
-	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		EZKlogger.debug();
-		if(e.getActionCommand() == "SENDEN") {
-			// hier muss ebenfalls das absenden der Nachricht geschehen
-			
-			
-			chatInput.setText(null);
-			chatInput.repaint();
-		}
+		
 	}
 	
-	public JTextArea getChatInput() {
-		return chatInput;
-	}
+	
+	
 	public JTextArea getChatOutput() {
 		return chatOutput;
 	}
 
-	public int getTabID() {
+	public Room getTabRoom() {
 		EZKlogger.debug();
-		return tabID;
+		return tabroom;
 	}
 
-	public void setTabID(int tabID) {
-		EZKlogger.debug();
-		this.tabID = tabID;
-	}
 	
 	
 }
