@@ -201,9 +201,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			Eizikiu_Server_GUI.this.roomList.getSelectedValue().getUserList();
 			
 		}else if(e.getActionCommand()=="CLOSE") {
-			for(User x : Eizikiu_Server.getGlobalUserList()) {
-				Eizikiu_Server.warnUser(x, "Server shutdown! - You disconnected.");
-			}
+			
 			System.exit(0);
 			
 		}else if(e.getActionCommand()=="DELETE") {
