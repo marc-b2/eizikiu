@@ -53,7 +53,6 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	public Eizikiu_Server_GUI() {
 		EZKlogger.debug();
 		initialize();
-		frmEizikiuServer.setVisible(true);
 	}
 
 	
@@ -271,8 +270,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	public void run() {
 		EZKlogger.debug();
 		try {
-			Eizikiu_Server_GUI window = new Eizikiu_Server_GUI();
-			window.frmEizikiuServer.setVisible(true);
+			frmEizikiuServer.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -305,7 +303,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		EZKlogger.debug();
 		DefaultListModel<User> uList = new DefaultListModel<User>();
 		try {
-			for(User u : Eizikiu_Client.getGlobalUserList()) {
+			for(User u : Eizikiu_Server.getGlobalUserList()) {
 				uList.addElement(u);
 			}return uList;
 		}catch(Exception e){
@@ -321,7 +319,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		EZKlogger.debug();
 		DefaultListModel<Room> rList = new DefaultListModel<Room>();
 		try {
-			for(Room r : Eizikiu_Client.getPublicRooms()) {
+			for(Room r : Eizikiu_Server.getPublicRooms()) {
 				rList.addElement(r);
 			}
 			return rList;

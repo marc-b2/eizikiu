@@ -52,7 +52,6 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public Eizikiu_Client_GUI() {
 		EZKlogger.debug();
 		initialize();
-		this.frmEizikiuClient.setVisible(true);
 	}
 
 	// Initialisieren der GUI
@@ -175,8 +174,12 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void actionPerformed(ActionEvent e) {
 		EZKlogger.debug();
 		if(e.getActionCommand() == "SENDEN") {
-			// hier muss ebenfalls das absenden der Nachricht geschehen
-			
+			String temp = chatInput.getText();
+			try {
+				Eizikiu_Client.sendMessage(temp, ((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 			
 			chatInput.setText(null);
 			chatInput.repaint();
@@ -233,8 +236,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void run() {
 		EZKlogger.debug();
 		try {
-			Eizikiu_Client_GUI window = new Eizikiu_Client_GUI();
-			window.frmEizikiuClient.setVisible(true);
+			frmEizikiuClient.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -291,6 +293,10 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void newChat(int roomID) {
 		EZKlogger.debug();
 		this.chatHolder.addTab(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab((Room)roomList.getSelectedValue()));
+		frmEizikiuClient.repaint();
+	}
+	public void newChat(String nameChatPartner, int roomID) {
+		this.chatHolder.addTab("Private: " + nameChatPartner, new Chat_Tab((Room)roomList.getSelectedValue()));
 		frmEizikiuClient.repaint();
 	}
 	public JFrame getFrmEizikiuClient() {
