@@ -36,6 +36,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	Chat_Tab chatTab;
 	
 	DefaultListModel<Room> rList;
+	DefaultListModel<User> uList;
+	
 	JList<User> userList; 
 	JList<Room> roomList;
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker;
@@ -269,7 +271,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 */
 	public DefaultListModel<User> actualizeUserList() {
 		EZKlogger.debug();
-		DefaultListModel<User> uList = new DefaultListModel<User>();
+		uList = new DefaultListModel<User>();
 		try {
 			for(User u : Eizikiu_Client.getGlobalUserList()) {
 				uList.addElement(u);
@@ -285,7 +287,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
-		DefaultListModel<Room> rList = new DefaultListModel<Room>();
+		this.rList = new DefaultListModel<Room>();
 		try {
 			for(Room r : Eizikiu_Client.getPublicRooms()) {
 				rList.addElement(r);

@@ -180,6 +180,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		userMenu.add(kick_User_MenuItem);
 		userMenu.add(bann_User_MenuItem);
 		
+		roomMenu.add(create_Room_MenuItem);
 		roomMenu.add(edit_Room_MenuItem);
 		roomMenu.add(show_UserList_MenuItem);
 		roomMenu.add(delete_Rooms_MenuItem);

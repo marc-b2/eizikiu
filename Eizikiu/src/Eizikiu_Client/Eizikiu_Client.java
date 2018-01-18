@@ -222,6 +222,7 @@ public class Eizikiu_Client {
 					break;
 					
 				case 27:	// receive room list
+					EZKlogger.debug("room list received");
 					tempRoomList = new LinkedList<>();
 					tempString = message.getMessage(); // message is "roomName1§roomID1§roomName2§roomID2§....§roomNameX§roomIDX"
 					parts = tempString.split("§");
@@ -233,6 +234,7 @@ public class Eizikiu_Client {
 					break;
 					
 				case 28:	// receive user list
+					EZKlogger.debug("user list received");
 					room = null;
 					tempUserList = new LinkedList<>();
 					tempString = message.getMessage(); // message is "userName1§userName2§...§userNameX"
@@ -252,7 +254,7 @@ public class Eizikiu_Client {
 							room.setUserList(tempUserList);
 						}
 					}
-					// TODO: gui.actualizeUserJList(message.getRoomID());
+					if(message.getRoomID() == 0) gui.actualizeUserJList();
 					break;
 				
 				case 29:	// warning -> dialog box WARNING
@@ -299,7 +301,11 @@ public class Eizikiu_Client {
 		
 		Room room = null;
 		for(Room x : user.getRooms()) {
-			if(x.getID() == roomID) room = x;
+			EZKlogger.debug("for each rooms of user");
+			if(x.getID() == roomID) {
+				room = x;
+				EZKlogger.debug("if roomID == roomIDübergeben");
+			}
 		}
 		if(room != null) {
 			// Message(room name, senderName, 14(private)/16(public), roomID)
