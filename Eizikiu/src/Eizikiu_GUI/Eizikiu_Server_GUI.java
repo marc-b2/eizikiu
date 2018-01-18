@@ -217,11 +217,19 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			
 		}else if(e.getActionCommand()=="KICK") {
 			Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been kicked by server! \n");
-			userList.getSelectedValue().logOut();
+			try {
+				userList.getSelectedValue().getConnection().shutdown();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 			
 		}else if(e.getActionCommand()=="BANN") {
 			Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been permanently banned! \n");
-			userList.getSelectedValue().logOut();
+			try {
+				userList.getSelectedValue().getConnection().shutdown();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 			userList.getSelectedValue().setBanned(true);
 		}
 	}
