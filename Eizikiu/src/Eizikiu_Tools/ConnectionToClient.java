@@ -377,19 +377,24 @@ public class ConnectionToClient implements Runnable {
 							if(x.getName().equals(user.getName())){
 								nameIsInUserList = true;
 								EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> name is in user list");
-								if(!x.isStatus()){
-									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> pw in list: " + x.getPassword() + " ----- pw client: " + user.getPassword());
-									if(x.getPassword().equals(user.getPassword())){
-										userValid = true;
-										user = x;
-										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password correct");
-									} else { // when password is wrong
-										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password not correct");
-										netOutput.sendMessage(new Message("The entered password is wrong! Try again!", "server", 9, 0));
+								if(!x.isBanned()) {
+									if(!x.isStatus()){
+										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> pw in list: " + x.getPassword() + " ----- pw client: " + user.getPassword());
+										if(x.getPassword().equals(user.getPassword())){
+											userValid = true;
+											user = x;
+											EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password correct");
+										} else { // when password is wrong
+											EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> password not correct");
+											netOutput.sendMessage(new Message("The entered password is wrong! Try again!", "server", 9, 0));
+										}
+									} else { // when status is true
+										EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user allready logged in");
+										netOutput.sendMessage(new Message("The user named '" + user.getName() + "' is already logged in! Try again!", "server", 9, 0));
 									}
-								}else{ // when status is true
-									EZKlogger.debug(user.getName() + ".ConnectionToClient.run() -> password check -> user allready logged in");
-									netOutput.sendMessage(new Message("The user named '" + user.getName() + "' is already logged in! Try again!", "server", 9, 0));
+								} else { // user is banned
+									EZKlogger.debug(user.getName() + "] is banned");
+									netOutput.sendMessage(new Message("Sorry! You are banned from Server!", "server", 9, 0));
 								}
 							}
 						}
