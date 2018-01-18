@@ -25,9 +25,6 @@ public class Registry_GUI {
 	private JPasswordField passwordField_1, passwordField_2;
 	
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -99,6 +96,10 @@ public class Registry_GUI {
 					if(Eizikiu_Client.register(name, pw1, Registry_GUI.this)){
 						EZKlogger.debug();
 						Registry_GUI.this.frmRegister.dispose();
+					}else {
+						textField.setText("");
+						passwordField_1.setText("");
+						passwordField_2.setText("");
 					}
 			
 				}else {

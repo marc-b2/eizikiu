@@ -49,6 +49,9 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 			 
 			 if(Eizikiu_Client.login(name, pw, this)){
 				 LogInGUI.this.dispose();
+			 }else {
+				 this.textfieldName.setText("");
+				 this.password.setText("");
 			 }
 
 		}
