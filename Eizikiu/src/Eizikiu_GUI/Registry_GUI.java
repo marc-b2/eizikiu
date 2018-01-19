@@ -70,6 +70,7 @@ public class Registry_GUI {
 		verticalBox.add(label2);
 		
 		passwordField_1 = new JPasswordField();
+		
 		verticalBox.add(passwordField_1);
 		passwordField_1.setColumns(10);
 		

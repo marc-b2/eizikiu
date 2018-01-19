@@ -75,9 +75,37 @@ public class LogInGUI extends JFrame implements ActionListener, Runnable{
 		JLabel text2 = new JLabel("Geben sie ihr Password ein:");
 		
 		textfieldName.setMaximumSize(d);
-		
+		textfieldName.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				String name = textfieldName.getText();
+				 @SuppressWarnings("deprecation")
+				 String pw = password.getText();
+				 
+				 if(Eizikiu_Client.login(name, pw, LogInGUI.this)){
+					 LogInGUI.this.dispose();
+				 }else {
+					 LogInGUI.this.textfieldName.setText("");
+					 LogInGUI.this.password.setText("");
+				 }
+			}
+		});
 		password.setMaximumSize(d);
-		
+		password.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				String name = textfieldName.getText();
+				 @SuppressWarnings("deprecation")
+				 String pw = password.getText();
+				 
+				 if(Eizikiu_Client.login(name, pw, LogInGUI.this)){
+					 LogInGUI.this.dispose();
+				 }else {
+					 LogInGUI.this.textfieldName.setText("");
+					 LogInGUI.this.password.setText("");
+				 }
+			}
+		});
 		anmeldeButton.setText("Anmelden");
 		anmeldeButton.addActionListener(this);
 		anmeldeButton.setActionCommand("ANMELDEN");

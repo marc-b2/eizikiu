@@ -36,12 +36,12 @@ import javax.swing.JLabel;
 public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnable{
 
 	private JFrame frmEizikiuServer;
-	JTextArea chatOutput;
-	JCheckBoxMenuItem infoChecker, logChecker, debugChecker, safeLogToChecker;
-	JList<Room> roomList;
-	JList<User> userList;
-	DefaultListModel<Room> rList;
-	DefaultListModel<User>uList;
+	private JTextArea chatOutput;
+	private JCheckBoxMenuItem infoChecker, logChecker, debugChecker, safeLogToChecker;
+	private JList<Room> roomList;
+	private JList<User> userList;
+	private DefaultListModel<Room> rList;
+	private DefaultListModel<User>uList;
 	
 	
 	public static void main(String[] args) {
@@ -180,6 +180,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		userMenu.add(kick_User_MenuItem);
 		userMenu.add(bann_User_MenuItem);
 		
+		roomMenu.add(create_Room_MenuItem);
 		roomMenu.add(edit_Room_MenuItem);
 		roomMenu.add(show_UserList_MenuItem);
 		roomMenu.add(delete_Rooms_MenuItem);
@@ -199,6 +200,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			
 			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
 			Eizikiu_Server.editRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue(), newName);
+			this.actualizeRoomJList();
 			
 		}else if(e.getActionCommand()=="CREATEROOMS") {
 			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
@@ -306,10 +308,11 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	/**
 	 * aktualisiert das DefaultListModel der UserJList
 	 * @return
+	 * @deprecated
 	 */
 	public DefaultListModel<User> actualizeUserList() {
 		EZKlogger.debug();
-		DefaultListModel<User> uList = new DefaultListModel<User>();
+		this.uList = new DefaultListModel<User>();
 		try {
 			for(User u : Eizikiu_Server.getGlobalUserList()) {
 				uList.addElement(u);
@@ -322,10 +325,11 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	/**
 	 * aktualisiert das DefaultListModel der RoomJList
 	 * @return
+	 * @deprecated
 	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
-		DefaultListModel<Room> rList = new DefaultListModel<Room>();
+		this.rList = new DefaultListModel<Room>();
 		try {
 			for(Room r : Eizikiu_Server.getPublicRooms()) {
 				rList.addElement(r);
@@ -341,16 +345,54 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	 * aktualisiert die UserJList
 	 */
 	public void actualizeUserJList() {
-		EZKlogger.debug();
-		this.actualizeUserList();
-		this.userList.repaint();
+		for(int i = 0; i < this.userList.getModel().getSize(); i++ ) {
+			boolean exist = false;
+			User temp = this.userList.getModel().getElementAt(i);
+			for(int j = 0; j < Eizikiu_Server.getGlobalUserList().size(); j++) {
+				if(this.userList.getModel().getElementAt(i).getName() == Eizikiu_Server.getGlobalUserList().get(j).getName()) {
+					exist = true;
+				}
+			}
+			if(!exist) {
+				((DefaultListModel<User>)userList.getModel()).removeElementAt(((DefaultListModel<User>)userList.getModel()).indexOf(temp));
+			}
+		}for(int i = 0; i < Eizikiu_Server.getGlobalUserList().size(); i++ ) {
+			boolean exist = false;
+			User temp = Eizikiu_Server.getGlobalUserList().get(i);
+			for(int j = 0; j < this.userList.getModel().getSize(); j++) {
+				if(this.userList.getModel().getElementAt(i).getName() == Eizikiu_Server.getGlobalUserList().get(j).getName()) {
+					exist = true;
+				}
+			}if(!exist) {
+				((DefaultListModel<User>)this.userList.getModel()).addElement(temp);
+			}
+		}
 	}
 	/**
 	 * aktualisiert die RoomJList
 	 */
 	public void actualizeRoomJList() {
-		EZKlogger.debug();
-		this.actualizeRoomList();
-		this.roomList.repaint();
+		for(int i = 0; i < this.roomList.getModel().getSize(); i++ ) {
+			boolean exist = false;
+			Room temp = this.roomList.getModel().getElementAt(i);
+			for(int j = 0; j < Eizikiu_Server.getPublicRooms().size(); j++) {
+				if(this.roomList.getModel().getElementAt(i).getName() == Eizikiu_Server.getPublicRooms().get(j).getName()) {
+					exist = true;
+				}
+			}
+			if(!exist) {
+				((DefaultListModel<Room>)roomList.getModel()).removeElementAt(((DefaultListModel<Room>)roomList.getModel()).indexOf(temp));
+			}
+		}for(int i = 0; i < Eizikiu_Server.getGlobalUserList().size(); i++ ) {
+			boolean exist = false;
+			Room temp = Eizikiu_Server.getPublicRooms().get(i);
+			for(int j = 0; j < this.roomList.getModel().getSize(); j++) {
+				if(this.roomList.getModel().getElementAt(i).getName() == Eizikiu_Server.getGlobalUserList().get(j).getName()) {
+					exist = true;
+				}
+			}if(!exist) {
+				((DefaultListModel<Room>)this.roomList.getModel()).addElement(temp);
+			}
+		}
 	}
 }

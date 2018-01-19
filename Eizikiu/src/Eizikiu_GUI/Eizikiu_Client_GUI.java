@@ -20,10 +20,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 
 import Eizikiu_Client.Eizikiu_Client;
+import Eizikiu_Server.Eizikiu_Server;
 import Eizikiu_Tools.EZKlogger;
 import Eizikiu_Tools.Message;
 import Eizikiu_Tools.Room;
@@ -35,13 +37,14 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	private JFrame frmEizikiuClient;
 	Chat_Tab chatTab;
 	
+	DefaultListModel<User> uList;
 	DefaultListModel<Room> rList;
 	JList<User> userList; 
 	JList<Room> roomList;
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker;
 	private JTabbedPane listHolder, chatHolder;
 	private JButton sendButton, closeTab;
-	private JTextArea chatInput;
+	private JTextField chatInput;
 	// starten der GUI
 	public static void main(String[] args) {
 		EZKlogger.debug();
@@ -138,7 +141,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		closeTab.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent e){
 				try {
-					if (((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID()!=0) {
+					if (((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID()!=1) {
 						Eizikiu_Client.chatLeave(((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
 						chatHolder.removeTabAt(chatHolder.getSelectedIndex());
 					}
@@ -151,12 +154,22 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		});
 		
 		
-		chatInput = new JTextArea();
-		chatInput.setLineWrap(true);
+		chatInput = new JTextField();
 		chatInput.setBorder(new LineBorder(new Color(0, 0, 0)));
 		chatInput.setBounds(10, 340, 250, 50);
-		chatInput.setWrapStyleWord(true);
-		chatInput.addKeyListener(this);
+		chatInput.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String temp = chatInput.getText();
+				try {
+					Eizikiu_Client.sendMessage(temp, ((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				
+				chatInput.setText(null);
+				chatInput.repaint();
+			}
+		});
 		
 		chatHolder = new JTabbedPane();
 		chatHolder.setBounds(10,30,350,300);
@@ -215,7 +228,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void keyTyped(KeyEvent e) {
 		EZKlogger.debug();
 		 int key = e.getKeyCode();
-	     if (key == KeyEvent.VK_ENTER && chatInput.getText()!= null) {
+	     if (key == KeyEvent.VK_ENTER) {
 	    	 // hier muss das Absenden der Nachricht geschehen
 			
 	    	 chatInput.setText(null);
@@ -255,7 +268,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			int temp = ((Chat_Tab) chatHolder.getComponentAt(i)).getTabRoom().getID();
 			if(temp == m.getRoomID()){
 				EZKlogger.debug();
-				((Chat_Tab)chatHolder.getComponentAt(i)).getChatOutput().append("["+ m.getSenderName()+"]:" + m.getMessage());
+				((Chat_Tab)chatHolder.getComponentAt(i)).getChatOutput().append("["+ m.getSenderName()+"]: " + m.getMessage() + "\n");
 				
 				break;
 			}
@@ -266,10 +279,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	/**
 	 * aktualisiert die rootListe der userJList
 	 * @return
+	 * @deprecated
 	 */
 	public DefaultListModel<User> actualizeUserList() {
 		EZKlogger.debug();
-		DefaultListModel<User> uList = new DefaultListModel<User>();
+		uList = new DefaultListModel<User>();
 		try {
 			for(User u : Eizikiu_Client.getGlobalUserList()) {
 				uList.addElement(u);
@@ -282,10 +296,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	/**
 	 * aktualisiert die rootList der roomJList
 	 * @return
+	 * @deprecated
 	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
-		DefaultListModel<Room> rList = new DefaultListModel<Room>();
+		rList = new DefaultListModel<Room>();
 		try {
 			for(Room r : Eizikiu_Client.getPublicRooms()) {
 				rList.addElement(r);
@@ -300,17 +315,56 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 * aktualisiert die userJList
 	 */
 	public void actualizeUserJList() {
-		EZKlogger.debug();
-		this.actualizeUserList();
-		this.userList.repaint();
+		
+		for(int i = 0; i < this.userList.getModel().getSize(); i++ ) {
+			boolean exist = false;
+			User temp = this.userList.getModel().getElementAt(i);
+			for(int j = 0; j < Eizikiu_Client.getGlobalUserList().size(); j++) {
+				if(this.userList.getModel().getElementAt(i).getName() == Eizikiu_Client.getGlobalUserList().get(j).getName()) {
+					exist = true;
+				}
+			}
+			if(!exist) {
+				((DefaultListModel<User>)userList.getModel()).removeElementAt(((DefaultListModel<User>)userList.getModel()).indexOf(temp));
+			}
+		}for(int i = 0; i < Eizikiu_Client.getGlobalUserList().size(); i++ ) {
+			boolean exist = false;
+			User temp = Eizikiu_Client.getGlobalUserList().get(i);
+			for(int j = 0; j < this.userList.getModel().getSize(); j++) {
+				if(this.userList.getModel().getElementAt(i).getName() == Eizikiu_Client.getGlobalUserList().get(j).getName()) {
+					exist = true;
+				}
+			}if(!exist) {
+				((DefaultListModel<User>)this.userList.getModel()).addElement(temp);
+			}
+		}
 	}
 	/**
 	 * aktualisiert die roomJList
 	 */
 	public void actualizeRoomJList() {
-		EZKlogger.debug();
-		this.actualizeRoomList();
-		this.roomList.repaint();
+		for(int i = 0; i < this.roomList.getModel().getSize(); i++ ) {
+			boolean exist = false;
+			Room temp = this.roomList.getModel().getElementAt(i);
+			for(int j = 0; j < Eizikiu_Client.getPublicRooms().size(); j++) {
+				if(this.roomList.getModel().getElementAt(i).getName() == Eizikiu_Client.getPublicRooms().get(j).getName()) {
+					exist = true;
+				}
+			}
+			if(!exist) {
+				((DefaultListModel<Room>)roomList.getModel()).removeElementAt(((DefaultListModel<Room>)roomList.getModel()).indexOf(temp));
+			}
+		}for(int i = 0; i < Eizikiu_Client.getGlobalUserList().size(); i++ ) {
+			boolean exist = false;
+			Room temp = Eizikiu_Client.getPublicRooms().get(i);
+			for(int j = 0; j < this.roomList.getModel().getSize(); j++) {
+				if(this.roomList.getModel().getElementAt(i).getName() == Eizikiu_Client.getGlobalUserList().get(j).getName()) {
+					exist = true;
+				}
+			}if(!exist) {
+				((DefaultListModel<Room>)this.roomList.getModel()).addElement(temp);
+			}
+		}
 	}
 	
 	/**
