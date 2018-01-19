@@ -4,6 +4,8 @@ import Eizikiu_Server.*;
 import java.net.*;
 import java.util.*;
 
+import Eizikiu_GUI.Eizikiu_Server_GUI;
+
 public class ConnectionToClient implements Runnable {
 	
 	private LinkedList<ConnectionToClient> connectionList;
@@ -14,11 +16,12 @@ public class ConnectionToClient implements Runnable {
 	private InputStreamSet netInput;
 	private Socket socket;
 	private User user;
+	private Eizikiu_Server_GUI gui;
 	
 	// constructors
 	public ConnectionToClient(){EZKlogger.debug();}
 	
-	public ConnectionToClient(Socket socket) {
+	public ConnectionToClient(Socket socket, Eizikiu_Server_GUI gui) {
 		EZKlogger.debug();
 		this.connectionList = Eizikiu_Server.getConnectionList();
 		this.globalUserList = Eizikiu_Server.getGlobalUserList();
@@ -28,6 +31,7 @@ public class ConnectionToClient implements Runnable {
 		this.user = new User("name", "password");
 		this.netInput = new InputStreamSet(socket);
 		this.netOutput = new OutputStreamSet(socket);
+		this.gui = gui;
 	}
 	
 	// functions
@@ -179,6 +183,10 @@ public class ConnectionToClient implements Runnable {
 							if(privateRooms.remove(room)) {
 								EZKlogger.debug("the following room was removed from 'privateRooms'");
 								EZKlogger.debug(room.toString());
+							}
+							Integer i = room.getID();
+							if(Room.getIDList().remove(i)) {
+								EZKlogger.log("The ID " + i + " got removed from ID list.");
 							}
 						} else {
 							EZKlogger.debug("requested private chat to leave has already been closed");

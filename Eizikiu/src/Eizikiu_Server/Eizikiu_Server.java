@@ -77,19 +77,20 @@ public class Eizikiu_Server {
 			publicRooms.add(new Room("default"));
 			globalUserList.add(new User("admin", "admin"));
 		}
-		
+
+		// create gui
+		Eizikiu_Server_GUI gui = new Eizikiu_Server_GUI();
 		// create NetListener and start as thread (daemon)
 		NetListener netListener;
-		netListener = new NetListener();
+		netListener = new NetListener(gui);
 		Thread NLThread = new Thread(netListener);
 		NLThread.setDaemon(true);
 		EZKlogger.log("Eizikiu_Server.main() -> NetListener started...");
 		NLThread.start();
 		
 		// start GUI
-		Eizikiu_Server_GUI gui = new Eizikiu_Server_GUI();
 		EventQueue.invokeLater(gui);
-		
+		EZKlogger.setGui(gui);
 		/*
 		try {
 			latch.await();
@@ -228,9 +229,9 @@ public class Eizikiu_Server {
 		String roomList = "";
 		for(Room x : publicRooms) {
 			if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
-				roomList = roomList + x.getName() + "§" + x.getID();
+				roomList = roomList + x.getName() + "ï¿½" + x.getID();
 			} else {
-				roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
+				roomList = roomList + x.getName() + "ï¿½" + x.getID() + "ï¿½"; 								
 			}
 		}
 		return roomList;
@@ -247,7 +248,7 @@ public class Eizikiu_Server {
 			if(userList.indexOf(x) == userList.size()-1) { // last element
 				userString = userString + x.getName();
 			} else {
-				userString = userString + x.getName() + "§";
+				userString = userString + x.getName() + "ï¿½";
 			}
 		}
 		return userString;
@@ -267,7 +268,7 @@ public class Eizikiu_Server {
 			if(userList.indexOf(x) == userList.size()-1) { // last element
 				userString = userString + x.getName();
 			} else {
-				userString = userString + x.getName() + "§";
+				userString = userString + x.getName() + "ï¿½";
 			}
 		}
 		return userString;

@@ -4,6 +4,8 @@ import java.io.*;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import Eizikiu_GUI.Eizikiu_Server_GUI;
+
 public class EZKlogger {
 	
 	protected static int loglevel = 2;
@@ -15,6 +17,7 @@ public class EZKlogger {
 	protected static BufferedWriter bw = null;
 	protected static PrintWriter fileOut = null;
 	protected static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm:ss.SSS");
+	protected static Eizikiu_Server_GUI gui = null;
 	
 	// setter
 	public static void setLoglevel(int newLoglevel){
@@ -52,8 +55,11 @@ public class EZKlogger {
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-		fileOutput = newFileOutput;
-		
+		fileOutput = newFileOutput;	
+	}
+	
+	public static void setGui(Eizikiu_Server_GUI gui) {
+		EZKlogger.gui = gui;
 	}
 	
 	// logging methods
@@ -64,6 +70,7 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("INFO " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " INFO " + trace + " *** " + message); fileOut.flush();}
+			if(gui != null) {gui.writeLogger("INFO " + trace + " *** " + message);}
 		}
 	}
 	
@@ -74,6 +81,7 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("LOG " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " LOG " + trace + " *** " + message); fileOut.flush();}
+			if(gui != null) {gui.writeLogger("LOG " + trace + " *** " + message);}
 		}
 	}
 	
@@ -84,6 +92,7 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("DEBUG " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " DEBUG " + trace + " *** " + message); fileOut.flush();}
+			if(gui != null) {gui.writeLogger("DEBUG " + trace + " *** " + message);}
 		}
 	}
 	
@@ -94,6 +103,7 @@ public class EZKlogger {
 						   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("DEBUG " + trace);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " DEBUG: " + trace); fileOut.flush();}
+			if(gui != null) {gui.writeLogger("DEBUG " + trace);}
 		}
 	}
 	// stream handling
