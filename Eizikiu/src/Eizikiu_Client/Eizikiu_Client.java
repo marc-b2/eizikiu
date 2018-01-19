@@ -65,7 +65,7 @@ public class Eizikiu_Client {
 				if(messageType == 27) { // room list from server
 					publicRooms = new LinkedList<>();
 					String tempString = message.getMessage(); // message is "roomName1ï¿½roomID1ï¿½roomName2ï¿½roomID2ï¿½....ï¿½roomNameXï¿½roomIDX"
-					String[] parts = tempString.split("ï¿½");
+					String[] parts = tempString.split("§");
 					for(int i=0; i<parts.length; i+=2) {
 						publicRooms.add(new Room(parts[i], Integer.parseInt(parts[i+1])));
 					}
@@ -73,7 +73,7 @@ public class Eizikiu_Client {
 				if(messageType == 28) { // user list from server
 					globalUserList = new LinkedList<>(); // message is "userName1ï¿½userName2ï¿½...ï¿½userNameX"
 					String tempString = message.getMessage();
-					String[] parts = tempString.split("ï¿½");
+					String[] parts = tempString.split("§");
 					for(String x : parts) {
 						globalUserList.add(new User(x, "noPW"));
 					}

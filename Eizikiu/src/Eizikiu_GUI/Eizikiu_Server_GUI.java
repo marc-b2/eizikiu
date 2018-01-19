@@ -117,7 +117,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		
 		
 //AnzeigeMenu zum Einstellen der Logbuchmitschriebe
-		JMenu anzeigeMenu = new JMenu("Window");
+		JMenu anzeigeMenu = new JMenu("Logging");
 		menuBar.add(anzeigeMenu);
 		
 		infoChecker = new JCheckBoxMenuItem("Info");

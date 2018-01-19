@@ -137,6 +137,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		
 		JMenu roomMenu = new JMenu("Room");
 		roomMenu.add(startChat);
+		roomMenu.add(showRoomsMember);
+		menuBar.add(roomMenu);
 		
 		sendButton = new JButton("Send");
 		sendButton.setBounds(260, 340, 100, 50);
@@ -327,6 +329,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	/**
 	 * aktualisiert die userJList
 	 */
+	// lösche alle Elemente aus der Liste und füge alle danach wieder hinzu
 	public void actualizeUserJList() {
 		
 		for(int i = 0; i < this.userList.getModel().getSize(); i++ ) {

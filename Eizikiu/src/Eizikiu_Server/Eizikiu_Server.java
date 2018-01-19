@@ -234,9 +234,9 @@ public class Eizikiu_Server {
 		String roomList = "";
 		for(Room x : publicRooms) {
 			if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
-				roomList = roomList + x.getName() + "ï¿½" + x.getID();
+				roomList = roomList + x.getName() + "§" + x.getID();
 			} else {
-				roomList = roomList + x.getName() + "ï¿½" + x.getID() + "ï¿½"; 								
+				roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
 			}
 		}
 		return roomList;
@@ -253,7 +253,7 @@ public class Eizikiu_Server {
 			if(userList.indexOf(x) == userList.size()-1) { // last element
 				userString = userString + x.getName();
 			} else {
-				userString = userString + x.getName() + "ï¿½";
+				userString = userString + x.getName() + "§";
 			}
 		}
 		return userString;

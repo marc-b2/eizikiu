@@ -48,9 +48,9 @@ public class Show_UserList_GUI extends JDialog {
 		contentPanel.add(scrollPane);
 		
 		JTextArea listOutput = new JTextArea();
-		for(int i = 0; i < list.size(); i++)
-			listOutput.append(list.get(i).getName() + "\n");
-		
+		for(User x : list) {
+			listOutput.append(x.getName() + "\n");
+		}
 		scrollPane.setViewportView(listOutput);
 		{
 			JPanel buttonPane = new JPanel();
@@ -63,6 +63,6 @@ public class Show_UserList_GUI extends JDialog {
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
-		}
+		}this.setVisible(true);
 	}
 }
