@@ -207,11 +207,10 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			Eizikiu_Server.createRoom(newName);
 			this.actualizeRoomList();
 			
-		}else if(e.getActionCommand()=="EDITUSERLIST") {
-			
-			Eizikiu_Server_GUI.this.roomList.getSelectedValue().getUserList();
-			
-		}else if(e.getActionCommand()=="CLOSE") {
+		}else if(e.getActionCommand() == "SHOW"){
+			new Show_UserList_GUI(roomList.getSelectedValue().getUserList());
+		}
+		else if(e.getActionCommand()=="CLOSE") {
 			
 			System.exit(0);
 			

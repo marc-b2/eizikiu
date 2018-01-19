@@ -35,15 +35,15 @@ import Eizikiu_Tools.User;
 public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, ItemListener, Runnable{
 
 	private JFrame frmEizikiuClient;
-	Chat_Tab chatTab;
+	private Chat_Tab chatTab;
 	
-	DefaultListModel<User> uList;
-	DefaultListModel<Room> rList;
-	DefaultListModel<User> uList;
+	private DefaultListModel<User> uList;
+	private DefaultListModel<Room> rList;
 	
-	JList<User> userList; 
-	JList<Room> roomList;
-	JCheckBoxMenuItem infoChecker, logChecker, debugChecker;
+	
+	private JList<User> userList; 
+	private JList<Room> roomList;
+	private JCheckBoxMenuItem infoChecker;
 	private JTabbedPane listHolder, chatHolder;
 	private JButton sendButton, closeTab;
 	private JTextField chatInput;
@@ -130,8 +130,13 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		startChat.setActionCommand("PRIVATE");
 		userMenu.add(startChat);
 		
+		JMenuItem showRoomsMember= new JMenuItem("Show users in room");
+		showRoomsMember.addActionListener(this);
+		showRoomsMember.setActionCommand("SHOW");
+		
+		
 		JMenu roomMenu = new JMenu("Room");
-		menuBar.add(roomMenu);
+		roomMenu.add(startChat);
 		
 		sendButton = new JButton("Send");
 		sendButton.setBounds(260, 340, 100, 50);
@@ -223,6 +228,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 				e1.printStackTrace();
 			}
 			System.exit(0);
+		}else if(e.getActionCommand() == "SHOW"){
+			new Show_UserList_GUI(roomList.getSelectedValue().getUserList());
 		}
 	}
 	
@@ -302,11 +309,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
-<<<<<<< HEAD
+
 		rList = new DefaultListModel<Room>();
-=======
+
 		this.rList = new DefaultListModel<Room>();
->>>>>>> branch 'master' of https://github.com/marc-b2/eizikiu.git
+
 		try {
 			for(Room r : Eizikiu_Client.getPublicRooms()) {
 				rList.addElement(r);
