@@ -20,7 +20,7 @@ public class Eizikiu_Server {
 	public static void main(String[] args) {
 		
 		// switch on logging to file
-		EZKlogger.setLoglevel(2);
+		EZKlogger.setLoglevel(3);
 		EZKlogger.setLogfile("eizikiu_server.log");
 		EZKlogger.setFileOutput(true);
 		EZKlogger.debug();
@@ -156,7 +156,9 @@ public class Eizikiu_Server {
 	// functions
 	public static void createRoom(String roomName) {
 		EZKlogger.debug();
-		publicRooms.add(new Room(roomName));
+		if(publicRooms.add(new Room(roomName))) {
+			EZKlogger.log("The following room [" + roomName + "] was created:");
+		}
 		sendRoomListToAllClients();
 	}
 	
@@ -168,7 +170,22 @@ public class Eizikiu_Server {
 	
 	public static void deleteRoom(Room room) {
 		EZKlogger.debug();
-		if(room.getID() != 1) publicRooms.remove(room); // not allowed to delete default room
+		if(room.getID() != 1) { // not allowed to delete default room
+			if(publicRooms.remove(room)) {
+				EZKlogger.log("The following room got deleted:");
+				EZKlogger.log(room.toString());
+			}
+			int i = Room.getIDList().remove(room.getID());
+			EZKlogger.log("The ID " + i + " got removed from ID list.");
+			for(User x : room.getUserList()) {
+				try {
+					x.getConnection().getNetOutput().sendMessage(new Message("This room got deleted by server. You may leave it now!", "Server---------->", 1, room.getID()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				x.getRooms().remove(room);
+			}
+		}
 		sendRoomListToAllClients();
 	}
 	

@@ -20,19 +20,27 @@ public class Eizikiu_Client {
 	private static InputStreamSet netInput;
 	private static Socket socket;
 	private static User user = null;
+	private static String address = "localhost";
 	public final static CountDownLatch latch = new CountDownLatch(1);
 	
 	public static void main(String args[]) {
 		
-		EZKlogger.setLoglevel(2);
+		try {
+			address = args[0];
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		EZKlogger.setLoglevel(3);
 		EZKlogger.setLogfile("eizikiu_client.log");
 		EZKlogger.setFileOutput(true);
 		EZKlogger.debug();
 		
 		EZKlogger.log("************Eizikiu_Client.main() -> Eizikiu_Client started ************");
+		EZKlogger.log("server address set to '" + address + "'");
 		
 		try {
-			socket = new Socket("localhost", 1234);
+			socket = new Socket(address, 1234);
 			
 			EZKlogger.log("Eizikiu_Client.main() -> server found");
 			
@@ -77,7 +85,7 @@ public class Eizikiu_Client {
 			EventQueue.invokeLater(gui);
 			// start chat
 			chat(gui);
-		}catch(Exception e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	} 
@@ -209,8 +217,15 @@ public class Eizikiu_Client {
 				case 25:	// join room ACK -> new room
 					// Message('successful opened' from server, senderName, 25, roomID)
 					for(Room x : publicRooms) {
-						if(x.getID() == message.getRoomID()) user.getRooms().add(x);
-						break;
+						EZKlogger.debug("x.roomID = " + x.getID() + "; message.roomID = " + message.getRoomID());
+						if(x.getID() == message.getRoomID()) {
+							EZKlogger.debug("x.roomID == message.roomID");
+							if(user.getRooms().add(x)) {
+								EZKlogger.debug("the following room was added to users room list:");
+								EZKlogger.debug(x.toString());
+							}
+							break;
+						}
 					}
 					gui.newChat(message.getRoomID());
 					break;
@@ -298,6 +313,7 @@ public class Eizikiu_Client {
 				isPublic = true;
 			}
 		}
+		EZKlogger.debug("room is public: " + isPublic);
 		
 		Room room = null;
 		for(Room x : user.getRooms()) {
@@ -310,7 +326,10 @@ public class Eizikiu_Client {
 		if(room != null) {
 			// Message(room name, senderName, 14(private)/16(public), roomID)
 			netOutput.sendMessage(new Message(room.getName(), user.getName(), isPublic ? 16 : 14, roomID));
-			user.getRooms().remove(room);
+			if(user.getRooms().remove(room)) {
+				EZKlogger.debug("removed the following room from users room list:");
+				EZKlogger.debug(room.toString());
+			}
 		}
 	}
 	
