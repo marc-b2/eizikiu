@@ -218,6 +218,9 @@ public class Eizikiu_Server {
 		String list = makeUserListToString(room.getUserList());
 		int roomID = room.getID();
 		for(User x : room.getUserList()) {
+			System.out.println("raum: " + x);
+			System.out.println("connection: " + x.getConnection());
+			System.out.println("netoutput: " + x.getConnection().getNetOutput());
 			try {
 				x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 28, roomID));
 			} catch (Exception e) {

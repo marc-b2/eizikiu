@@ -449,9 +449,9 @@ public class ConnectionToClient implements Runnable {
 			// send positive ACK for successful login to client
 			netOutput.sendMessage(new Message("Login successful!", "server", 8, 0));
 			// log in after ACK because client is awaiting ACK before new user list of default room which is send during user.login()
-			user.logIn();
-			user.setConnection(this);
 			connectionList.add(this);
+			user.setConnection(this);
+			user.logIn();
 			// update gui user list
 			gui.actualizeUserJList();
 			EZKlogger.log(user.getName() + ".ConnectionToClient.run() -> password check -> user [" + user.getName() + "] logged in");
