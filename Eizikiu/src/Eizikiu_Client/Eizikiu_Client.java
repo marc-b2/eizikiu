@@ -292,7 +292,9 @@ public class Eizikiu_Client {
 	public static void privateChatRequest(String userName) throws Exception {
 		EZKlogger.debug();
 		// Message(name of requested chat partner, senderName, 13, 0)
-		netOutput.sendMessage(new Message(userName, user.getName(), 13, 0));
+		if(!userName.equals(user.getName())) {
+			netOutput.sendMessage(new Message(userName, user.getName(), 13, 0));			
+		}
 	}
 	
 	public static void publicChatRequest(int roomID) throws Exception{
@@ -318,9 +320,11 @@ public class Eizikiu_Client {
 		Room room = null;
 		for(Room x : user.getRooms()) {
 			EZKlogger.debug("for each rooms of user");
-			if(x.getID() == roomID) {
-				room = x;
-				EZKlogger.debug("if roomID == roomIDübergeben");
+			if(roomID != 1) {
+				if(x.getID() == roomID) {
+					room = x;
+					EZKlogger.debug("if roomID == roomIDübergeben");
+				}
 			}
 		}
 		if(room != null) {

@@ -119,6 +119,7 @@ public class ConnectionToClient implements Runnable {
 						for(User x : globalUserList) {
 							if(x.isStatus() && x.getName().equals(message.getMessage())) { // due to message type is 13 'message' holds name of second user
 								chatPartner = x;
+								EZKlogger.debug("requested chatpartner [" + chatPartner.getName() + "] is online");
 							}
 						}
 						if(chatPartner != null) {
@@ -127,18 +128,26 @@ public class ConnectionToClient implements Runnable {
 							for(Room x : privateRooms) {
 								if(x.hasUsers(user, chatPartner)) {
 									check = true;
+									EZKlogger.debug("private chat with users [" + user.getName() + "] and [" + chatPartner.getName() + "] already exists");
 								}
 							}
 							if(!check) { // all good -> create room, add users, add room to 'privateRooms', add room to users room list, send ACK to both clients
+								EZKlogger.debug("private chat with users [" + user.getName() + "] and [" + chatPartner.getName() + "] not existing yet");
 								Room newRoom = new Room(user.getName() + "PRIVATE" + chatPartner.getName());
-								newRoom.addUser(user);
-								newRoom.addUser(chatPartner);
-								privateRooms.add(newRoom);
-								user.getRooms().add(newRoom);
-								chatPartner.getRooms().add(newRoom);
+								EZKlogger.debug("new private room created: " + newRoom.toString());
+								if(newRoom.addUser(user) && newRoom.addUser(chatPartner)) {
+									EZKlogger.debug("users [" + user.getName() + "] and [" + chatPartner.getName() + "] added to new room");
+								}
+								if(privateRooms.add(newRoom)) {
+									EZKlogger.debug("new room added to 'privateRooms'");
+								}
+								if(user.getRooms().add(newRoom) && chatPartner.getRooms().add(newRoom)) {
+									EZKlogger.debug("new room added to room list of [" + user.getName() + "] and [" + chatPartner.getName() + "]");
+								}
 								netOutput.sendMessage(new Message(chatPartner.getName(), newRoom.getName(), 23, newRoom.getID()));
 								chatPartner.getConnection().netOutput.sendMessage(new Message(user.getName(), newRoom.getName(), 23, newRoom.getID()));
 								// due to message type is 23 'senderName' delivers room name
+								EZKlogger.log("new privat chat: " + newRoom.toString());
 							} else {
 								netOutput.sendMessage(new Message("You are already talking to [" + chatPartner.getName() + "]!", "Server---------->", 24, 0));
 							}
@@ -153,6 +162,7 @@ public class ConnectionToClient implements Runnable {
 						for(Room x : privateRooms) {
 							if(x.getID() == message.getRoomID() && message.getMessage().equals(x.getName())) { // due to message type is 14 'message' holds room name
 								room = x;
+								EZKlogger.debug("requested private room to leave is: " + room.toString());
 								break;
 							}
 						}
@@ -161,10 +171,18 @@ public class ConnectionToClient implements Runnable {
 								if(!x.equals(user)) {
 									x.getConnection().netOutput.sendMessage(new Message("[" + user.getName() + "] has left your private chat. You may close this Window now.", "Server---------->", 2, room.getID()));
 								}
-								x.getRooms().remove(room);
+								if(x.getRooms().remove(room)) {
+									EZKlogger.debug("the following room was removed from room list of [" + x.getName() + "]");
+									EZKlogger.debug(room.toString());
+								}
 							}
-							privateRooms.remove(room);
-						} // else not necessary. if room==null room is already closed by other chat partner
+							if(privateRooms.remove(room)) {
+								EZKlogger.debug("the following room was removed from 'privateRooms'");
+								EZKlogger.debug(room.toString());
+							}
+						} else {
+							EZKlogger.debug("requested private chat to leave has already been closed");
+						}
 						break;
 						
 					case 15: // join room request
@@ -298,8 +316,10 @@ public class ConnectionToClient implements Runnable {
 			connectionList.remove(this);
 
 			// "user offline" to other clients
-			for(ConnectionToClient x : connectionList) {
-				x.netOutput.sendMessage(new Message("[" + user.getName() + "] is offline", "Server---------->", 20, 0));
+			if(!user.getName().equals("name")) { // to avoid sending offline message if client is just aborting login
+				for(ConnectionToClient x : connectionList) {
+					x.netOutput.sendMessage(new Message("[" + user.getName() + "] is offline", "Server---------->", 20, 0));
+				}				
 			}
 						
 			netInput.closeStreams();

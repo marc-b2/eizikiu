@@ -90,12 +90,16 @@ public class Eizikiu_Server {
 		Eizikiu_Server_GUI gui = new Eizikiu_Server_GUI();
 		EventQueue.invokeLater(gui);
 		
-		
+		/*
 		try {
 			latch.await();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+		*/
+		
+		EZKlogger.info("Eizikiu_Server.main() -> Press Return to stop Server!");
+		keyboardIn.nextLine();
 		
 		// close connections
 		for(ConnectionToClient x : connectionList){
@@ -164,6 +168,7 @@ public class Eizikiu_Server {
 	
 	public static void editRoom(Room room, String newName) {
 		EZKlogger.debug();
+		EZKlogger.log("room [" + room.getName() + "] changed name to [" + newName +"]");
 		room.setName(newName);
 		sendRoomListToAllClients();
 	}
@@ -175,8 +180,10 @@ public class Eizikiu_Server {
 				EZKlogger.log("The following room got deleted:");
 				EZKlogger.log(room.toString());
 			}
-			int i = Room.getIDList().remove(room.getID());
-			EZKlogger.log("The ID " + i + " got removed from ID list.");
+			Integer i = room.getID();
+			if(Room.getIDList().remove(i)) {
+				EZKlogger.log("The ID " + i + " got removed from ID list.");
+			}
 			for(User x : room.getUserList()) {
 				try {
 					x.getConnection().getNetOutput().sendMessage(new Message("This room got deleted by server. You may leave it now!", "Server---------->", 1, room.getID()));
