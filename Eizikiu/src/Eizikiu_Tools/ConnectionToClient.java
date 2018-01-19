@@ -321,6 +321,9 @@ public class ConnectionToClient implements Runnable {
 			// set 'user.status' false; delete users room list; remove user from all rooms and send new user lists to all members
 			user.logOut();
 			
+			// update gui user list
+			gui.actualizeUserJList();
+			
 			connectionList.remove(this);
 
 			// "user offline" to other clients
@@ -449,6 +452,8 @@ public class ConnectionToClient implements Runnable {
 			user.logIn();
 			user.setConnection(this);
 			connectionList.add(this);
+			// update gui user list
+			gui.actualizeUserJList();
 			EZKlogger.log(user.getName() + ".ConnectionToClient.run() -> password check -> user [" + user.getName() + "] logged in");
 			return true;
 		} catch (Exception e) {

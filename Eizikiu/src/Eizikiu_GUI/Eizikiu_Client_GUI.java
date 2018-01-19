@@ -39,7 +39,6 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	
 	DefaultListModel<User> uList;
 	DefaultListModel<Room> rList;
-	DefaultListModel<User> uList;
 	
 	JList<User> userList; 
 	JList<Room> roomList;
@@ -79,7 +78,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.getContentPane().add(listHolder);
 
 		
-//Erstellen der Listen und den zugehörigen Scrollables		
+//Erstellen der Listen und den zugehï¿½rigen Scrollables		
 		JScrollPane scrollUserList = new JScrollPane();
 		listHolder.addTab("New tab", null, scrollUserList, null);
 		
@@ -302,18 +301,18 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
-<<<<<<< HEAD
+
 		rList = new DefaultListModel<Room>();
-=======
+
 		this.rList = new DefaultListModel<Room>();
->>>>>>> branch 'master' of https://github.com/marc-b2/eizikiu.git
+
 		try {
 			for(Room r : Eizikiu_Client.getPublicRooms()) {
 				rList.addElement(r);
 			}
 			return rList;
 		}catch(Exception e) {
-			this.writeString("Es sind keine Räume vorhanden" + "\n");
+			this.writeString("Es sind keine Rï¿½ume vorhanden" + "\n");
 			return rList;
 		}
 	}
@@ -374,7 +373,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	}
 	
 	/**
-	 * öffnet einen neuen Tab mit einer Unterhaltung zu einem public room
+	 * ï¿½ffnet einen neuen Tab mit einer Unterhaltung zu einem public room
 	 * @param roomID
 	 */
 	public void newChat(int roomID) {
@@ -383,7 +382,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.repaint();
 	}
 	/** 
-	 * öffnet einen neuen Tab mit einer Unterhaltung zu einem pivate room
+	 * ï¿½ffnet einen neuen Tab mit einer Unterhaltung zu einem pivate room
 	 * @param nameChatPartner
 	 * @param roomID
 	 */

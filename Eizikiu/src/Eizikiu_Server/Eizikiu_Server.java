@@ -14,6 +14,7 @@ public class Eizikiu_Server {
 	private static LinkedList<ConnectionToClient> connectionList;
 	private static LinkedList<Room> publicRooms;
 	private static LinkedList<Room> privateRooms;
+	private static Eizikiu_Server_GUI gui;
 	public final static CountDownLatch latch = new CountDownLatch(1);
 	
 	@SuppressWarnings("unchecked")
@@ -79,7 +80,7 @@ public class Eizikiu_Server {
 		}
 
 		// create gui
-		Eizikiu_Server_GUI gui = new Eizikiu_Server_GUI();
+		gui = new Eizikiu_Server_GUI();
 		// create NetListener and start as thread (daemon)
 		NetListener netListener;
 		netListener = new NetListener(gui);
@@ -165,6 +166,7 @@ public class Eizikiu_Server {
 			EZKlogger.log("The following room [" + roomName + "] was created:");
 		}
 		sendRoomListToAllClients();
+		gui.actualizeRoomJList();
 	}
 	
 	public static void editRoom(Room room, String newName) {
@@ -172,6 +174,7 @@ public class Eizikiu_Server {
 		EZKlogger.log("room [" + room.getName() + "] changed name to [" + newName +"]");
 		room.setName(newName);
 		sendRoomListToAllClients();
+		gui.actualizeRoomJList();
 	}
 	
 	public static void deleteRoom(Room room) {
@@ -195,6 +198,7 @@ public class Eizikiu_Server {
 			}
 		}
 		sendRoomListToAllClients();
+		gui.actualizeRoomJList();
 	}
 	
 	public static void sendRoomListToAllClients() {
@@ -212,9 +216,10 @@ public class Eizikiu_Server {
 	public static void sendUserListToAllMembersOf(Room room) {
 		EZKlogger.debug();
 		String list = makeUserListToString(room.getUserList());
+		int roomID = room.getID();
 		for(User x : room.getUserList()) {
 			try {
-				x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 28, room.getID()));
+				x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 28, roomID));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

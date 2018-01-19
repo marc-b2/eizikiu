@@ -31,7 +31,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 
 
-//@Marc: Um die Dialogfenster zu erstellen braucht man nur die Methode JOptionPane.showMessageDialog(Component c (das Fenster in dem sich die Nachricht öffnen soll),
+//@Marc: Um die Dialogfenster zu erstellen braucht man nur die Methode JOptionPane.showMessageDialog(Component c (das Fenster in dem sich die Nachricht ï¿½ffnen soll),
 //Object nachricht, String titel, int nachrichtentyp(ERROR_MESSAGE,INFORMATION_MESSAGE,WARNING_MESSAGE,QUESTION_MESSAGE,PLAIN_MESSAGE))
 public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnable{
 
@@ -155,7 +155,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		bann_User_MenuItem.setActionCommand("BANN");
 		
 		
-//RoomMenu mit der Möglichkeit die Rooms zu editieren
+//RoomMenu mit der Mï¿½glichkeit die Rooms zu editieren
 		JMenu roomMenu = new JMenu("Rooms");
 		menuBar.add(roomMenu);
 		
@@ -184,7 +184,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		roomMenu.add(edit_Room_MenuItem);
 		roomMenu.add(show_UserList_MenuItem);
 		roomMenu.add(delete_Rooms_MenuItem);
-// Label das als Überschrift für die Logausgabe gilt
+// Label das als ï¿½berschrift fï¿½r die Logausgabe gilt
 		JLabel lblLog = new JLabel("Log:");
 		lblLog.setBounds(12, 52, 56, 16);
 		
@@ -192,7 +192,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		
 	}
 	
-//Steuerungsblock für alle Buttons und MenuItems
+//Steuerungsblock fï¿½r alle Buttons und MenuItems
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		EZKlogger.debug();
@@ -242,7 +242,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		}
 	}
 	
-	// ItemState überprüfung die die jeweiligen Checker bedient (und die Logs mitschreibt oder eben nicht)
+	// ItemState ï¿½berprï¿½fung die die jeweiligen Checker bedient (und die Logs mitschreibt oder eben nicht)
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		EZKlogger.debug();
@@ -298,11 +298,10 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	
 		chatOutput.append(m.toString());
 	}
-	/** Ermöglicht das Schreiben eines Strings in die Ausgabe des Servers.
+	/** Ermï¿½glicht das Schreiben eines Strings in die Ausgabe des Servers.
 	 * 	 * @param str
 	 */
 	public void writeLogger(String message) {
-		EZKlogger.debug();
 		chatOutput.append(message);
 	}
 	/**
@@ -336,7 +335,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			}
 			return rList;
 		}catch(Exception e) {
-			this.writeLogger("Es sind keine Räume vorhanden" + "\n");
+			this.writeLogger("Es sind keine Rï¿½ume vorhanden" + "\n");
 			return rList;
 		}
 	}
