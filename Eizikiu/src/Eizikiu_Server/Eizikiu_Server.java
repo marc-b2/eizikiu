@@ -20,7 +20,7 @@ public class Eizikiu_Server {
 	public static void main(String[] args) {
 		
 		// switch on logging to file
-		EZKlogger.setLoglevel(2);
+		EZKlogger.setLoglevel(3);
 		EZKlogger.setLogfile("eizikiu_server.log");
 		EZKlogger.setFileOutput(true);
 		EZKlogger.debug();
@@ -77,25 +77,30 @@ public class Eizikiu_Server {
 			publicRooms.add(new Room("default"));
 			globalUserList.add(new User("admin", "admin"));
 		}
-		
+
+		// create gui
+		Eizikiu_Server_GUI gui = new Eizikiu_Server_GUI();
 		// create NetListener and start as thread (daemon)
 		NetListener netListener;
-		netListener = new NetListener();
+		netListener = new NetListener(gui);
 		Thread NLThread = new Thread(netListener);
 		NLThread.setDaemon(true);
 		EZKlogger.log("Eizikiu_Server.main() -> NetListener started...");
 		NLThread.start();
 		
 		// start GUI
-		Eizikiu_Server_GUI gui = new Eizikiu_Server_GUI();
 		EventQueue.invokeLater(gui);
-		
-		
+		EZKlogger.setGui(gui);
+		/*
 		try {
 			latch.await();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+		*/
+		
+		EZKlogger.info("Eizikiu_Server.main() -> Press Return to stop Server!");
+		keyboardIn.nextLine();
 		
 		// close connections
 		for(ConnectionToClient x : connectionList){
@@ -156,19 +161,39 @@ public class Eizikiu_Server {
 	// functions
 	public static void createRoom(String roomName) {
 		EZKlogger.debug();
-		publicRooms.add(new Room(roomName));
+		if(publicRooms.add(new Room(roomName))) {
+			EZKlogger.log("The following room [" + roomName + "] was created:");
+		}
 		sendRoomListToAllClients();
 	}
 	
 	public static void editRoom(Room room, String newName) {
 		EZKlogger.debug();
+		EZKlogger.log("room [" + room.getName() + "] changed name to [" + newName +"]");
 		room.setName(newName);
 		sendRoomListToAllClients();
 	}
 	
 	public static void deleteRoom(Room room) {
 		EZKlogger.debug();
-		if(room.getID() != 1) publicRooms.remove(room); // not allowed to delete default room
+		if(room.getID() != 1) { // not allowed to delete default room
+			if(publicRooms.remove(room)) {
+				EZKlogger.log("The following room got deleted:");
+				EZKlogger.log(room.toString());
+			}
+			Integer i = room.getID();
+			if(Room.getIDList().remove(i)) {
+				EZKlogger.log("The ID " + i + " got removed from ID list.");
+			}
+			for(User x : room.getUserList()) {
+				try {
+					x.getConnection().getNetOutput().sendMessage(new Message("This room got deleted by server. You may leave it now!", "Server---------->", 1, room.getID()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				x.getRooms().remove(room);
+			}
+		}
 		sendRoomListToAllClients();
 	}
 	
@@ -204,9 +229,9 @@ public class Eizikiu_Server {
 		String roomList = "";
 		for(Room x : publicRooms) {
 			if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
-				roomList = roomList + x.getName() + "§" + x.getID();
+				roomList = roomList + x.getName() + "ï¿½" + x.getID();
 			} else {
-				roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
+				roomList = roomList + x.getName() + "ï¿½" + x.getID() + "ï¿½"; 								
 			}
 		}
 		return roomList;
@@ -223,7 +248,7 @@ public class Eizikiu_Server {
 			if(userList.indexOf(x) == userList.size()-1) { // last element
 				userString = userString + x.getName();
 			} else {
-				userString = userString + x.getName() + "§";
+				userString = userString + x.getName() + "ï¿½";
 			}
 		}
 		return userString;
@@ -243,7 +268,7 @@ public class Eizikiu_Server {
 			if(userList.indexOf(x) == userList.size()-1) { // last element
 				userString = userString + x.getName();
 			} else {
-				userString = userString + x.getName() + "§";
+				userString = userString + x.getName() + "ï¿½";
 			}
 		}
 		return userString;

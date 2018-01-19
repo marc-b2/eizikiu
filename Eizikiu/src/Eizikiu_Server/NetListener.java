@@ -1,11 +1,18 @@
 package Eizikiu_Server;
 
 import java.net.*;
+
+import Eizikiu_GUI.Eizikiu_Server_GUI;
 import Eizikiu_Tools.*;
 
 public class NetListener implements Runnable {
 	
-	public NetListener() {EZKlogger.debug();}
+	Eizikiu_Server_GUI gui = null;
+	
+	public NetListener(Eizikiu_Server_GUI gui) {
+		this.gui = gui;
+		EZKlogger.debug();
+		}
 
 	@Override
 	public void run() {
@@ -20,7 +27,7 @@ public class NetListener implements Runnable {
 
 				Socket socket = listener.accept(); // wait for connection
 				
-				Thread x = new Thread(new ConnectionToClient(socket));
+				Thread x = new Thread(new ConnectionToClient(socket, gui));
 				x.start();
 				
 				listener.close();

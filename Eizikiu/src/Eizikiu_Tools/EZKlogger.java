@@ -4,21 +4,25 @@ import java.io.*;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import Eizikiu_GUI.Eizikiu_Server_GUI;
+
 public class EZKlogger {
 	
-	private static int loglevel = 2;
-	private static String logfile = "eizikiu.log";
+	protected static int loglevel = 2;
+	protected static String logfile = "eizikiu.log";
 	
-	private static boolean consoleOutput = true;
-	private static boolean fileOutput = false;
-	private static FileWriter fw = null;
-	private static BufferedWriter bw = null;
-	private static PrintWriter fileOut = null;
-	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm:ss.SSS");
+	protected static boolean consoleOutput = true;
+	protected static boolean fileOutput = false;
+	protected static FileWriter fw = null;
+	protected static BufferedWriter bw = null;
+	protected static PrintWriter fileOut = null;
+	protected static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm:ss.SSS");
+	protected static Eizikiu_Server_GUI gui = null;
 	
 	// setter
 	public static void setLoglevel(int newLoglevel){
 		loglevel = newLoglevel;
+		System.out.println("log level set to " + loglevel);
 	}
 	
 	public static void setLogfile(String newLogfile) {
@@ -31,6 +35,7 @@ public class EZKlogger {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("log file set to " + logfile);
 	}
 	
 	public static void setConsoleOutput(boolean newConsoleOutput) {
@@ -41,14 +46,20 @@ public class EZKlogger {
 		try {
 			if (!fileOutput && newFileOutput) {
 				initFileOutput();
+				System.out.println("logging to file enabled");
 			}
 			if (fileOutput && !newFileOutput){
 				closeFileOutput();
+				System.out.println("logging to file disabled");
 			}
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-		fileOutput = newFileOutput;
+		fileOutput = newFileOutput;	
+	}
+	
+	public static void setGui(Eizikiu_Server_GUI gui) {
+		EZKlogger.gui = gui;
 	}
 	
 	// logging methods
@@ -59,6 +70,7 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("INFO " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " INFO " + trace + " *** " + message); fileOut.flush();}
+			if(gui != null) {gui.writeLogger("INFO " + trace + " *** " + message);}
 		}
 	}
 	
@@ -69,6 +81,7 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("LOG " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " LOG " + trace + " *** " + message); fileOut.flush();}
+			if(gui != null) {gui.writeLogger("LOG " + trace + " *** " + message);}
 		}
 	}
 	
@@ -79,16 +92,18 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("DEBUG " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " DEBUG " + trace + " *** " + message); fileOut.flush();}
+			if(gui != null) {gui.writeLogger("DEBUG " + trace + " *** " + message);}
 		}
 	}
 	
 	public static void debug() {
-		if(loglevel >=2) {
+		if(loglevel >=3) {
 			String trace = new Throwable().getStackTrace()[1].getClassName() + "." +
 						   new Throwable().getStackTrace()[1].getMethodName() + "():" +
 						   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("DEBUG " + trace);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " DEBUG: " + trace); fileOut.flush();}
+			if(gui != null) {gui.writeLogger("DEBUG " + trace);}
 		}
 	}
 	// stream handling

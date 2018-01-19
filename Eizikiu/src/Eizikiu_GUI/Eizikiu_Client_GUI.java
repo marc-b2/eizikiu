@@ -39,6 +39,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	
 	DefaultListModel<User> uList;
 	DefaultListModel<Room> rList;
+	DefaultListModel<User> uList;
+	
 	JList<User> userList; 
 	JList<Room> roomList;
 	JCheckBoxMenuItem infoChecker, logChecker, debugChecker;
@@ -300,7 +302,11 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
+<<<<<<< HEAD
 		rList = new DefaultListModel<Room>();
+=======
+		this.rList = new DefaultListModel<Room>();
+>>>>>>> branch 'master' of https://github.com/marc-b2/eizikiu.git
 		try {
 			for(Room r : Eizikiu_Client.getPublicRooms()) {
 				rList.addElement(r);

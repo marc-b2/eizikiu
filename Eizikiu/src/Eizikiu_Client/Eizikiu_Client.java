@@ -20,19 +20,27 @@ public class Eizikiu_Client {
 	private static InputStreamSet netInput;
 	private static Socket socket;
 	private static User user = null;
+	private static String address = "localhost";
 	public final static CountDownLatch latch = new CountDownLatch(1);
 	
 	public static void main(String args[]) {
 		
-		EZKlogger.setLoglevel(2);
+		try {
+			address = args[0];
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		EZKlogger.setLoglevel(3);
 		EZKlogger.setLogfile("eizikiu_client.log");
 		EZKlogger.setFileOutput(true);
 		EZKlogger.debug();
 		
 		EZKlogger.log("************Eizikiu_Client.main() -> Eizikiu_Client started ************");
+		EZKlogger.log("server address set to '" + address + "'");
 		
 		try {
-			socket = new Socket("localhost", 1234);
+			socket = new Socket(address, 1234);
 			
 			EZKlogger.log("Eizikiu_Client.main() -> server found");
 			
@@ -56,16 +64,16 @@ public class Eizikiu_Client {
 				int messageType = message.getType();
 				if(messageType == 27) { // room list from server
 					publicRooms = new LinkedList<>();
-					String tempString = message.getMessage(); // message is "roomName1§roomID1§roomName2§roomID2§....§roomNameX§roomIDX"
-					String[] parts = tempString.split("§");
+					String tempString = message.getMessage(); // message is "roomName1ï¿½roomID1ï¿½roomName2ï¿½roomID2ï¿½....ï¿½roomNameXï¿½roomIDX"
+					String[] parts = tempString.split("ï¿½");
 					for(int i=0; i<parts.length; i+=2) {
 						publicRooms.add(new Room(parts[i], Integer.parseInt(parts[i+1])));
 					}
 				}
 				if(messageType == 28) { // user list from server
-					globalUserList = new LinkedList<>(); // message is "userName1§userName2§...§userNameX"
+					globalUserList = new LinkedList<>(); // message is "userName1ï¿½userName2ï¿½...ï¿½userNameX"
 					String tempString = message.getMessage();
-					String[] parts = tempString.split("§");
+					String[] parts = tempString.split("ï¿½");
 					for(String x : parts) {
 						globalUserList.add(new User(x, "noPW"));
 					}
@@ -75,9 +83,10 @@ public class Eizikiu_Client {
 			// start GUI
 			Eizikiu_Client_GUI gui = new Eizikiu_Client_GUI();
 			EventQueue.invokeLater(gui);
+			gui.getFrmEizikiuClient().setTitle("Eizikiu  " + user.getName());
 			// start chat
 			chat(gui);
-		}catch(Exception e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	} 
@@ -209,8 +218,15 @@ public class Eizikiu_Client {
 				case 25:	// join room ACK -> new room
 					// Message('successful opened' from server, senderName, 25, roomID)
 					for(Room x : publicRooms) {
-						if(x.getID() == message.getRoomID()) user.getRooms().add(x);
-						break;
+						EZKlogger.debug("x.roomID = " + x.getID() + "; message.roomID = " + message.getRoomID());
+						if(x.getID() == message.getRoomID()) {
+							EZKlogger.debug("x.roomID == message.roomID");
+							if(user.getRooms().add(x)) {
+								EZKlogger.debug("the following room was added to users room list:");
+								EZKlogger.debug(x.toString());
+							}
+							break;
+						}
 					}
 					gui.newChat(message.getRoomID());
 					break;
@@ -222,9 +238,10 @@ public class Eizikiu_Client {
 					break;
 					
 				case 27:	// receive room list
+					EZKlogger.debug("room list received");
 					tempRoomList = new LinkedList<>();
-					tempString = message.getMessage(); // message is "roomName1§roomID1§roomName2§roomID2§....§roomNameX§roomIDX"
-					parts = tempString.split("§");
+					tempString = message.getMessage(); // message is "roomName1ï¿½roomID1ï¿½roomName2ï¿½roomID2ï¿½....ï¿½roomNameXï¿½roomIDX"
+					parts = tempString.split("ï¿½");
 					for(int i=0; i<parts.length; i+=2) {
 						tempRoomList.add(new Room(parts[i], Integer.parseInt(parts[i+1])));
 					}
@@ -233,10 +250,11 @@ public class Eizikiu_Client {
 					break;
 					
 				case 28:	// receive user list
+					EZKlogger.debug("user list received");
 					room = null;
 					tempUserList = new LinkedList<>();
-					tempString = message.getMessage(); // message is "userName1§userName2§...§userNameX"
-					parts = tempString.split("§");
+					tempString = message.getMessage(); // message is "userName1ï¿½userName2ï¿½...ï¿½userNameX"
+					parts = tempString.split("ï¿½");
 					for(String x : parts) {
 						tempUserList.add(new User(x, "noPW"));
 					}
@@ -252,7 +270,7 @@ public class Eizikiu_Client {
 							room.setUserList(tempUserList);
 						}
 					}
-					// TODO: gui.actualizeUserJList(message.getRoomID());
+					if(message.getRoomID() == 0) gui.actualizeUserJList();
 					break;
 				
 				case 29:	// warning -> dialog box WARNING
@@ -275,7 +293,9 @@ public class Eizikiu_Client {
 	public static void privateChatRequest(String userName) throws Exception {
 		EZKlogger.debug();
 		// Message(name of requested chat partner, senderName, 13, 0)
-		netOutput.sendMessage(new Message(userName, user.getName(), 13, 0));
+		if(!userName.equals(user.getName())) {
+			netOutput.sendMessage(new Message(userName, user.getName(), 13, 0));			
+		}
 	}
 	
 	public static void publicChatRequest(int roomID) throws Exception{
@@ -296,15 +316,25 @@ public class Eizikiu_Client {
 				isPublic = true;
 			}
 		}
+		EZKlogger.debug("room is public: " + isPublic);
 		
 		Room room = null;
 		for(Room x : user.getRooms()) {
-			if(x.getID() == roomID) room = x;
+			EZKlogger.debug("for each rooms of user");
+			if(roomID != 1) {
+				if(x.getID() == roomID) {
+					room = x;
+					EZKlogger.debug("if roomID == roomIDï¿½bergeben");
+				}
+			}
 		}
 		if(room != null) {
 			// Message(room name, senderName, 14(private)/16(public), roomID)
 			netOutput.sendMessage(new Message(room.getName(), user.getName(), isPublic ? 16 : 14, roomID));
-			user.getRooms().remove(room);
+			if(user.getRooms().remove(room)) {
+				EZKlogger.debug("removed the following room from users room list:");
+				EZKlogger.debug(room.toString());
+			}
 		}
 	}
 	

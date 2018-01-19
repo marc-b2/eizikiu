@@ -75,7 +75,7 @@ public class Message implements Serializable{
 		EZKlogger.debug();
 		String output = "Error in Message.toString()";
 		if (type == 1) {output = date.toString() + " [" + senderName + "]: " + message;}
-		else {output = date.toString() + " TYPE = " + type + " [" + senderName + "]: " + message;}
+		else {output = date.toString() + " TYPE = " + type + " roomID = " + roomID + " [" + senderName + "]: " + message;}
 		return output;
 	}
 	
