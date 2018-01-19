@@ -77,22 +77,19 @@ public class Room implements Serializable{
 	// functions
 	public boolean addUser(User user) {
 		EZKlogger.debug();
-		return userList.add(user);
+		if(userList.add(user)) {
+			EZKlogger.debug("user [" + user.getName() + "] added to room " + this.toString());
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public boolean removeUser(User user) {
 		EZKlogger.debug();
-		return userList.remove(user);
-	}
-	
-	public boolean removeUser(String name) {
-		EZKlogger.debug();
-		User user = null;
-		for(User x : userList) {
-			if(x.getName().equals(name)) {user = x;}
-		}
-		if(!(user==null)) {
-			return userList.remove(user);
+		if(userList.remove(user)) {
+			EZKlogger.debug("user [" + user.getName() + "] removed from room " + this.toString());
+			return true;
 		} else {
 			return false;
 		}
