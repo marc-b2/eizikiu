@@ -212,7 +212,10 @@ public class Eizikiu_Server {
 			}
 		}
 	}
-	
+	/**
+	 * @deprecated
+	 * @param room
+	 */
 	public static void sendUserListToAllMembersOf(Room room) {
 		EZKlogger.debug(room.toString());
 		String list = makeUserListToString(room.getUserList());

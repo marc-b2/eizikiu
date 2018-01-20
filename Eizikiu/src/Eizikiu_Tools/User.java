@@ -96,33 +96,49 @@ public class User implements Serializable{
 		return "name: " + name + "  password: " + password + "  logged in: " + status + "  is banned: " + banned;
 	}
 	
-	public void addTo(LinkedList<User> userList){
+	/**
+	 * adds 'room' to users room list
+	 * @param room
+	 * @return true: if successful<br>false: otherwise
+	 */
+	public boolean addTo(Room room){
 		EZKlogger.debug();
-		if(userList.add(this)){
-			EZKlogger.log(name + ".addTo() -> new user [" + name + "] added");
-		}
-	}
-
-	public void removeFrom(LinkedList<User> userList){
-		EZKlogger.debug();
-		if(userList.remove(this)){
-			EZKlogger.log(name + ".removeFrom() -> user [" + name + "] deleted");
+		if(rooms.add(room)){
+			return true;
+		} else {
+			EZKlogger.debug(this.toString() + ": ERROR: room '" + room.toString() + "' already in list");
+			return false;
 		}
 	}
 	
+	/**
+	 * removes 'room' from users room list
+	 * @param room
+	 * @return true: if successful<br>false: otherwise
+	 */
+	public boolean removeFrom(Room room){
+		EZKlogger.debug();
+		if(rooms.remove(room)){
+			return true;
+		} else {
+			EZKlogger.debug(this.toString() + ": ERROR: room '" + room.toString() + "' not in list");
+			return false;
+		}
+	}
+	
+	/**
+	 * sets status = true and creates users room list
+	 */
 	public void logIn(){ // server only
 		EZKlogger.debug();
 		status = true;
 		rooms = new LinkedList<>();
-		for(Room x : Eizikiu_Server.getPublicRooms()) { // add user to default room and send new room list to all members
-			if(x.getID() == 1) {
-				if(x.addUser(this)) Eizikiu_Server.sendUserListToAllMembersOf(x);
-				break;
-			}
-		}
-		EZKlogger.log(name + ".logIn() -> [" + name + "] logged in");
 	}
 	
+	/**
+	 * sets status = false and users room list = null;
+	 * removes user from all rooms
+	 */
 	public void logOut(){ // server only
 		EZKlogger.debug();
 		status = false;

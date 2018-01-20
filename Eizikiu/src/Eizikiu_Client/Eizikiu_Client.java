@@ -52,7 +52,7 @@ public class Eizikiu_Client {
 			EZKlogger.log("Eizikiu_Client.main() -> connection to server established\n\n");
 			
 			// start login GUI
-			new LogInGUI();
+			new LogInGUI(); // calls Eizikiu_Client.login() or ...register() until one of them returns true
 			latch.await();
 			EZKlogger.debug("returned from LogIn/Registry GUI");
 			
