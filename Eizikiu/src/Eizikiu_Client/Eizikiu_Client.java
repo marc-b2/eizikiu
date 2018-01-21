@@ -336,6 +336,7 @@ public class Eizikiu_Client {
 							targetUserList = room.getUserList();
 						} else {
 							EZKlogger.debug("ERROR: no room with ID " + message.getRoomID() + " in public room list!");
+							break;
 						}
 					}
 					// copy users that not have changed to new list  
