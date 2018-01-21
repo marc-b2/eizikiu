@@ -33,7 +33,7 @@ import javax.swing.JLabel;
 
 //@Marc: Um die Dialogfenster zu erstellen braucht man nur die Methode JOptionPane.showMessageDialog(Component c (das Fenster in dem sich die Nachricht ï¿½ffnen soll),
 //Object nachricht, String titel, int nachrichtentyp(ERROR_MESSAGE,INFORMATION_MESSAGE,WARNING_MESSAGE,QUESTION_MESSAGE,PLAIN_MESSAGE))
-public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnable{
+public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 
 	private JFrame frmEizikiuServer;
 	private JTextArea chatOutput;
@@ -65,12 +65,19 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		frmEizikiuServer.setLayout(null);
 		frmEizikiuServer.getContentPane().setLayout(null);
 		
+		
+		
+		JScrollPane scrollOutput = new JScrollPane();
+		scrollOutput.setBounds(10, 70, 360, 370);
+		
+		
 		chatOutput = new JTextArea();
 		chatOutput.setBorder(new LineBorder(new Color(0, 0, 0)));
 		chatOutput.setEditable(false);
 		chatOutput.setBounds(10, 70, 360, 370);
-		frmEizikiuServer.getContentPane().add(chatOutput);
+		frmEizikiuServer.getContentPane().add(scrollOutput);
 		
+		scrollOutput.setViewportView(chatOutput);
 		JTabbedPane listHolder = new JTabbedPane(JTabbedPane.TOP);
 		listHolder.setBounds(380, 40, 190, 400);
 		
@@ -121,20 +128,57 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 		menuBar.add(anzeigeMenu);
 		
 		infoChecker = new JCheckBoxMenuItem("Info");
-		infoChecker.addItemListener(this);
+		infoChecker.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(infoChecker.getState()== true) {
+					EZKlogger.debug("loglevel 0");
+					EZKlogger.setLoglevel(0);
+					logChecker.setState(false);
+					debugChecker.setState(false);
+				}
+			}
+		});
 		anzeigeMenu.add(infoChecker);
 		
 		
 		logChecker = new JCheckBoxMenuItem("Log");
-		logChecker.addItemListener(this);
+		logChecker.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(logChecker.getState()== true) {
+					EZKlogger.debug("loglevel 1");
+					EZKlogger.setLoglevel(1);
+					infoChecker.setState(false);
+					debugChecker.setState(false);
+				}
+			}
+		});
 		anzeigeMenu.add(logChecker);
 		
 		debugChecker = new JCheckBoxMenuItem("Debug");
-		debugChecker.addItemListener(this);
+		debugChecker.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(debugChecker.getState()== true) {
+					EZKlogger.debug("loglevel 2");
+					EZKlogger.setLoglevel(2);
+					infoChecker.setState(false);
+					logChecker.setState(false);
+				}
+			}
+		});
 		anzeigeMenu.add(debugChecker);
 		
 		safeLogToChecker = new JCheckBoxMenuItem("Safe Log to File");
-		safeLogToChecker.addItemListener(this);
+		safeLogToChecker.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(safeLogToChecker.getState()== true) {
+					EZKlogger.debug("Fileoutput true");
+					EZKlogger.setFileOutput(true);
+				}else {
+					EZKlogger.debug("Fileoutput false");
+					EZKlogger.setFileOutput(false);
+				}
+			}
+		});
 		anzeigeMenu.add(safeLogToChecker);
 		
 		
@@ -240,40 +284,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			userList.getSelectedValue().setBanned(true);
 		}
 	}
-	
-	// ItemState ï¿½berprï¿½fung die die jeweiligen Checker bedient (und die Logs mitschreibt oder eben nicht)
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		EZKlogger.debug();
-		if(((JCheckBoxMenuItem) e.getItem()) == infoChecker) {
-			if(infoChecker.getState()== true) {
-				EZKlogger.setLoglevel(0);
-				logChecker.setState(false);
-				debugChecker.setState(false);
-			
-		}else if(((JCheckBoxMenuItem) e.getItem()) == logChecker){
-			if(logChecker.getState()== true) {
-				EZKlogger.setLoglevel(1);
-				infoChecker.setState(false);
-				debugChecker.setState(false);
-		
-			
-		}else if(((JCheckBoxMenuItem) e.getItem()) == debugChecker){
-			if(debugChecker.getState()== true) {
-				EZKlogger.setLoglevel(2);
-				infoChecker.setState(false);
-				logChecker.setState(false);
-			}
-		}	
-		}else if(((JCheckBoxMenuItem) e.getItem()) == safeLogToChecker){
-			if(safeLogToChecker.getState()== true) {
-				EZKlogger.setFileOutput(true);
-			}else {
-				EZKlogger.setFileOutput(false);
-			}
-		}
-		}	
-	}
+
 	@Override
 	public void run() {
 		EZKlogger.debug();
@@ -309,7 +320,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	 * @deprecated
 	 */
 	public DefaultListModel<User> actualizeUserList() {
-		EZKlogger.debug();
+		
 		this.uList = new DefaultListModel<User>();
 		try {
 			for(User u : Eizikiu_Server.getGlobalUserList()) {
@@ -323,7 +334,7 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 	/**
 	 * aktualisiert das DefaultListModel der RoomJList
 	 * @return
-	 * @deprecated
+	 * 
 	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
@@ -338,59 +349,28 @@ public class Eizikiu_Server_GUI implements ItemListener, ActionListener, Runnabl
 			return rList;
 		}
 	}
-	// Methoden die dann zum Aktualisieren der Room/User Listn verwendet werden
+	// Methoden die dann zum Aktualisieren der Room/User Listen verwendet werden
 	/**
 	 * aktualisiert die UserJList
 	 */
 	public void actualizeUserJList() {
-		for(int i = 0; i < this.userList.getModel().getSize(); i++ ) {
-			boolean exist = false;
-			User temp = this.userList.getModel().getElementAt(i);
-			for(int j = 0; j < Eizikiu_Server.getGlobalUserList().size(); j++) {
-				if(this.userList.getModel().getElementAt(i).getName() == Eizikiu_Server.getGlobalUserList().get(j).getName()) {
-					exist = true;
-				}
-			}
-			if(!exist) {
-				((DefaultListModel<User>)userList.getModel()).removeElementAt(((DefaultListModel<User>)userList.getModel()).indexOf(temp));
-			}
-		}for(int i = 0; i < Eizikiu_Server.getGlobalUserList().size(); i++ ) {
-			boolean exist = false;
-			User temp = Eizikiu_Server.getGlobalUserList().get(i);
-			for(int j = 0; j < this.userList.getModel().getSize(); j++) {
-				if(this.userList.getModel().getElementAt(i).getName() == Eizikiu_Server.getGlobalUserList().get(j).getName()) {
-					exist = true;
-				}
-			}if(!exist) {
-				((DefaultListModel<User>)this.userList.getModel()).addElement(temp);
-			}
+		EZKlogger.debug("Userlist aktualisieren");
+		((DefaultListModel<User>) userList.getModel()).removeAllElements();
+		for(User x : Eizikiu_Server.getGlobalUserList()) {
+			EZKlogger.debug("" + x + "hinzugefügt");
+			((DefaultListModel<User>) userList.getModel()).addElement(x);
 		}
+		roomList.repaint();
 	}
 	/**
 	 * aktualisiert die RoomJList
 	 */
 	public void actualizeRoomJList() {
-		for(int i = 0; i < this.roomList.getModel().getSize(); i++ ) {
-			boolean exist = false;
-			Room temp = this.roomList.getModel().getElementAt(i);
-			for(int j = 0; j < Eizikiu_Server.getPublicRooms().size(); j++) {
-				if(this.roomList.getModel().getElementAt(i).getName() == Eizikiu_Server.getPublicRooms().get(j).getName()) {
-					exist = true;
-				}
-			}
-			if(!exist) {
-				((DefaultListModel<Room>)roomList.getModel()).removeElementAt(((DefaultListModel<Room>)roomList.getModel()).indexOf(temp));
-			}
-		}for(int i = 0; i < Eizikiu_Server.getGlobalUserList().size(); i++ ) {
-			boolean exist = false;
-			Room temp = Eizikiu_Server.getPublicRooms().get(i);
-			for(int j = 0; j < this.roomList.getModel().getSize(); j++) {
-				if(this.roomList.getModel().getElementAt(i).getName() == Eizikiu_Server.getGlobalUserList().get(j).getName()) {
-					exist = true;
-				}
-			}if(!exist) {
-				((DefaultListModel<Room>)this.roomList.getModel()).addElement(temp);
-			}
+		EZKlogger.debug("Roomlist aktualisieren");
+		((DefaultListModel<Room>) roomList.getModel()).removeAllElements();
+		for(Room x : Eizikiu_Server.getPublicRooms()) {
+			((DefaultListModel<Room>) roomList.getModel()).addElement(x);
 		}
+		roomList.repaint();
 	}
 }

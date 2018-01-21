@@ -18,6 +18,8 @@ import javax.swing.ScrollPaneConstants;
 
 public class Show_UserList_GUI extends JDialog {
 
+	
+	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 
 	/**
@@ -38,13 +40,13 @@ public class Show_UserList_GUI extends JDialog {
 		
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(null);
-		contentPanel.setBounds(0, 0, 432, 1);
+		contentPanel.setBounds(0, 0, 430, 217);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel);
 		contentPanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 13, 420, -11);
+		scrollPane.setBounds(0, 0, 420, 217);
 		contentPanel.add(scrollPane);
 		
 		JTextArea listOutput = new JTextArea();

@@ -276,7 +276,7 @@ public class Eizikiu_Server {
 			if(userList.indexOf(x) == userList.size()-1) { // last element
 				userString = userString + x.getName();
 			} else {
-				userString = userString + x.getName() + "ï¿½";
+				userString = userString + x.getName() + "§";
 			}
 		}
 		return userString;

@@ -1,6 +1,7 @@
 package Eizikiu_GUI;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -79,7 +81,9 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.getContentPane().add(listHolder);
 
 		
-//Erstellen der Listen und den zugehï¿½rigen Scrollables		
+//Erstellen der Listen und den zugehï¿½rigen Scrollables
+		
+		
 		JScrollPane scrollUserList = new JScrollPane();
 		listHolder.addTab("New tab", null, scrollUserList, null);
 		
@@ -120,6 +124,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		menuBar.add(anzeigeMenu);
 		
 		infoChecker = new JCheckBoxMenuItem("Activated");
+		infoChecker.addItemListener(this);
 		anzeigeMenu.add(infoChecker);
 		
 		JMenu userMenu = new JMenu("User");
@@ -136,7 +141,6 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		
 		
 		JMenu roomMenu = new JMenu("Room");
-		roomMenu.add(startChat);
 		roomMenu.add(showRoomsMember);
 		menuBar.add(roomMenu);
 		
@@ -231,7 +235,9 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			}
 			System.exit(0);
 		}else if(e.getActionCommand() == "SHOW"){
-			new Show_UserList_GUI(roomList.getSelectedValue().getUserList());
+			if(roomList.getSelectedValue().getUserList() != null && roomList.getSelectedValue().getID() != 1)	{
+				new Show_UserList_GUI(roomList.getSelectedValue().getUserList());
+			}
 		}
 	}
 	
@@ -290,7 +296,6 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	/**
 	 * aktualisiert die rootListe der userJList
 	 * @return
-	 * @deprecated
 	 */
 	public DefaultListModel<User> actualizeUserList() {
 		EZKlogger.debug();
@@ -307,7 +312,6 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	/**
 	 * aktualisiert die rootList der roomJList
 	 * @return
-	 * @deprecated
 	 */
 	public DefaultListModel<Room> actualizeRoomList(){
 		EZKlogger.debug();
@@ -322,7 +326,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			}
 			return rList;
 		}catch(Exception e) {
-			this.writeString("Es sind keine Rï¿½ume vorhanden" + "\n");
+			this.writeString("Es sind keine Raeume vorhanden" + "\n");
 			return rList;
 		}
 	}
@@ -331,60 +335,25 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 */
 	// lösche alle Elemente aus der Liste und füge alle danach wieder hinzu
 	public void actualizeUserJList() {
-		
-		for(int i = 0; i < this.userList.getModel().getSize(); i++ ) {
-			boolean exist = false;
-			User temp = this.userList.getModel().getElementAt(i);
-			for(int j = 0; j < Eizikiu_Client.getGlobalUserList().size(); j++) {
-				if(this.userList.getModel().getElementAt(i).getName() == Eizikiu_Client.getGlobalUserList().get(j).getName()) {
-					exist = true;
-				}
-			}
-			if(!exist) {
-				((DefaultListModel<User>)userList.getModel()).removeElementAt(((DefaultListModel<User>)userList.getModel()).indexOf(temp));
-			}
-		}for(int i = 0; i < Eizikiu_Client.getGlobalUserList().size(); i++ ) {
-			boolean exist = false;
-			User temp = Eizikiu_Client.getGlobalUserList().get(i);
-			for(int j = 0; j < this.userList.getModel().getSize(); j++) {
-				if(this.userList.getModel().getElementAt(i).getName() == Eizikiu_Client.getGlobalUserList().get(j).getName()) {
-					exist = true;
-				}
-			}if(!exist) {
-				((DefaultListModel<User>)this.userList.getModel()).addElement(temp);
-			}
+		((DefaultListModel<User>) userList.getModel()).removeAllElements();
+		for(User x : Eizikiu_Client.getGlobalUserList()) {
+			((DefaultListModel<User>) userList.getModel()).addElement(x);
 		}
 	}
 	/**
 	 * aktualisiert die roomJList
 	 */
 	public void actualizeRoomJList() {
-		for(int i = 0; i < this.roomList.getModel().getSize(); i++ ) {
-			boolean exist = false;
-			Room temp = this.roomList.getModel().getElementAt(i);
-			for(int j = 0; j < Eizikiu_Client.getPublicRooms().size(); j++) {
-				if(this.roomList.getModel().getElementAt(i).getName() == Eizikiu_Client.getPublicRooms().get(j).getName()) {
-					exist = true;
-				}
-			}
-			if(!exist) {
-				((DefaultListModel<Room>)roomList.getModel()).removeElementAt(((DefaultListModel<Room>)roomList.getModel()).indexOf(temp));
-			}
-		}for(int i = 0; i < Eizikiu_Client.getGlobalUserList().size(); i++ ) {
-			boolean exist = false;
-			Room temp = Eizikiu_Client.getPublicRooms().get(i);
-			for(int j = 0; j < this.roomList.getModel().getSize(); j++) {
-				if(this.roomList.getModel().getElementAt(i).getName() == Eizikiu_Client.getGlobalUserList().get(j).getName()) {
-					exist = true;
-				}
-			}if(!exist) {
-				((DefaultListModel<Room>)this.roomList.getModel()).addElement(temp);
-			}
+		
+		((DefaultListModel<Room>) roomList.getModel()).removeAllElements();
+		for(Room x : Eizikiu_Client.getPublicRooms()) {
+			
+			((DefaultListModel<Room>) roomList.getModel()).addElement(x);
 		}
 	}
 	
 	/**
-	 * ï¿½ffnet einen neuen Tab mit einer Unterhaltung zu einem public room
+	 * Öffnet einen neuen Tab mit einer Unterhaltung zu einem public room
 	 * @param roomID
 	 */
 	public void newChat(int roomID) {
@@ -393,11 +362,12 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.repaint();
 	}
 	/** 
-	 * ï¿½ffnet einen neuen Tab mit einer Unterhaltung zu einem pivate room
+	 * Öffnet einen neuen Tab mit einer Unterhaltung zu einem pivate room
 	 * @param nameChatPartner
 	 * @param roomID
 	 */
 	public void newChat(String nameChatPartner, int roomID) {
+		EZKlogger.debug("new Chat gestartet");
 		this.chatHolder.addTab("Private: " + nameChatPartner, new Chat_Tab((Room)roomList.getSelectedValue()));
 		frmEizikiuClient.repaint();
 	}

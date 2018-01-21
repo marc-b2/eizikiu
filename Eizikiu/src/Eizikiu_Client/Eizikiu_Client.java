@@ -241,7 +241,7 @@ public class Eizikiu_Client {
 					EZKlogger.debug("room list received");
 					tempRoomList = new LinkedList<>();
 					tempString = message.getMessage(); // message is "roomName1ï¿½roomID1ï¿½roomName2ï¿½roomID2ï¿½....ï¿½roomNameXï¿½roomIDX"
-					parts = tempString.split("ï¿½");
+					parts = tempString.split("§");
 					for(int i=0; i<parts.length; i+=2) {
 						tempRoomList.add(new Room(parts[i], Integer.parseInt(parts[i+1])));
 					}
@@ -254,7 +254,7 @@ public class Eizikiu_Client {
 					room = null;
 					tempUserList = new LinkedList<>();
 					tempString = message.getMessage(); // message is "userName1ï¿½userName2ï¿½...ï¿½userNameX"
-					parts = tempString.split("ï¿½");
+					parts = tempString.split("§");
 					for(String x : parts) {
 						tempUserList.add(new User(x, "noPW"));
 					}
