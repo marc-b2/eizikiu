@@ -96,61 +96,71 @@ public class User implements Serializable{
 		return "name: " + name + "  password: " + password + "  logged in: " + status + "  is banned: " + banned;
 	}
 	
-	public void addTo(LinkedList<User> userList){
+	/**
+	 * adds 'room' to users room list
+	 * @param room
+	 * @return true: if successful<br>false: otherwise
+	 */
+	public boolean addTo(Room room){
 		EZKlogger.debug();
-		if(userList.add(this)){
-			EZKlogger.log(name + ".addTo() -> new user [" + name + "] added");
-		}
-	}
-
-	public void removeFrom(LinkedList<User> userList){
-		EZKlogger.debug();
-		if(userList.remove(this)){
-			EZKlogger.log(name + ".removeFrom() -> user [" + name + "] deleted");
+		if(rooms.add(room)){
+			return true;
+		} else {
+			EZKlogger.debug(this.toString() + ": ERROR: could not add " + room.toString() + " to room list");
+			return false;
 		}
 	}
 	
+	/**
+	 * removes 'room' from users room list
+	 * @param room
+	 * @return true: if successful<br>false: otherwise
+	 */
+	public boolean removeFrom(Room room){
+		EZKlogger.debug();
+		if(rooms.remove(room)){
+			return true;
+		} else {
+			EZKlogger.debug(this.toString() + ": ERROR: could not remove " + room.toString() + " from room list");
+			return false;
+		}
+	}
+	
+	/**
+	 * sets status = true and creates users room list
+	 */
 	public void logIn(){ // server only
 		EZKlogger.debug();
 		status = true;
 		rooms = new LinkedList<>();
-		for(Room x : Eizikiu_Server.getPublicRooms()) { // add user to default room and send new room list to all members
-			if(x.getID() == 1) {
-				if(x.addUser(this)) Eizikiu_Server.sendUserListToAllMembersOf(x);
-				break;
-			}
-		}
-		EZKlogger.log(name + ".logIn() -> [" + name + "] logged in");
 	}
 	
+	/**
+	 * sets status = false and users room list = null;
+	 * removes user from all rooms
+	 */
 	public void logOut(){ // server only
 		EZKlogger.debug();
 		status = false;
 		rooms = null;
-		// remove user from all rooms; send 'user left' message and new user list to all members
-		for(Room x : Eizikiu_Server.getPublicRooms()) {
-			if(x.getUserList().contains(this)) {
-				if(x.getUserList().remove(this)) {
-					for(User y : x.getUserList()) {
-						try {
-							y.getConnection().getNetOutput().sendMessage(new Message("[" + name + "] left this room", "Server---------->", 1, x.getID()));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					Eizikiu_Server.sendUserListToAllMembersOf(x);
-				}
-			}
-		}
-		
+	}
+	
+	/**
+	 * 
+	 */
+	public void closeAllPrivateChats() {
 		Room room = null;
 		do	{
 			room = null;
-			for(Room x : Eizikiu_Server.getPrivateRooms()) {
-				if(x.getUserList().contains(this)) {
-					room = x;
-					break;
+			if(!Eizikiu_Server.getPrivateRooms().isEmpty()) {
+				for(Room x : Eizikiu_Server.getPrivateRooms()) {
+					if(x.getUserList().contains(this)) {
+						room = x;
+						break;
+					}
 				}
+			} else {
+				EZKlogger.debug(name + ": ERROR: The list of private chats is empty!");
 			}
 			
 			if(room != null) {
@@ -159,15 +169,24 @@ public class User implements Serializable{
 						try {
 							x.getConnection().getNetOutput().sendMessage(new Message("[" + name + "] has left your private chat. You may close this Window now.", "Server---------->", 2, room.getID()));
 						} catch (Exception e) {
+							EZKlogger.debug(name + ": ERROR: could not send message to user [" + x.name + "] of private chat '" + room.getName() + "'");
 							e.printStackTrace();
 						}
-						x.getRooms().remove(room);
 					}
+					x.getRooms().remove(room);
 				}
-				Eizikiu_Server.getPrivateRooms().remove(room);
+				if(Eizikiu_Server.getPrivateRooms().remove(room)) {
+					EZKlogger.log("The room " + room.toString() + "got deleted.");
+				} else {
+					EZKlogger.debug(": ERROR: the room " + room.toString() + " could not be removed from public room list!");
+				}
+				Integer i = room.getID();
+				if(Room.getIDList().remove(i)) {
+					EZKlogger.log("The ID " + i + " got removed from ID list.");
+				} else {
+					EZKlogger.debug(": ERROR: the ID of room " + room.toString() + " was not in the ID list!");
+				}
 			}
 		} while(room != null);
-		
-		EZKlogger.log(name + ".logOut() -> [" + name + "] logged out");
 	}
 }

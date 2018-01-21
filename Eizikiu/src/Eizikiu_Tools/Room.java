@@ -3,6 +3,8 @@ package Eizikiu_Tools;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import Eizikiu_Server.Eizikiu_Server;
+
 public class Room implements Serializable{
 
 	private static final long serialVersionUID = 636461425992742159L;
@@ -75,23 +77,76 @@ public class Room implements Serializable{
 	}
 	
 	// functions
-	public boolean addUser(User user) {
+	/**
+	 * adds 'user' to public rooms user list and sends "user joined" to other members 
+	 * @param user
+	 * @return true: if 'user' added successfully<br>false: if room is private or 'user' already member
+	 */
+	public boolean addToPublicRoom(User user) {
 		EZKlogger.debug();
+		if(Eizikiu_Server.getPrivateRooms().contains(this)) {
+			EZKlogger.debug(this.toString() + ": ERROR: this is a private room!");
+			return false;
+		}
 		if(userList.add(user)) {
-			EZKlogger.debug("user [" + user.getName() + "] added to room " + this.toString());
+			for(User x: userList) {
+				if(!x.equals(user)) {
+					try {
+						x.getConnection().getNetOutput().sendMessage(new Message("[" + user.getName() + "] joined this room", "Server---------->", 1, ID));
+					} catch (Exception e) {
+						EZKlogger.debug(this.toString() + ": ERROR: cannot send 'user joined' to user [" + x.getName() +"]");
+						e.printStackTrace();
+					}
+				}
+			}
 			return true;
 		} else {
+			EZKlogger.debug(this.toString() + ": ERROR: user already in user list");
 			return false;
 		}
 	}
 	
-	public boolean removeUser(User user) {
+	/**
+	 * removes 'user' from public rooms user list and sends "user left" to other members 
+	 * @param user
+	 * @return true: if 'user' removed successfully<br>false: if room is private or 'user' not member
+	 */
+	public boolean removeFromPublicRoom(User user) {
 		EZKlogger.debug();
+		if(Eizikiu_Server.getPrivateRooms().contains(this)) {
+			EZKlogger.debug(this.toString() + ": ERROR: this is a private room!");
+			return false;
+		}
 		if(userList.remove(user)) {
-			EZKlogger.debug("user [" + user.getName() + "] removed from room " + this.toString());
+			for(User x: userList) {
+				try {
+					x.getConnection().getNetOutput().sendMessage(new Message("[" + user.getName() + "] left this room", "Server---------->", 1, ID));
+				} catch (Exception e) {
+					EZKlogger.debug(this.toString() + ": ERROR: could not send 'user left' to user [" + x.getName() +"]");
+					e.printStackTrace();
+				}
+			}
 			return true;
 		} else {
-			return false;
+			EZKlogger.debug(this.toString() + ": ERROR: could not remove user [" + user.getName() + "] from user list of '" + name + "'!");
+			return false;			
+		}
+	}
+	
+	public void sendUserListToMembers() {
+		EZKlogger.debug();
+		String list = Eizikiu_Server.makeUserListToString(userList);
+		if(!userList.isEmpty()) {
+			for(User x : userList) {
+				try {
+					x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 28, ID));
+				} catch (Exception e) {
+					EZKlogger.debug(": ERROR: could not send userlist of room '" + name + "' to user [" + x.getName() + "]!");
+					e.printStackTrace();
+				}
+			}
+		} else {
+			EZKlogger.debug(": ERROR: user list of room " + this.toString() + " is empty!");
 		}
 	}
 	
@@ -113,7 +168,7 @@ public class Room implements Serializable{
 	@Override
 	public String toString() {
 		EZKlogger.debug();
-		return "ID: " + ID + " name: " + name;
+		return "[" + ID + "]:" + name;
 	}
 }
 
