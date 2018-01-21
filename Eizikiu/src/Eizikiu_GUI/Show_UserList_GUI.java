@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import Eizikiu_Tools.Room;
 import Eizikiu_Tools.User;
 
 import javax.swing.JScrollPane;
@@ -36,8 +37,9 @@ public class Show_UserList_GUI extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public Show_UserList_GUI(LinkedList<User> list) {
+	public Show_UserList_GUI(Room room) {
 		
+		this.setTitle("User of " + room.getName() );
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 430, 217);
@@ -50,7 +52,7 @@ public class Show_UserList_GUI extends JDialog {
 		contentPanel.add(scrollPane);
 		
 		JTextArea listOutput = new JTextArea();
-		for(User x : list) {
+		for(User x : room.getUserList()) {
 			listOutput.append(x.getName() + "\n");
 		}
 		scrollPane.setViewportView(listOutput);

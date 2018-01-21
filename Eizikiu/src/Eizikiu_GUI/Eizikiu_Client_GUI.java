@@ -236,7 +236,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			System.exit(0);
 		}else if(e.getActionCommand() == "SHOW"){
 			if(roomList.getSelectedValue().getUserList() != null && roomList.getSelectedValue().getID() != 1)	{
-				new Show_UserList_GUI(roomList.getSelectedValue().getUserList());
+				new Show_UserList_GUI(roomList.getSelectedValue());
 			}
 		}
 	}
@@ -356,7 +356,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 * Öffnet einen neuen Tab mit einer Unterhaltung zu einem public room
 	 * @param roomID
 	 */
-	public void newChat(int roomID) {
+	public void newChat(Room room) {
 		EZKlogger.debug();
 		this.chatHolder.addTab(((Room)roomList.getSelectedValue()).getName(), new Chat_Tab((Room)roomList.getSelectedValue()));
 		frmEizikiuClient.repaint();
@@ -366,7 +366,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 * @param nameChatPartner
 	 * @param roomID
 	 */
-	public void newChat(String nameChatPartner, int roomID) {
+	public void newChat(String nameChatPartner, Room room) {
 		EZKlogger.debug("new Chat gestartet");
 		this.chatHolder.addTab("Private: " + nameChatPartner, new Chat_Tab((Room)roomList.getSelectedValue()));
 		frmEizikiuClient.repaint();

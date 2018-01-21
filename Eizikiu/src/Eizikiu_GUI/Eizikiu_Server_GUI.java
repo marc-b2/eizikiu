@@ -37,7 +37,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 
 	private JFrame frmEizikiuServer;
 	private JTextArea chatOutput;
-	private JCheckBoxMenuItem infoChecker, logChecker, debugChecker, safeLogToChecker;
+	private JCheckBoxMenuItem infoChecker, logChecker, debugChecker, debuglevel, safeLogToChecker;
 	private JList<Room> roomList;
 	private JList<User> userList;
 	private DefaultListModel<Room> rList;
@@ -135,6 +135,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 					EZKlogger.setLoglevel(0);
 					logChecker.setState(false);
 					debugChecker.setState(false);
+					debuglevel.setState(false);
 				}
 			}
 		});
@@ -149,6 +150,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 					EZKlogger.setLoglevel(1);
 					infoChecker.setState(false);
 					debugChecker.setState(false);
+					debuglevel.setState(false);
 				}
 			}
 		});
@@ -162,10 +164,25 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 					EZKlogger.setLoglevel(2);
 					infoChecker.setState(false);
 					logChecker.setState(false);
+					debuglevel.setState(false);
 				}
 			}
 		});
 		anzeigeMenu.add(debugChecker);
+		
+		debuglevel = new JCheckBoxMenuItem("Debug-Level 2");
+		debuglevel.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(debuglevel.getState()== true) {
+					EZKlogger.debug("loglevel 3");
+					EZKlogger.setLoglevel(3);
+					debugChecker.setState(false);
+					infoChecker.setState(false);
+					logChecker.setState(false);
+				}
+			}
+		});
+		anzeigeMenu.add(debuglevel);
 		
 		safeLogToChecker = new JCheckBoxMenuItem("Safe Log to File");
 		safeLogToChecker.addItemListener(new ItemListener() {
@@ -252,7 +269,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 			this.actualizeRoomList();
 			
 		}else if(e.getActionCommand() == "SHOW"){
-			new Show_UserList_GUI(roomList.getSelectedValue().getUserList());
+			new Show_UserList_GUI(roomList.getSelectedValue());
 		}
 		else if(e.getActionCommand()=="CLOSE") {
 			
@@ -317,7 +334,6 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 	/**
 	 * aktualisiert das DefaultListModel der UserJList
 	 * @return
-	 * @deprecated
 	 */
 	public DefaultListModel<User> actualizeUserList() {
 		
