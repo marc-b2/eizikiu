@@ -5,6 +5,7 @@ import Eizikiu_Tools.*;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+
 import java.io.*;
 import java.awt.EventQueue;
 
@@ -21,7 +22,7 @@ public class Eizikiu_Server {
 	public static void main(String[] args) {
 		
 		// switch on logging to file
-		EZKlogger.setLoglevel(3);
+		EZKlogger.setLoglevel(2);
 		EZKlogger.setLogfile("eizikiu_server.log");
 		EZKlogger.setFileOutput(true);
 		EZKlogger.debug();
@@ -81,12 +82,13 @@ public class Eizikiu_Server {
 
 		// create gui
 		gui = new Eizikiu_Server_GUI();
+		
 		// create NetListener and start as thread (daemon)
 		NetListener netListener;
 		netListener = new NetListener(gui);
 		Thread NLThread = new Thread(netListener);
 		NLThread.setDaemon(true);
-		EZKlogger.log("Eizikiu_Server.main() -> NetListener started...");
+		EZKlogger.log("NetListener started");
 		NLThread.start();
 		
 		// start GUI
@@ -100,18 +102,13 @@ public class Eizikiu_Server {
 		}
 		*/
 		
-		EZKlogger.info("Eizikiu_Server.main() -> Press Return to stop Server!");
+		EZKlogger.info("Press Return to stop Server!");
 		keyboardIn.nextLine();
 		
 		// close connections
-		for(ConnectionToClient x : connectionList){
-			try {
-				x.shutdown();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		closeAllConnections();
 		
+		EZKlogger.info("server shutting down...");
 		// save 'globalUserList' and 'publicRooms' to file
 		try {
 			// users
@@ -162,43 +159,80 @@ public class Eizikiu_Server {
 	// functions
 	public static void createRoom(String roomName) {
 		EZKlogger.debug();
-		if(publicRooms.add(new Room(roomName))) {
-			EZKlogger.log("The following room [" + roomName + "] was created:");
+		boolean checker = false;
+		for(Room x : publicRooms) {
+			if(x.getName().equals(roomName)) {
+				checker = true;
+				break;
+			}
 		}
-		sendRoomListToAllClients();
-		gui.actualizeRoomJList();
+		if(!checker) {
+			Room room = new Room(roomName);
+			if(publicRooms.add(room)) {
+				EZKlogger.log("The room [" + room.toString() + "] was created:");
+				sendRoomListToAllClients();
+				gui.actualizeRoomJList();
+			} else {
+				EZKlogger.debug(": ERROR: could not add room '" + room.toString() + "' to public room list!");
+				Integer i = room.getID();
+				if(Room.getIDList().remove(i)) {
+					EZKlogger.log("The ID " + i + " got removed from ID list.");
+				} else {
+					EZKlogger.debug(": ERROR: the ID of room " + room.toString() + " was not in the ID list!");
+				}
+			}
+		} else {
+			EZKlogger.debug(": ERROR: room with name '" + roomName + "' already exists!");
+		}
 	}
 	
 	public static void editRoom(Room room, String newName) {
 		EZKlogger.debug();
-		EZKlogger.log("room [" + room.getName() + "] changed name to [" + newName +"]");
-		room.setName(newName);
-		sendRoomListToAllClients();
-		gui.actualizeRoomJList();
+		boolean checker = false;
+		for(Room x : publicRooms) {
+			if(x.getName().equals(newName)) {
+				checker = true;
+				break;
+			}
+		}
+		if(!checker) {
+			EZKlogger.log("room [" + room.getName() + "] changed name to [" + newName +"]");
+			room.setName(newName);
+			sendRoomListToAllClients();
+			gui.actualizeRoomJList();
+		} else {
+			EZKlogger.debug(": ERROR: room with name '" + newName + "' already exists!");
+		}
 	}
 	
 	public static void deleteRoom(Room room) {
 		EZKlogger.debug();
 		if(room.getID() != 1) { // not allowed to delete default room
 			if(publicRooms.remove(room)) {
-				EZKlogger.log("The following room got deleted:");
-				EZKlogger.log(room.toString());
+				EZKlogger.log("The room " + room.toString() + "got deleted.");
+			} else {
+				EZKlogger.debug(": ERROR: the room " + room.toString() + " could not be removed from public room list!");
 			}
 			Integer i = room.getID();
 			if(Room.getIDList().remove(i)) {
 				EZKlogger.log("The ID " + i + " got removed from ID list.");
+			} else {
+				EZKlogger.debug(": ERROR: the ID of room " + room.toString() + " was not in the ID list!");
 			}
 			for(User x : room.getUserList()) {
 				try {
 					x.getConnection().getNetOutput().sendMessage(new Message("This room got deleted by server. You may leave it now!", "Server---------->", 1, room.getID()));
 				} catch (Exception e) {
+					EZKlogger.debug(": ERROR: could not send new room deleted message to user [" + x.getName() + "]");
 					e.printStackTrace();
 				}
-				x.getRooms().remove(room);
+				if(!x.getRooms().remove(room)) {
+					EZKlogger.debug(": ERRROR: could not remove room " + room.toString() + " from [" + x.getName() + "]s room list!");
+				}
 			}
+			sendRoomListToAllClients();
+			gui.actualizeRoomJList();
 		}
-		sendRoomListToAllClients();
-		gui.actualizeRoomJList();
 	}
 	
 	public static void sendRoomListToAllClients() {
@@ -208,39 +242,32 @@ public class Eizikiu_Server {
 			try {
 				x.getNetOutput().sendMessage(new Message(list, "Server", 27, 0));
 			} catch (Exception e) {
+				EZKlogger.debug(": ERROR: could not send public room list to user [" + x.getUser().getName() + "]!");
 				e.printStackTrace();
 			}
 		}
 	}
-	/**
-	 * @deprecated
-	 * @param room
-	 */
-	public static void sendUserListToAllMembersOf(Room room) {
-		EZKlogger.debug(room.toString());
-		String list = makeUserListToString(room.getUserList());
-		int roomID = room.getID();
-		for(User x : room.getUserList()) {
-			try {
-				x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 28, roomID));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-		
+	
 	/**
 	 * @return String of 'publicRooms' to send to clients (for message type 27)
 	 */
 	public static String publicRoomsToString(){
 		EZKlogger.debug();
 		String roomList = "";
-		for(Room x : publicRooms) {
-			if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
-				roomList = roomList + x.getName() + "§" + x.getID();
+		if(publicRooms != null) {
+			if(!publicRooms.isEmpty()) {
+				for(Room x : publicRooms) {
+					if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
+						roomList = roomList + x.getName() + "§" + x.getID();
+					} else {
+						roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
+					}
+				}
 			} else {
-				roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
+				EZKlogger.debug(": ERROR: the room pulbic room list is empty!");
 			}
+		} else {
+			EZKlogger.debug(": ERROR: the room pulbic room list is null!");
 		}
 		return roomList;
 	}
@@ -252,12 +279,20 @@ public class Eizikiu_Server {
 	public static String makeUserListToString(LinkedList<User> userList) {
 		EZKlogger.debug();
 		String userString = "";
-		for(User x : userList) {
-			if(userList.indexOf(x) == userList.size()-1) { // last element
-				userString = userString + x.getName();
+		if(userList != null) {
+			if(!userList.isEmpty()) {
+				for(User x : userList) {
+					if(userList.indexOf(x) == userList.size()-1) { // last element
+						userString = userString + x.getName();
+					} else {
+						userString = userString + x.getName() + "§";
+					}
+				}
 			} else {
-				userString = userString + x.getName() + "§";
+				EZKlogger.debug(": ERROR: the passed user list is empty!");
 			}
+		} else {
+			EZKlogger.debug(": ERROR: the passed user list is null!");
 		}
 		return userString;
 	}
@@ -290,7 +325,19 @@ public class Eizikiu_Server {
 		try {
 			user.getConnection().getNetOutput().sendMessage(new Message(message, "Server", 29, 0));
 		} catch (Exception e) {
+			EZKlogger.debug(": ERROR: could not send warn message to user [" + user.getName() + "]");
 			e.printStackTrace();
+		}
+	}
+	
+	public static void closeAllConnections () {
+		for(ConnectionToClient x : connectionList){
+			try {
+				x.shutdown();
+			} catch (Exception e) {
+				EZKlogger.debug(": ERROR: could not send exit message to user [" + x.getUser().getName() + "]");
+				e.printStackTrace();
+			}
 		}
 	}
 }

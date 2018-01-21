@@ -122,19 +122,32 @@ public class Room implements Serializable{
 				try {
 					x.getConnection().getNetOutput().sendMessage(new Message("[" + user.getName() + "] left this room", "Server---------->", 1, ID));
 				} catch (Exception e) {
-					EZKlogger.debug(this.toString() + ": ERROR: cannot send 'user left' to user [" + x.getName() +"]");
+					EZKlogger.debug(this.toString() + ": ERROR: could not send 'user left' to user [" + x.getName() +"]");
 					e.printStackTrace();
 				}
 			}
 			return true;
 		} else {
-			EZKlogger.debug(this.toString() + ": ERROR: user [" + user.getName() + "] not in list");
+			EZKlogger.debug(this.toString() + ": ERROR: could not remove user [" + user.getName() + "] from user list of '" + name + "'!");
 			return false;			
 		}
 	}
 	
 	public void sendUserListToMembers() {
-		
+		EZKlogger.debug();
+		String list = Eizikiu_Server.makeUserListToString(userList);
+		if(!userList.isEmpty()) {
+			for(User x : userList) {
+				try {
+					x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 28, ID));
+				} catch (Exception e) {
+					EZKlogger.debug(": ERROR: could not send userlist of room '" + name + "' to user [" + x.getName() + "]!");
+					e.printStackTrace();
+				}
+			}
+		} else {
+			EZKlogger.debug(": ERROR: user list of room " + this.toString() + " is empty!");
+		}
 	}
 	
 	public boolean hasUsers(User user1, User user2) { // for private chats only; tells if a room with the two handed over users already exists
@@ -155,7 +168,7 @@ public class Room implements Serializable{
 	@Override
 	public String toString() {
 		EZKlogger.debug();
-		return "ID: " + ID + " name: " + name;
+		return "[" + ID + "]:" + name;
 	}
 }
 

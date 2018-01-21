@@ -42,22 +42,22 @@ public class Eizikiu_Client {
 		try {
 			socket = new Socket(address, 1234);
 			
-			EZKlogger.log("Eizikiu_Client.main() -> server found");
+			EZKlogger.log("server found");
 			
 			netInput = new InputStreamSet(socket);
 			netOutput = new OutputStreamSet(socket);
 			netInput.setupStreams();
 			netOutput.setupStreams();
 			
-			EZKlogger.log("Eizikiu_Client.main() -> connection to server established\n\n");
+			EZKlogger.log("connection to server established\n\n");
 			
 			// start login GUI
+			EZKlogger.debug("starting login GUI...");
 			new LogInGUI(); // calls Eizikiu_Client.login() or ...register() until one of them returns true
 			latch.await();
-			EZKlogger.debug("returned from LogIn/Registry GUI");
+			EZKlogger.debug("returned from login GUI");
 			
 			// get globalUserList and pubicRooms
-			
 			do { // because user is already logged in and can receive messages from default room
 				EZKlogger.debug("do-while-loop get user and room list");
 				Message message = netInput.receiveMessage();
@@ -69,6 +69,7 @@ public class Eizikiu_Client {
 					for(int i=0; i<parts.length; i+=2) {
 						publicRooms.add(new Room(parts[i], Integer.parseInt(parts[i+1])));
 					}
+					EZKlogger.debug("public room list received");
 				}
 				if(messageType == 28) { // user list from server
 					globalUserList = new LinkedList<>(); // message is "userName1§userName2§...§userNameX"
@@ -77,16 +78,24 @@ public class Eizikiu_Client {
 					for(String x : parts) {
 						globalUserList.add(new User(x, "noPW"));
 					}
+					EZKlogger.debug("global user list received");
 				}
 			} while(publicRooms == null || globalUserList == null);
 			
+			EZKlogger.log("received rooms:");
+			for(Room x : publicRooms) EZKlogger.log(x.toString());
+			EZKlogger.log("\n received users:");
+			for(User x : globalUserList) EZKlogger.log(x.getName());
+			
 			// start GUI
+			EZKlogger.debug("starting GUI...");
 			Eizikiu_Client_GUI gui = new Eizikiu_Client_GUI();
 			EventQueue.invokeLater(gui);
 			gui.getFrmEizikiuClient().setTitle("Eizikiu  " + user.getName());
 			// start chat
 			chat(gui);
 		} catch(Exception e) {
+			EZKlogger.debug("ERROR: connection interrupted!");
 			e.printStackTrace();
 		}
 	} 
@@ -103,6 +112,7 @@ public class Eizikiu_Client {
 	}
 	
 	public static User getUser() {
+		EZKlogger.debug();
 		return user;
 	}
 	
@@ -124,24 +134,28 @@ public class Eizikiu_Client {
 			// create user
 			user = new User(name,pw);
 			
+			EZKlogger.debug("sending login request...");
 			// send login request
 			netOutput.sendMessage(new Message("login request", name, 11, 0));
 			// send user credentials
 			netOutput.sendMessage(new Message(pw, name, 12, 0));
 			
+			EZKlogger.debug("waiting for answer from server...");
 			// wait for answer
 			Message message;
 			message = netInput.receiveMessage();
 			
 			// react on answer
 			if(message.getType() == 8) {
-				// TODO: receive user list of default room here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				EZKlogger.debug("login successful");
 				latch.countDown();
 				return true;				
 			} else if(message.getType() == 9) {
+				EZKlogger.debug("REJECTED: " + message.getMessage());
 				JOptionPane.showMessageDialog(gui.getBox(), message.getMessage(), "Error:", 0);
 				return false;
 			} else {
+				EZKlogger.debug("ERROR: expected type 8 or 9, received message of type: " + message.getType());
 				JOptionPane.showMessageDialog(gui.getBox(), "Sorry, unknown error!", "Error:", 0);
 				return false;
 			}
@@ -157,27 +171,33 @@ public class Eizikiu_Client {
 			// create user
 			user = new User(name,pw);
 			
+			EZKlogger.debug("sending register request...");
 			// send register request
 			netOutput.sendMessage(new Message("register request", name, 10, 0));
 			// send user credentials
 			netOutput.sendMessage(new Message(pw, name, 12, 0));
 			
+			EZKlogger.debug("waiting for answer from server...");
 			// wait for answer
 			Message message;
 			message = netInput.receiveMessage();
 			
 			// react on answer
 			if(message.getType() == 8) {
+				EZKlogger.debug("registering successful");
 				latch.countDown();
 				return true;				
 			} else if(message.getType() == 9) {
+				EZKlogger.debug("REJECTED: " + message.getMessage());
 				JOptionPane.showMessageDialog(gui.getFrame(), message.getMessage(), "ERROR", 0);
 				return false;
 			} else {
+				EZKlogger.debug("ERROR: expected type 8 or 9, received message of type: " + message.getType());
 				JOptionPane.showMessageDialog(gui.getFrame(), "Sorry, unknown error!", "Error:", 0);
 				return false;
 			}
 		} catch (Exception e) {
+			EZKlogger.debug("ERROR: connection to server interrupted");
 			e.printStackTrace();
 			return false;
 		}
@@ -191,6 +211,7 @@ public class Eizikiu_Client {
 			Room room;
 			LinkedList<Room> tempRoomList;
 			LinkedList<User> tempUserList;
+			LinkedList<User> targetUserList;
 			boolean exit = false;
 			while(!exit){
 				Message message = netInput.receiveMessage();
@@ -198,43 +219,61 @@ public class Eizikiu_Client {
 				
 				switch(messageType) {
 				case 0:		// exit
+					EZKlogger.debug("exit message received");
 					exit = true;
 					break;
 				
 				case 1:		// regular public message
 				case 2:		// regular private message
+					EZKlogger.debug(messageType == 1 ? "regular public message received" : "regular private message received");
 					gui.writeMessage(message);
 					break;
 				
 				case 20:	// service message -> dialog box INFO
+					EZKlogger.debug("service message received");
+					EZKlogger.log("service message from server: " + message.getMessage());
 					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), message.getMessage(), "Message from Server", 1);
 					break;
 				
 				case 23:	// private chat ACK -> new private chat
-					// Message(name of chat partner, room name, 23, roomID)
-					user.getRooms().add(new Room(message.getSenderName(), message.getRoomID()));
-					gui.newChat(message.getMessage(), message.getRoomID());
+							// Message(name of chat partner, room name, 23, roomID)
+					EZKlogger.debug("private chat ACK received");
+					room = new Room(message.getSenderName(), message.getRoomID());
+					if(user.getRooms().add(room)) {
+						EZKlogger.debug("room " + room.toString() + " was added to users room list");
+						gui.newChat(room);
+						EZKlogger.log("user joined private chat " + room);
+					} else {
+						EZKlogger.debug("ERROR: could not add " + room.toString() + " to users room list");
+					}
 					break;
 					
-				case 25:	// join room ACK -> new room
-					// Message('successful opened' from server, senderName, 25, roomID)
+				case 25:	// join room ACK -> get room from public room list
+							// Message('successful opened' from server, senderName, 25, roomID)
+					EZKlogger.debug("join room ACK received");
+					room = null;
 					for(Room x : publicRooms) {
-						EZKlogger.debug("x.roomID = " + x.getID() + "; message.roomID = " + message.getRoomID());
+//						EZKlogger.debug("x.roomID = " + x.getID() + "; message.roomID = " + message.getRoomID());
 						if(x.getID() == message.getRoomID()) {
-							EZKlogger.debug("x.roomID == message.roomID");
-							if(user.getRooms().add(x)) {
-								EZKlogger.debug("the following room was added to users room list:");
-								EZKlogger.debug(x.toString());
+							room = x;
+							if(user.getRooms().add(room)) {
+								EZKlogger.debug("the room " + room + " was added to users room list:");
+								gui.newChat(room);
+								EZKlogger.log("user joined room " + room);
 							}
 							break;
 						}
 					}
-					gui.newChat(message.getRoomID());
+					if(room == null) {
+						EZKlogger.debug("ERROR: room is not in public rooms list!");
+					}
 					break;
 				
 				case 9:		// general NAK
 				case 24:	// private chat NAK 
 				case 26:	// join room NAK 	-> dialog box ERROR
+					EZKlogger.debug("NAK received");
+					EZKlogger.log("error message from server: " + message.getMessage());
 					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), message.getMessage(), "ERROR", 0);
 					break;
 					
@@ -242,10 +281,31 @@ public class Eizikiu_Client {
 					EZKlogger.debug("room list received");
 					
 					tempRoomList = new LinkedList<>();
-					tempString = message.getMessage(); // message is "roomName1ï¿½roomID1ï¿½roomName2ï¿½roomID2ï¿½....ï¿½roomNameXï¿½roomIDX"
+					tempString = message.getMessage(); // message is "roomName1§roomID1§roomName2§roomID2§....§roomNameX§roomIDX"
 					parts = tempString.split("§");
 					for(int i=0; i<parts.length; i+=2) {
-						tempRoomList.add(new Room(parts[i], Integer.parseInt(parts[i+1])));
+						String name = parts[i];
+						int ID = Integer.parseInt(parts[i+1]);
+						tempRoomList.add(new Room(name, ID));
+					}
+					
+					for(Room x : tempRoomList) {
+						boolean oldListHasID = false;
+						for(Room y : publicRooms) {
+							if(y.getID() == x.getID()) {
+								oldListHasID = true;
+								if(y.getName().equals(x.getName())) { // room did not change
+									x = y;
+								} else { // room name changed
+									EZKlogger.debug(y.toString() + " changed name to " + x.toString());
+									y.setName(x.getName());
+									x = y;
+								}
+							}
+						}
+						if(!oldListHasID) { // new room
+							EZKlogger.debug("new room " + x.toString() + " added to list");
+						}
 					}
 					publicRooms = tempRoomList;
 					gui.actualizeRoomJList();
@@ -255,13 +315,16 @@ public class Eizikiu_Client {
 					EZKlogger.debug("user list received");
 					room = null;
 					tempUserList = new LinkedList<>();
-					tempString = message.getMessage(); // message is "userName1ï¿½userName2ï¿½...ï¿½userNameX"
+					tempString = message.getMessage(); // message is "userName1§userName2§...§userNameX"
 					parts = tempString.split("§");
+					// make new user list
 					for(String x : parts) {
 						tempUserList.add(new User(x, "noPW"));
 					}
+					// get target room and user list
 					if(message.getRoomID() == 0) {
-						globalUserList = tempUserList;
+						targetUserList = globalUserList;
+						EZKlogger.debug("target is global user list");
 					} else {
 						for(Room x : publicRooms) {
 							if(x.getID() == message.getRoomID()) {
@@ -269,21 +332,46 @@ public class Eizikiu_Client {
 							}
 						}
 						if(room != null) {
-							room.setUserList(tempUserList);
+							EZKlogger.debug("target room is " + room.toString());
+							targetUserList = room.getUserList();
+						} else {
+							EZKlogger.debug("ERROR: no room with ID " + message.getRoomID() + " in public room list!");
 						}
 					}
-					if(message.getRoomID() == 0) gui.actualizeUserJList();
+					// copy users that not have changed to new list  
+					for(User x : tempUserList) {
+						boolean oldListHasUser = false;
+						for(User y : targetUserList) {
+							if(y.getName().equals(x.getName())) {
+								oldListHasUser = true;
+								x = y;
+							}
+						}
+						if(!oldListHasUser) { // new room
+							EZKlogger.debug("new user " + x.toString() + " added to list");
+						}
+					}
+					// set new list
+					if(message.getRoomID() == 0) {
+						globalUserList = tempUserList;
+						gui.actualizeUserJList();
+					} else {
+						room.setUserList(tempUserList);
+					}
 					break;
 				
 				case 29:	// warning -> dialog box WARNING
+					EZKlogger.debug("warning message received");
+					EZKlogger.log("warning from server: " + message.getMessage());
 					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), message.getMessage(), "WARNING", 2);
 					break;
 				
 				default: // error
-					EZKlogger.log("chat -> received message of unexpected type: " + messageType);
+					EZKlogger.debug("received message of unexpected type: " + messageType);
 				} // switch
 			} // while
 			
+			EZKlogger.log("shutting down...");
 			netInput.closeStreams();
 			netOutput.closeStreams();
 			socket.close();
@@ -318,15 +406,15 @@ public class Eizikiu_Client {
 				isPublic = true;
 			}
 		}
-		EZKlogger.debug("room is public: " + isPublic);
+		EZKlogger.debug(isPublic ? "room is public" : "room is private");
 		
 		Room room = null;
 		for(Room x : user.getRooms()) {
-			EZKlogger.debug("for each rooms of user");
+//			EZKlogger.debug("for each rooms of user");
 			if(roomID != 1) {
 				if(x.getID() == roomID) {
 					room = x;
-					EZKlogger.debug("if roomID == roomIDuebergeben");
+					EZKlogger.debug("leaving room " + room.toString());
 				}
 			}
 		}
@@ -334,9 +422,12 @@ public class Eizikiu_Client {
 			// Message(room name, senderName, 14(private)/16(public), roomID)
 			netOutput.sendMessage(new Message(room.getName(), user.getName(), isPublic ? 16 : 14, roomID));
 			if(user.getRooms().remove(room)) {
-				EZKlogger.debug("removed the following room from users room list:");
-				EZKlogger.debug(room.toString());
+				EZKlogger.debug("removed the room " + room.toString() + " from users room list");
+			} else {
+				EZKlogger.debug("ERROR: could not remove " + room.toString() + " from users room list!");
 			}
+		} else {
+			EZKlogger.debug("ERROR: room with id " + roomID + " is not in users room list!");
 		}
 	}
 	

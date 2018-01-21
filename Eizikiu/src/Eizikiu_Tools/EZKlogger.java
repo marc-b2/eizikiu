@@ -22,7 +22,7 @@ public class EZKlogger {
 	// setter
 	public static void setLoglevel(int newLoglevel){
 		loglevel = newLoglevel;
-		System.out.println("log level set to " + loglevel);
+		info("log level set to " + loglevel);
 	}
 	
 	public static void setLogfile(String newLogfile) {
@@ -35,7 +35,7 @@ public class EZKlogger {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("log file set to " + logfile);
+		info("log file set to " + logfile);
 	}
 	
 	public static void setConsoleOutput(boolean newConsoleOutput) {
