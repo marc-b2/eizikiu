@@ -368,7 +368,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	 */
 	public void newChat(String nameChatPartner, Room room) {
 		EZKlogger.debug("new Chat gestartet");
-		this.chatHolder.addTab("Private: " + nameChatPartner, new Chat_Tab((Room)roomList.getSelectedValue()));
+		this.chatHolder.addTab("Private: " + nameChatPartner, new Chat_Tab(room));
 		frmEizikiuClient.repaint();
 	}
 	
