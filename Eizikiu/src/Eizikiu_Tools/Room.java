@@ -37,7 +37,7 @@ public class Room implements Serializable{
 		EZKlogger.debug();
 		this.name = name;
 		this.ID = ID;
-		userList = null;
+		userList = new LinkedList<User>();
 	}
 		
 	// getter
@@ -133,15 +133,15 @@ public class Room implements Serializable{
 		}
 	}
 	
-	public void sendUserListToMembers() {
+	public void sendUserListToOnlineClients() {
 		EZKlogger.debug();
 		String list = Eizikiu_Server.makeUserListToString(userList);
 		if(!userList.isEmpty()) {
-			for(User x : userList) {
+			for(ConnectionToClient x : Eizikiu_Server.getConnectionList()) {
 				try {
-					x.getConnection().getNetOutput().sendMessage(new Message(list, "Server", 28, ID));
+					x.getNetOutput().sendMessage(new Message(list, "Server", 28, ID));
 				} catch (Exception e) {
-					EZKlogger.debug(": ERROR: could not send userlist of room '" + name + "' to user [" + x.getName() + "]!");
+					EZKlogger.debug(": ERROR: could not send userlist of room '" + name + "' to user [" + x.getUser().getName() + "]!");
 					e.printStackTrace();
 				}
 			}

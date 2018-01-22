@@ -80,7 +80,7 @@ public class ConnectionToClient implements Runnable {
 						EZKlogger.debug(user.getName() + ": adding user to default room...");
 						user.addTo(x);
 						x.addToPublicRoom(user);
-						x.sendUserListToMembers();
+						x.sendUserListToOnlineClients();
 					}
 					userListString = Eizikiu_Server.makeUserListToString(x.getUserList());
 					netOutput.sendMessage(new Message(userListString, "Server---------->", 28, x.getID()));
@@ -266,7 +266,7 @@ public class ConnectionToClient implements Runnable {
 								if(room.addToPublicRoom(user)) {
 									EZKlogger.debug(user.getName() + ": user successfully added to rooms user list");
 									EZKlogger.debug(user.getName() + ": sending new user list to all members of " + room.getName() + "...");
-									room.sendUserListToMembers();
+									room.sendUserListToOnlineClients();
 								}
 								EZKlogger.log(user.getName() + ": user joined room " + room.toString());
 							}
@@ -295,7 +295,7 @@ public class ConnectionToClient implements Runnable {
 							if(room.removeFromPublicRoom(user)) {
 								EZKlogger.debug(user.getName() + ": user successfully removed from " + room.toString());
 								EZKlogger.debug(user.getName() + ": sending new user list to all members of " + room.getName() + "...");
-								room.sendUserListToMembers();
+								room.sendUserListToOnlineClients();
 							}
 							EZKlogger.log(user.getName() + ": user left room " + room.toString());
 						} else {
@@ -366,7 +366,7 @@ public class ConnectionToClient implements Runnable {
 			for(Room x : publicRooms) {
 				if(x.removeFromPublicRoom(user)) {
 					EZKlogger.debug(user.getName() + ": user got removed from " + x.toString());
-					x.sendUserListToMembers();
+					x.sendUserListToOnlineClients();
 				}
 			}
 			

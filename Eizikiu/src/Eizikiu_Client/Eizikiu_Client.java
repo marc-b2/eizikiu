@@ -93,6 +93,7 @@ public class Eizikiu_Client {
 			EventQueue.invokeLater(gui);
 			gui.getFrmEizikiuClient().setTitle("Eizikiu  " + user.getName());
 			// start chat
+			EZKlogger.debug("starting chat...");
 			chat(gui);
 		} catch(Exception e) {
 			EZKlogger.debug("ERROR: connection interrupted!");
@@ -241,7 +242,7 @@ public class Eizikiu_Client {
 					room = new Room(message.getSenderName(), message.getRoomID());
 					if(user.getRooms().add(room)) {
 						EZKlogger.debug("room " + room.toString() + " was added to users room list");
-						gui.newChat(room);
+						gui.newChat(message.getMessage(), room);
 						EZKlogger.log("user joined private chat " + room);
 					} else {
 						EZKlogger.debug("ERROR: could not add " + room.toString() + " to users room list");

@@ -46,11 +46,11 @@ public class EZKlogger {
 		try {
 			if (!fileOutput && newFileOutput) {
 				initFileOutput();
-				System.out.println("logging to file enabled");
+				info("logging to file enabled");
 			}
 			if (fileOutput && !newFileOutput){
+				info("logging to file disabled");
 				closeFileOutput();
-				System.out.println("logging to file disabled");
 			}
 		}catch(IOException e){
 			e.printStackTrace();
