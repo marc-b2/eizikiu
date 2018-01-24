@@ -176,7 +176,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		});
 		anzeigeMenu.add(debugChecker);
 		
-		debuglevel = new JCheckBoxMenuItem("Debug-Level 2");
+		debuglevel = new JCheckBoxMenuItem("Super Debug");
 		debuglevel.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if(debuglevel.getState()) {
@@ -210,19 +210,25 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 //UserMenu zum verwalten der User
 		JMenu userMenu = new JMenu("User");
 		
+		JMenuItem show_Them_All_MenuItem = new JMenuItem("Show all users");
+		show_Them_All_MenuItem.addActionListener(this);
+		show_Them_All_MenuItem.setActionCommand("SHOWTHEMALL");
 		
-		JMenuItem warn_User_MenuItem= new JMenuItem("Warn");
+		JMenuItem warn_User_MenuItem = new JMenuItem("Warn");
 		warn_User_MenuItem.addActionListener(this);
 		warn_User_MenuItem.setActionCommand("WARN");
 		
-		JMenuItem kick_User_MenuItem= new JMenuItem("Kick");
+		JMenuItem kick_User_MenuItem = new JMenuItem("Kick");
 		kick_User_MenuItem.addActionListener(this);
 		kick_User_MenuItem.setActionCommand("KICK");
 		
-		JMenuItem bann_User_MenuItem= new JMenuItem("Bann");
+		JMenuItem bann_User_MenuItem = new JMenuItem("Ban");
 		bann_User_MenuItem.addActionListener(this);
 		bann_User_MenuItem.setActionCommand("BANN");
 		
+		JMenuItem unban_User_MenuItem = new JMenuItem("Unban");
+		unban_User_MenuItem.addActionListener(this);
+		unban_User_MenuItem.setActionCommand("UNBAN");
 		
 //RoomMenu mit der M�glichkeit die Rooms zu editieren
 		JMenu roomMenu = new JMenu("Rooms");
@@ -245,9 +251,11 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		delete_Rooms_MenuItem.setActionCommand("DELETE");
 		
 		menuBar.add(userMenu);
+		userMenu.add(show_Them_All_MenuItem);
 		userMenu.add(warn_User_MenuItem);
 		userMenu.add(kick_User_MenuItem);
 		userMenu.add(bann_User_MenuItem);
+		userMenu.add(unban_User_MenuItem);
 		
 		roomMenu.add(create_Room_MenuItem);
 		roomMenu.add(edit_Room_MenuItem);
@@ -307,6 +315,11 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 				e1.printStackTrace();
 			}
 			userList.getSelectedValue().setBanned(true);
+		}else if(e.getActionCommand()=="BANN") {
+			if(userList.getSelectedValue().isBanned())
+			userList.getSelectedValue().setBanned(false);
+		}else if(e.getActionCommand()=="SHOWTHEMALL") {
+			new Show_All_Users_GUI();
 		}
 	}
 

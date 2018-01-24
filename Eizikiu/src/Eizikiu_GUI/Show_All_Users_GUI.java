@@ -1,26 +1,19 @@
 package Eizikiu_GUI;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import Eizikiu_Tools.Room;
 import Eizikiu_Tools.User;
+import Eizikiu_Server.Eizikiu_Server;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
-
-public class Show_UserList_GUI extends JDialog {
-
-	
+public class Show_All_Users_GUI extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 
@@ -34,9 +27,9 @@ public class Show_UserList_GUI extends JDialog {
 	}
 
 
-	public Show_UserList_GUI(Room room) {
+	public Show_All_Users_GUI() {
 		
-		this.setTitle("User of " + room.getName() );
+		this.setTitle("Status of all users");
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 430, 217);
@@ -50,8 +43,8 @@ public class Show_UserList_GUI extends JDialog {
 		
 		JTextArea listOutput = new JTextArea();
 		listOutput.setEditable(false);
-		for(User x : room.getUserList()) {
-			listOutput.append(x.getName() + "\n");
+		for(User x : Eizikiu_Server.getGlobalUserList()) {
+			listOutput.append(x.everythingToString() + "\n");
 		}
 		scrollPane.setViewportView(listOutput);
 		{
@@ -72,4 +65,6 @@ public class Show_UserList_GUI extends JDialog {
 			this.dispose();
 		}
 	}
+}
+
 }
