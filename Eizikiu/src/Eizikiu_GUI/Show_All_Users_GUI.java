@@ -66,5 +66,3 @@ public class Show_All_Users_GUI extends JDialog {
 		}
 	}
 }
-
-}
