@@ -32,6 +32,7 @@ import Eizikiu_Tools.EZKlogger;
 import Eizikiu_Tools.Message;
 import Eizikiu_Tools.Room;
 import Eizikiu_Tools.User;
+import javax.swing.JLabel;
 
 
 public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, ItemListener, Runnable{
@@ -49,6 +50,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	private JTabbedPane listHolder, chatHolder;
 	private JButton sendButton, closeTab;
 	private JTextField chatInput;
+	private JLabel infoBar;
 	// starten der GUI
 	public static void main(String[] args) {
 		EZKlogger.debug();
@@ -194,9 +196,13 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		join_Room_MenuItem.setActionCommand("JOIN");
 		roomMenu.add(join_Room_MenuItem);
 		
-		frmEizikiuClient.add(closeTab);
-		frmEizikiuClient.add(sendButton);
-		frmEizikiuClient.add(chatInput);
+		frmEizikiuClient.getContentPane().add(closeTab);
+		frmEizikiuClient.getContentPane().add(sendButton);
+		frmEizikiuClient.getContentPane().add(chatInput);
+		
+		infoBar = new JLabel("");
+		infoBar.setBounds(10, 424, 250, 16);
+		frmEizikiuClient.getContentPane().add(infoBar);
 	}
 	
 	@Override
@@ -383,4 +389,8 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		return chatHolder;
 	}
 	
+	public void showServerInfo(String str) {
+		EZKlogger.debug();
+		this.infoBar.setText(str);
+	}
 }
