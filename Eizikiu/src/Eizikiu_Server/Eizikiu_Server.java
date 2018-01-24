@@ -94,16 +94,16 @@ public class Eizikiu_Server {
 		// start GUI
 		EventQueue.invokeLater(gui);
 		EZKlogger.setGui(gui);
-		/*
+		
 		try {
 			latch.await();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		*/
+		EZKlogger.debug("latch count down by GUI");
 		
-		EZKlogger.info("Press Return to stop Server!");
-		keyboardIn.nextLine();
+//		EZKlogger.info("Press Return to stop Server!");
+//		keyboardIn.nextLine();
 		
 		// close connections
 		closeAllConnections();

@@ -95,6 +95,7 @@ public class Eizikiu_Client {
 			// start chat
 			EZKlogger.debug("starting chat...");
 			chat(gui);
+			System.exit(0);
 		} catch(Exception e) {
 			EZKlogger.debug("ERROR: connection interrupted!");
 			e.printStackTrace();
@@ -379,6 +380,8 @@ public class Eizikiu_Client {
 			socket.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), "Connection to Server interrupted!", "ERROR", 0);
+			System.exit(0);
 		}
 	}
 	
