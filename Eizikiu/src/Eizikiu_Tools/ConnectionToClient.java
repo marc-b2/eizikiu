@@ -265,7 +265,7 @@ public class ConnectionToClient implements Runnable {
 								// send "user joined" to other members; add user to rooms user list
 								if(room.addToPublicRoom(user)) {
 									EZKlogger.debug(user.getName() + ": user successfully added to rooms user list");
-									EZKlogger.debug(user.getName() + ": sending new user list to all members of " + room.getName() + "...");
+									EZKlogger.debug(user.getName() + ": sending new user list to all clients " + room.getName() + "...");
 									room.sendUserListToOnlineClients();
 								}
 								EZKlogger.log(user.getName() + ": user joined room " + room.toString());
@@ -294,7 +294,7 @@ public class ConnectionToClient implements Runnable {
 							}
 							if(room.removeFromPublicRoom(user)) {
 								EZKlogger.debug(user.getName() + ": user successfully removed from " + room.toString());
-								EZKlogger.debug(user.getName() + ": sending new user list to all members of " + room.getName() + "...");
+								EZKlogger.debug(user.getName() + ": sending new user list to all clients " + room.getName() + "...");
 								room.sendUserListToOnlineClients();
 							}
 							EZKlogger.log(user.getName() + ": user left room " + room.toString());
