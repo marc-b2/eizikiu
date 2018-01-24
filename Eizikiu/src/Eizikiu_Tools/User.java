@@ -87,6 +87,7 @@ public class User implements Serializable{
 	public void setBanned(boolean banned) {
 		EZKlogger.debug();
 		this.banned = banned;
+		EZKlogger.log(banned ? "user [" + name + "] was banned from Server" : "user [" + name + "] was unbanned from Server");
 	}
 	
 	// functions

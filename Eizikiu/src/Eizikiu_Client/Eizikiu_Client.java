@@ -233,7 +233,7 @@ public class Eizikiu_Client {
 				case 20:	// service message -> dialog box INFO
 					EZKlogger.debug("service message received");
 					EZKlogger.log("service message from server: " + message.getMessage());
-					JOptionPane.showMessageDialog(gui.getFrmEizikiuClient(), message.getMessage(), "Message from Server", 1);
+					gui.showServerInfo(message.getMessage());
 					break;
 				
 				case 23:	// private chat ACK -> new private chat
