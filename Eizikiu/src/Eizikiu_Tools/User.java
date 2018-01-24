@@ -93,6 +93,11 @@ public class User implements Serializable{
 	@Override
 	public String toString() {
 		EZKlogger.debug();
+		return name;
+	}
+	
+	public String everythingToString() {
+		EZKlogger.debug();
 		return "name: " + name + "  password: " + password + "  logged in: " + status + "  is banned: " + banned;
 	}
 	

@@ -31,7 +31,7 @@ public class Eizikiu_Client {
 			e.printStackTrace();
 		}
 		
-		EZKlogger.setLoglevel(3);
+		EZKlogger.setLoglevel(2);
 		EZKlogger.setLogfile("eizikiu_client.log");
 		EZKlogger.setFileOutput(true);
 		EZKlogger.debug();
