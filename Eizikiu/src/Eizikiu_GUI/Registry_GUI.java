@@ -72,7 +72,33 @@ public class Registry_GUI {
 		verticalBox.add(label2);
 		
 		passwordField_1 = new JPasswordField();
-		
+		passwordField_1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				EZKlogger.debug();
+				String name = textField.getText();
+				String pw1 = String.valueOf(passwordField_1.getPassword());
+				String pw2 = String.valueOf(passwordField_2.getPassword());
+				
+				if (pw1.equals(pw2)){
+					EZKlogger.debug();
+					
+					
+					if(Eizikiu_Client.register(name, pw1, Registry_GUI.this)){
+						EZKlogger.debug();
+						Registry_GUI.this.frmRegister.dispose();
+					}else {
+						textField.setText("");
+						passwordField_1.setText("");
+						passwordField_2.setText("");
+					}
+			
+				}else {
+					EZKlogger.debug();
+					passwordField_1.setText("");
+					passwordField_2.setText("");
+				}
+			}
+		});
 		verticalBox.add(passwordField_1);
 		passwordField_1.setColumns(10);
 		
@@ -80,6 +106,33 @@ public class Registry_GUI {
 		verticalBox.add(label3);
 		
 		passwordField_2 = new JPasswordField();
+		passwordField_2.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				EZKlogger.debug();
+				String name = textField.getText();
+				String pw1 = String.valueOf(passwordField_1.getPassword());
+				String pw2 = String.valueOf(passwordField_2.getPassword());
+				
+				if (pw1.equals(pw2)){
+					EZKlogger.debug();
+					
+					
+					if(Eizikiu_Client.register(name, pw1, Registry_GUI.this)){
+						EZKlogger.debug();
+						Registry_GUI.this.frmRegister.dispose();
+					}else {
+						textField.setText("");
+						passwordField_1.setText("");
+						passwordField_2.setText("");
+					}
+			
+				}else {
+					EZKlogger.debug();
+					passwordField_1.setText("");
+					passwordField_2.setText("");
+				}
+			}
+		});
 		verticalBox.add(passwordField_2);
 		passwordField_2.setColumns(10);
 		

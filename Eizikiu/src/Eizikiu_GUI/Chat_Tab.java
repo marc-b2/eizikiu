@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
@@ -19,7 +20,7 @@ public class Chat_Tab extends JPanel{
 	
 	private Room tabroom;
 	private JTextArea chatOutput;
-	
+	private JScrollBar scrollBar;
 	
 	
 	public Chat_Tab(Room tabroom) {
@@ -33,12 +34,15 @@ public class Chat_Tab extends JPanel{
 		scrollPanel.setLayout(null);
 		
 		JScrollPane scrollYourChat = new JScrollPane();
-		scrollYourChat.setBounds(0, 0, 350, 300);
+		scrollYourChat.setBounds(0, 0, 350, 280);
 		
+		scrollBar = scrollYourChat.getVerticalScrollBar();
 		
 		chatOutput = new JTextArea();
 		chatOutput.setBorder(new LineBorder(new Color(0, 0, 0)));
 		chatOutput.setBounds(0, 0, 350, 300);
+		chatOutput.setLineWrap(true);
+		chatOutput.setWrapStyleWord(true);
 		chatOutput.setEditable(false);
 		
 		scrollPanel.add(scrollYourChat);
@@ -47,7 +51,9 @@ public class Chat_Tab extends JPanel{
 		
 	}
 	
-	
+	public JScrollBar getScrollBar() {
+		return scrollBar;
+	}
 	
 	public JTextArea getChatOutput() {
 		return chatOutput;

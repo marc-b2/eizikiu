@@ -1,37 +1,60 @@
 package Eizikiu_GUI;
+
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import Eizikiu_Server.Eizikiu_Server;
 import Eizikiu_Tools.Room;
 import Eizikiu_Tools.User;
-import Eizikiu_Server.Eizikiu_Server;
 
-public class Show_All_Users_GUI extends JDialog {
+public class Show_List_GUI extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-
-
-	public static void main(String[] args) {
-		try {
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
-	public Show_All_Users_GUI() {
-		
+	private JTextArea listOutput;
+	
+	public Show_List_GUI() {
 		this.setTitle("Status of all users");
-		setBounds(100, 100, 450, 300);
+		this.initComp();
+		
+		for(User x : Eizikiu_Server.getGlobalUserList()) {
+			listOutput.append(x.everythingToString() + "\n");
+		}
+		this.setVisible(true);
+	}
+	
+	public Show_List_GUI(User user) {
+		this.setTitle(user.getName() + " is in rooms:");
+		this.initComp();
+		
+		for(Room x : user.getRooms()) {
+			listOutput.append(x.toString() + "\n");
+		}
+		this.setVisible(true);
+	}
+	
+	public Show_List_GUI(Room room) {
+		this.setTitle(room.getName() + " holds these users:");
+		this.initComp();
+		
+		for(User x : room.getUserList()) {
+			listOutput.append(x.toString() + "\n");
+		}
+		this.setVisible(true);
+	}
+	
+	
+	private void initComp() {
+		
+		this.setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 430, 217);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -40,9 +63,9 @@ public class Show_All_Users_GUI extends JDialog {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 420, 217);
-		contentPanel.add(scrollPane);
+		this.contentPanel.add(scrollPane);
 		
-		JTextArea listOutput = new JTextArea();
+		listOutput = new JTextArea();
 		listOutput.setEditable(false);
 		for(User x : Eizikiu_Server.getGlobalUserList()) {
 			listOutput.append(x.everythingToString() + "\n");
@@ -58,13 +81,14 @@ public class Show_All_Users_GUI extends JDialog {
 				okButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Show_All_Users_GUI.this.dispose();
+						Show_List_GUI.this.dispose();
 					}
 				});
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
-		}this.setVisible(true);
+		}
 	}
-	
 }
+
+
