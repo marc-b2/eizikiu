@@ -136,6 +136,8 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 					logChecker.setState(false);
 					debugChecker.setState(false);
 					debuglevel.setState(false);
+				}if(!safeLogToChecker.getState() && !debuglevel.getState() && !debugChecker.getState() && !logChecker.getState() && !infoChecker.getState()) {
+					infoChecker.setState(true);
 				}
 			}
 		});
@@ -145,12 +147,14 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		logChecker = new JCheckBoxMenuItem("Log");
 		logChecker.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if(logChecker.getState()== true) {
+				if(logChecker.getState()) {
 					EZKlogger.debug("loglevel 1");
 					EZKlogger.setLoglevel(1);
 					infoChecker.setState(false);
 					debugChecker.setState(false);
 					debuglevel.setState(false);
+				}if(!safeLogToChecker.getState() && !debuglevel.getState() && !debugChecker.getState() && !logChecker.getState() && !infoChecker.getState()) {
+					infoChecker.setState(true);
 				}
 			}
 		});
@@ -159,12 +163,14 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		debugChecker = new JCheckBoxMenuItem("Debug");
 		debugChecker.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if(debugChecker.getState()== true) {
+				if(debugChecker.getState()) {
 					EZKlogger.debug("loglevel 2");
 					EZKlogger.setLoglevel(2);
 					infoChecker.setState(false);
 					logChecker.setState(false);
 					debuglevel.setState(false);
+				}if(!safeLogToChecker.getState() && !debuglevel.getState() && !debugChecker.getState() && !logChecker.getState() && !infoChecker.getState()) {
+					infoChecker.setState(true);
 				}
 			}
 		});
@@ -173,12 +179,14 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		debuglevel = new JCheckBoxMenuItem("Debug-Level 2");
 		debuglevel.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if(debuglevel.getState()== true) {
+				if(debuglevel.getState()) {
 					EZKlogger.debug("loglevel 3");
 					EZKlogger.setLoglevel(3);
 					debugChecker.setState(false);
 					infoChecker.setState(false);
 					logChecker.setState(false);
+				}if(!safeLogToChecker.getState() && !debuglevel.getState() && !debugChecker.getState() && !logChecker.getState() && !infoChecker.getState()) {
+					infoChecker.setState(true);
 				}
 			}
 		});
@@ -187,7 +195,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		safeLogToChecker = new JCheckBoxMenuItem("Safe Log to File");
 		safeLogToChecker.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if(safeLogToChecker.getState()== true) {
+				if(safeLogToChecker.getState()) {
 					EZKlogger.debug("Fileoutput true");
 					EZKlogger.setFileOutput(true);
 				}else {

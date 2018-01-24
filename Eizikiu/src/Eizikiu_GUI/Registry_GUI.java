@@ -43,6 +43,7 @@ public class Registry_GUI {
 	 */
 	public Registry_GUI() {
 		initialize();
+		
 		this.frmRegister.setVisible(true);
 	}
 
@@ -52,7 +53,8 @@ public class Registry_GUI {
 	private void initialize() {
 		frmRegister = new JFrame();
 		frmRegister.setTitle("Register ");
-		frmRegister.setBounds(100, 100, 300, 300);
+		frmRegister.setBounds(100, 100, 300, 220);
+		frmRegister.setLocation(800,300);
 		frmRegister.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmRegister.getContentPane().setLayout(new BoxLayout(frmRegister.getContentPane(), BoxLayout.X_AXIS));
 		
