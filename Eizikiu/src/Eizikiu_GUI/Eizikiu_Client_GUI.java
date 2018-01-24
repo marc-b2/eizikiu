@@ -83,7 +83,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		frmEizikiuClient.getContentPane().add(listHolder);
 
 		
-//Erstellen der Listen und den zugeh�rigen Scrollables
+//Erstellen der Listen und den zugehoerigen Scrollables
 		
 		
 		JScrollPane scrollUserList = new JScrollPane();
@@ -174,15 +174,17 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		chatInput.setBounds(10, 340, 250, 50);
 		chatInput.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String temp = chatInput.getText();
-				try {
+				if(chatInput.getText()!=null) {
+					String temp = chatInput.getText();
+					try {
 					Eizikiu_Client.sendMessage(temp, ((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
 				
-				chatInput.setText(null);
-				chatInput.repaint();
+					chatInput.setText(null);
+					chatInput.repaint();
+				}
 			}
 		});
 		
@@ -209,15 +211,17 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	public void actionPerformed(ActionEvent e) {
 		EZKlogger.debug();
 		if(e.getActionCommand() == "SENDEN") {
-			String temp = chatInput.getText();
-			try {
-				Eizikiu_Client.sendMessage(temp, ((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
-			} catch (Exception e1) {
-				e1.printStackTrace();
+			if(chatInput.getText()!=null) {
+				String temp = chatInput.getText();
+				try {
+					Eizikiu_Client.sendMessage(temp, ((Chat_Tab) chatHolder.getSelectedComponent()).getTabRoom().getID());
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				
+				chatInput.setText(null);
+				chatInput.repaint();
 			}
-			
-			chatInput.setText(null);
-			chatInput.repaint();
 		}
 		else if(e.getActionCommand() == "PRIVATE"){
 			try {
@@ -242,7 +246,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			System.exit(0);
 		}else if(e.getActionCommand() == "SHOW"){
 			if(roomList.getSelectedValue().getUserList() != null && roomList.getSelectedValue().getID() != 1)	{
-				new Show_UserList_GUI(roomList.getSelectedValue());
+				new Show_List_GUI(roomList.getSelectedValue());
 			}
 		}
 	}
@@ -292,7 +296,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			if(temp == m.getRoomID()){
 				EZKlogger.debug();
 				((Chat_Tab)chatHolder.getComponentAt(i)).getChatOutput().append("["+ m.getSenderName()+"]: " + m.getMessage() + "\n");
-				
+				((Chat_Tab)chatHolder.getComponentAt(i)).getScrollBar().setValue(((Chat_Tab)chatHolder.getComponentAt(i)).getScrollBar().getMaximum());
 				break;
 			}
 		}

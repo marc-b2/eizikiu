@@ -117,7 +117,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 		
-		JMenuItem close_File_MenuItem = new JMenuItem("Close");
+		JMenuItem close_File_MenuItem = new JMenuItem("Safe and close");
 		close_File_MenuItem.addActionListener(this);
 		close_File_MenuItem.setActionCommand("CLOSE");
 		fileMenu.add(close_File_MenuItem);
@@ -174,6 +174,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 				}
 			}
 		});
+		//debugChecker.setState(true);
 		anzeigeMenu.add(debugChecker);
 		
 		debuglevel = new JCheckBoxMenuItem("Super Debug");
@@ -204,6 +205,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 				}
 			}
 		});
+		safeLogToChecker.setState(true);
 		anzeigeMenu.add(safeLogToChecker);
 		
 		
@@ -213,6 +215,10 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		JMenuItem show_Them_All_MenuItem = new JMenuItem("Show all users");
 		show_Them_All_MenuItem.addActionListener(this);
 		show_Them_All_MenuItem.setActionCommand("SHOWTHEMALL");
+		
+		JMenuItem show_RoomsofUser_MenuItem = new JMenuItem("Show rooms");
+		show_RoomsofUser_MenuItem.addActionListener(this);
+		show_RoomsofUser_MenuItem.setActionCommand("SHOW");
 		
 		JMenuItem warn_User_MenuItem = new JMenuItem("Warn");
 		warn_User_MenuItem.addActionListener(this);
@@ -242,9 +248,9 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		edit_Room_MenuItem.addActionListener(this);
 		edit_Room_MenuItem.setActionCommand("EDITROOMS");
 		
-		JMenuItem show_UserList_MenuItem = new JMenuItem("Edit Userlist");
+		JMenuItem show_UserList_MenuItem = new JMenuItem("Show userlist");
 		show_UserList_MenuItem.addActionListener(this);
-		show_UserList_MenuItem.setActionCommand("EDITUSERLIST");
+		show_UserList_MenuItem.setActionCommand("SHOWUSERLIST");
 		
 		JMenuItem delete_Rooms_MenuItem = new JMenuItem("Delete");
 		delete_Rooms_MenuItem.addActionListener(this);
@@ -279,17 +285,20 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 			Eizikiu_Server.editRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue(), newName);
 			this.actualizeRoomJList();
 			
+		}else if(e.getActionCommand() == "SHOWUSERLIST"){
+			new Show_List_GUI(roomList.getSelectedValue());
+			
 		}else if(e.getActionCommand()=="CREATEROOMS") {
 			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
 			Eizikiu_Server.createRoom(newName);
 			this.actualizeRoomList();
 			
 		}else if(e.getActionCommand() == "SHOW"){
-			new Show_UserList_GUI(roomList.getSelectedValue());
-		}
-		else if(e.getActionCommand()=="CLOSE") {
+			new Show_List_GUI(userList.getSelectedValue());
 			
-			System.exit(0);
+		}else if(e.getActionCommand()=="CLOSE") {
+			Eizikiu_Server.latch.countDown();
+			Eizikiu_Server_GUI.this.frmEizikiuServer.dispose();
 			
 		}else if(e.getActionCommand()=="DELETE") {
 			Eizikiu_Server.deleteRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue());
@@ -319,7 +328,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 			if(userList.getSelectedValue().isBanned())
 			userList.getSelectedValue().setBanned(false);
 		}else if(e.getActionCommand()=="SHOWTHEMALL") {
-			new Show_All_Users_GUI();
+			new Show_List_GUI();
 		}
 	}
 
