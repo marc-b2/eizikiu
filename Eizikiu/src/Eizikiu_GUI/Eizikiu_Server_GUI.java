@@ -217,7 +217,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		
 		JMenuItem show_RoomsofUser_MenuItem = new JMenuItem("Show rooms");
 		show_RoomsofUser_MenuItem.addActionListener(this);
-		show_RoomsofUser_MenuItem.setActionCommand("SHOW");
+		show_RoomsofUser_MenuItem.setActionCommand("SHOWROOMSOFUSER");
 		
 		JMenuItem warn_User_MenuItem = new JMenuItem("Warn");
 		warn_User_MenuItem.addActionListener(this);
@@ -239,6 +239,10 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		JMenu roomMenu = new JMenu("Rooms");
 		menuBar.add(roomMenu);
 		
+		JMenuItem privateRooms_MenuItem = new JMenuItem("Show private rooms");
+		privateRooms_MenuItem.addActionListener(this);
+		privateRooms_MenuItem.setActionCommand("SHOWPRIVATEROOMS");
+		
 		JMenuItem create_Room_MenuItem = new JMenuItem("Create new room");
 		create_Room_MenuItem.addActionListener(this);
 		create_Room_MenuItem.setActionCommand("CREATEROOMS");
@@ -257,11 +261,13 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		
 		menuBar.add(userMenu);
 		userMenu.add(show_Them_All_MenuItem);
+		userMenu.add(show_RoomsofUser_MenuItem);
 		userMenu.add(warn_User_MenuItem);
 		userMenu.add(kick_User_MenuItem);
 		userMenu.add(ban_User_MenuItem);
 		userMenu.add(unban_User_MenuItem);
 		
+		roomMenu.add(privateRooms_MenuItem);
 		roomMenu.add(create_Room_MenuItem);
 		roomMenu.add(edit_Room_MenuItem);
 		roomMenu.add(show_UserList_MenuItem);
@@ -284,6 +290,9 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 			Eizikiu_Server.editRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue(), newName);
 			this.actualizeRoomJList();
 			
+		}else if(e.getActionCommand() == "SHOWPRIVATEROOMS"){
+			new Show_List_GUI(Eizikiu_Server.getPrivateRooms());
+			
 		}else if(e.getActionCommand() == "SHOWUSERLIST"){
 			new Show_List_GUI(roomList.getSelectedValue());
 			
@@ -292,7 +301,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 			Eizikiu_Server.createRoom(newName);
 			this.actualizeRoomList();
 			
-		}else if(e.getActionCommand() == "SHOW"){
+		}else if(e.getActionCommand() == "SHOWROOMSOFUSER"){
 			new Show_List_GUI(userList.getSelectedValue());
 			
 		}else if(e.getActionCommand()=="CLOSE") {
@@ -402,7 +411,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		EZKlogger.debug("Userlist aktualisieren");
 		((DefaultListModel<User>) userList.getModel()).removeAllElements();
 		for(User x : Eizikiu_Server.getGlobalUserList()) {
-			EZKlogger.debug("" + x + "hinzugefügt");
+			EZKlogger.debug("" + x + " hinzugefügt");
 			((DefaultListModel<User>) userList.getModel()).addElement(x);
 		}
 		roomList.repaint();

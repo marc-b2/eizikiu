@@ -3,6 +3,7 @@ package Eizikiu_GUI;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -50,6 +51,18 @@ public class Show_List_GUI extends JDialog {
 		this.setVisible(true);
 	}
 	
+	public Show_List_GUI(LinkedList<Room> roomList) {
+		this.setTitle("All private conversations");
+		this.initComp();
+		
+		for(Room x : roomList) {
+			listOutput.append(x.toString() + "\n");
+		}
+		this.setVisible(true);
+	}
+		
+
+	
 	
 	private void initComp() {
 		
@@ -66,9 +79,7 @@ public class Show_List_GUI extends JDialog {
 		
 		listOutput = new JTextArea();
 		listOutput.setEditable(false);
-		for(User x : Eizikiu_Server.getGlobalUserList()) {
-			listOutput.append(x.everythingToString() + "\n");
-		}
+		
 		scrollPane.setViewportView(listOutput);
 		{
 			JPanel buttonPane = new JPanel();
