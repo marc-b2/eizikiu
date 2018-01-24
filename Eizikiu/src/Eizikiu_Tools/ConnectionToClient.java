@@ -361,6 +361,8 @@ public class ConnectionToClient implements Runnable {
 		}
 
 		try {
+			connectionList.remove(this);
+			
 			EZKlogger.debug(user.getName() + ": removing user from all public rooms...");
 			// remove user from all public rooms user lists; send "user left" to other members and send new user lists to all members
 			for(Room x : publicRooms) {
@@ -380,8 +382,6 @@ public class ConnectionToClient implements Runnable {
 			
 			// update gui user list
 			gui.actualizeUserJList();
-			
-			connectionList.remove(this);
 
 			// send new global user list to all clients
 			EZKlogger.debug(user.getName() + ": sending new global user list to all clients...");
