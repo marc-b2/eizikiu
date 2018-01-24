@@ -222,9 +222,9 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		kick_User_MenuItem.addActionListener(this);
 		kick_User_MenuItem.setActionCommand("KICK");
 		
-		JMenuItem bann_User_MenuItem = new JMenuItem("Ban");
-		bann_User_MenuItem.addActionListener(this);
-		bann_User_MenuItem.setActionCommand("BANN");
+		JMenuItem ban_User_MenuItem = new JMenuItem("Ban");
+		ban_User_MenuItem.addActionListener(this);
+		ban_User_MenuItem.setActionCommand("BAN");
 		
 		JMenuItem unban_User_MenuItem = new JMenuItem("Unban");
 		unban_User_MenuItem.addActionListener(this);
@@ -254,14 +254,14 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		userMenu.add(show_Them_All_MenuItem);
 		userMenu.add(warn_User_MenuItem);
 		userMenu.add(kick_User_MenuItem);
-		userMenu.add(bann_User_MenuItem);
+		userMenu.add(ban_User_MenuItem);
 		userMenu.add(unban_User_MenuItem);
 		
 		roomMenu.add(create_Room_MenuItem);
 		roomMenu.add(edit_Room_MenuItem);
 		roomMenu.add(show_UserList_MenuItem);
 		roomMenu.add(delete_Rooms_MenuItem);
-// Label das als �berschrift f�r die Logausgabe gilt
+// Label das als Ueberschrift fuer die Logausgabe gilt
 		JLabel lblLog = new JLabel("Log:");
 		lblLog.setBounds(12, 52, 56, 16);
 		
@@ -307,7 +307,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 				e1.printStackTrace();
 			}
 			
-		}else if(e.getActionCommand()=="BANN") {
+		}else if(e.getActionCommand()=="BAN") {
 			Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been permanently banned! \n");
 			try {
 				userList.getSelectedValue().getConnection().shutdown();
@@ -315,7 +315,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 				e1.printStackTrace();
 			}
 			userList.getSelectedValue().setBanned(true);
-		}else if(e.getActionCommand()=="BANN") {
+		}else if(e.getActionCommand()=="UNBAN") {
 			if(userList.getSelectedValue().isBanned())
 			userList.getSelectedValue().setBanned(false);
 		}else if(e.getActionCommand()=="SHOWTHEMALL") {
