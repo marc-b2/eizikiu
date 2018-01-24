@@ -1,7 +1,6 @@
 package Eizikiu_GUI;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,16 +17,13 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 
 import Eizikiu_Client.Eizikiu_Client;
-import Eizikiu_Server.Eizikiu_Server;
 import Eizikiu_Tools.EZKlogger;
 import Eizikiu_Tools.Message;
 import Eizikiu_Tools.Room;

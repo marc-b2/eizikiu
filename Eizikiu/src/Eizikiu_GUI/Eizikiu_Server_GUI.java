@@ -12,7 +12,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
-import Eizikiu_Client.Eizikiu_Client;
 import Eizikiu_Server.Eizikiu_Server;
 import Eizikiu_Tools.EZKlogger;
 import Eizikiu_Tools.Message;
