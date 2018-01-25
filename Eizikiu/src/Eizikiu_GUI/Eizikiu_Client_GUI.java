@@ -29,6 +29,7 @@ import Eizikiu_Tools.Message;
 import Eizikiu_Tools.Room;
 import Eizikiu_Tools.User;
 import javax.swing.JLabel;
+import java.awt.Font;
 
 
 public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, ItemListener, Runnable{
@@ -47,6 +48,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 	private JButton sendButton, closeTab;
 	private JTextField chatInput;
 	private JLabel infoBar;
+	
 	// starten der GUI
 	public static void main(String[] args) {
 		EZKlogger.debug();
@@ -143,12 +145,16 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		menuBar.add(roomMenu);
 		
 		sendButton = new JButton("Send");
-		sendButton.setBounds(260, 340, 100, 50);
+		sendButton.setBounds(260, 357, 100, 50);
 		sendButton.addActionListener(this);
 		sendButton.setActionCommand("SENDEN");
 		
-		closeTab = new JButton("Leave Conversation");
-		closeTab.setBounds(0,100,20,20);
+		closeTab = new JButton("X");
+		closeTab.setToolTipText("Leave room.");
+		closeTab.setBackground(Color.RED);
+		closeTab.setForeground(Color.RED);
+		closeTab.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		closeTab.setBounds(12,332,22,20);
 		closeTab.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent e){
 				try {
@@ -167,7 +173,7 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		
 		chatInput = new JTextField();
 		chatInput.setBorder(new LineBorder(new Color(0, 0, 0)));
-		chatInput.setBounds(10, 340, 250, 50);
+		chatInput.setBounds(10, 357, 250, 50);
 		chatInput.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(chatInput.getText()!=null) {
@@ -221,14 +227,18 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 		}
 		else if(e.getActionCommand() == "PRIVATE"){
 			try {
-				Eizikiu_Client.privateChatRequest(((User)userList.getSelectedValue()).getName());
+				if(!userList.isSelectionEmpty()) {
+					Eizikiu_Client.privateChatRequest(((User)userList.getSelectedValue()).getName());
+				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
 		else if(e.getActionCommand() == "JOIN"){
 			try {
-				Eizikiu_Client.publicChatRequest(((Room)roomList.getSelectedValue()).getID());
+				if(!roomList.isSelectionEmpty()) {
+					Eizikiu_Client.publicChatRequest(((Room)roomList.getSelectedValue()).getID());
+				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -241,8 +251,10 @@ public class Eizikiu_Client_GUI extends KeyAdapter implements ActionListener, It
 			}
 			System.exit(0);
 		}else if(e.getActionCommand() == "SHOW"){
-			if(roomList.getSelectedValue().getUserList() != null && roomList.getSelectedValue().getID() != 1)	{
-				new Show_List_GUI(roomList.getSelectedValue());
+			if(!roomList.isSelectionEmpty()) {
+				if(roomList.getSelectedValue().getUserList() != null && roomList.getSelectedValue().getID() != 1)	{
+					new Show_List_GUI(roomList.getSelectedValue());
+				}
 			}
 		}
 	}

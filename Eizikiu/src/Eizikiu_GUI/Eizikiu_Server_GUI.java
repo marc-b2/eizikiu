@@ -41,6 +41,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 	private JList<User> userList;
 	private DefaultListModel<Room> rList;
 	private DefaultListModel<User>uList;
+	private JScrollPane scrollOutput;
 	
 	
 	public static void main(String[] args) {
@@ -66,7 +67,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		
 		
 		
-		JScrollPane scrollOutput = new JScrollPane();
+		scrollOutput = new JScrollPane();
 		scrollOutput.setBounds(10, 70, 360, 370);
 		
 		
@@ -284,57 +285,76 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		EZKlogger.debug();
+		
 		if(e.getActionCommand() == "EDITROOMS") {
+			if(!roomList.isSelectionEmpty()) {
+				String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
+				Eizikiu_Server.editRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue(), newName);
+				this.actualizeRoomJList();
+			}
 			
-			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
-			Eizikiu_Server.editRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue(), newName);
-			this.actualizeRoomJList();
-			
+		}else if(e.getActionCommand() == "SHOWROOMSOFUSER"){
+			if(!userList.isSelectionEmpty()) {	
+				new Show_List_GUI(userList.getSelectedValue());
+		
 		}else if(e.getActionCommand() == "SHOWPRIVATEROOMS"){
 			new Show_List_GUI(Eizikiu_Server.getPrivateRooms());
 			
 		}else if(e.getActionCommand() == "SHOWUSERLIST"){
-			new Show_List_GUI(roomList.getSelectedValue());
+			if(!roomList.isSelectionEmpty()) {	
+				new Show_List_GUI(roomList.getSelectedValue());
+			}
 			
 		}else if(e.getActionCommand()=="CREATEROOMS") {
 			String newName = JOptionPane.showInputDialog(frmEizikiuServer,"Select new name for the room:");
 			Eizikiu_Server.createRoom(newName);
 			this.actualizeRoomList();
 			
-		}else if(e.getActionCommand() == "SHOWROOMSOFUSER"){
-			new Show_List_GUI(userList.getSelectedValue());
+		}
 			
 		}else if(e.getActionCommand()=="CLOSE") {
 			Eizikiu_Server.latch.countDown();
 			Eizikiu_Server_GUI.this.frmEizikiuServer.dispose();
 			
 		}else if(e.getActionCommand()=="DELETE") {
-			Eizikiu_Server.deleteRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue());
-			this.actualizeRoomJList();
+			if(!roomList.isSelectionEmpty()){
+				Eizikiu_Server.deleteRoom(Eizikiu_Server_GUI.this.roomList.getSelectedValue());
+				this.actualizeRoomJList();
+			}
 			
 		}else if(e.getActionCommand()=="WARN") {
-			String newWarning= JOptionPane.showInputDialog(frmEizikiuServer,"Warn User:");
-			Eizikiu_Server.warnUser(userList.getSelectedValue(), newWarning);
+			if(!userList.isSelectionEmpty()) {	
+				String newWarning= JOptionPane.showInputDialog(frmEizikiuServer,"Warn User:");
+				Eizikiu_Server.warnUser(userList.getSelectedValue(), newWarning);
+			}
 			
 		}else if(e.getActionCommand()=="KICK") {
-			Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been kicked by server! \n");
-			try {
-				userList.getSelectedValue().getConnection().shutdown();
-			} catch (Exception e1) {
-				e1.printStackTrace();
+			if(!userList.isSelectionEmpty()) {
+				Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been kicked by server! \n");
+				try {
+					userList.getSelectedValue().getConnection().shutdown();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 			
 		}else if(e.getActionCommand()=="BAN") {
-			Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been permanently banned! \n");
-			try {
-				userList.getSelectedValue().getConnection().shutdown();
-			} catch (Exception e1) {
-				e1.printStackTrace();
+			if(!userList.isSelectionEmpty()) {
+				Eizikiu_Server.warnUser(userList.getSelectedValue(), "You have been permanently banned! \n");
+				try {
+					userList.getSelectedValue().getConnection().shutdown();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				
+				userList.getSelectedValue().setBanned(true);
 			}
-			userList.getSelectedValue().setBanned(true);
 		}else if(e.getActionCommand()=="UNBAN") {
-			if(userList.getSelectedValue().isBanned())
-			userList.getSelectedValue().setBanned(false);
+			if(!userList.isSelectionEmpty()) {
+				if(userList.getSelectedValue().isBanned()) {
+					userList.getSelectedValue().setBanned(false);
+				}
+			}
 		}else if(e.getActionCommand()=="SHOWTHEMALL") {
 			new Show_List_GUI();
 		}
@@ -353,6 +373,7 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 	public void writeString(String str) {
 		this.chatOutput.append(str);
 		this.frmEizikiuServer.repaint();
+		scrollOutput.getVerticalScrollBar().setValue(scrollOutput.getVerticalScrollBar().getMaximum());	
 	}
 	/**
 	 * Schreibt den Inhalt String eines Message-Objekts in die Ausgabe des Servers
@@ -362,12 +383,15 @@ public class Eizikiu_Server_GUI implements ActionListener, Runnable{
 		EZKlogger.debug();
 	
 		chatOutput.append(m.toString());
+		
+		scrollOutput.getVerticalScrollBar().setValue(scrollOutput.getVerticalScrollBar().getMaximum());
 	}
-	/** Erm�glicht das Schreiben eines Strings in die Ausgabe des Servers.
+	/** Ermoeglicht das Schreiben eines Strings in die Ausgabe des Servers.
 	 * 	 * @param str
 	 */
 	public void writeLogger(String message) {
 		chatOutput.append(message);
+		scrollOutput.getVerticalScrollBar().setValue(scrollOutput.getVerticalScrollBar().getMaximum());
 	}
 	/**
 	 * aktualisiert das DefaultListModel der UserJList
