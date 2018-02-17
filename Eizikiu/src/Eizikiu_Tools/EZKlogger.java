@@ -13,6 +13,7 @@ public class EZKlogger {
 	
 	protected static boolean consoleOutput = true;
 	protected static boolean fileOutput = false;
+	protected static boolean guiOutput = false;
 	protected static FileWriter fw = null;
 	protected static BufferedWriter bw = null;
 	protected static PrintWriter fileOut = null;
@@ -58,8 +59,13 @@ public class EZKlogger {
 		fileOutput = newFileOutput;	
 	}
 	
+	public static void setGuiOutput(boolean guiOutput) {
+		EZKlogger.guiOutput = guiOutput;
+	}
+	
 	public static void setGui(Eizikiu_Server_GUI gui) {
 		EZKlogger.gui = gui;
+		guiOutput = true;
 	}
 	
 	// logging methods
@@ -70,7 +76,7 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("INFO " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " INFO " + trace + " *** " + message); fileOut.flush();}
-			if(gui != null) {gui.writeLogger("INFO " + trace + " *** " + message +"\n");}
+			if(gui != null && guiOutput) {gui.writeLogger("INFO " + trace + " *** " + message +"\n");}
 		}
 	}
 	
@@ -81,7 +87,7 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("LOG " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " LOG " + trace + " *** " + message); fileOut.flush();}
-			if(gui != null) {gui.writeLogger("LOG " + trace + " *** " + message +"\n");}
+			if(gui != null && guiOutput) {gui.writeLogger("LOG " + trace + " *** " + message +"\n");}
 		}
 	}
 	
@@ -92,7 +98,7 @@ public class EZKlogger {
 					   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("DEBUG " + trace + " *** " + message);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " DEBUG " + trace + " *** " + message); fileOut.flush();}
-			if(gui != null) {gui.writeLogger("DEBUG " + trace + " *** " + message +"\n");}
+			if(gui != null && guiOutput) {gui.writeLogger("DEBUG " + trace + " *** " + message +"\n");}
 		}
 	}
 	
@@ -103,7 +109,7 @@ public class EZKlogger {
 						   new Throwable().getStackTrace()[1].getLineNumber();
 			if(consoleOutput) {System.out.println("DEBUG " + trace);}
 			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " DEBUG: " + trace); fileOut.flush();}
-			if(gui != null) {gui.writeLogger("DEBUG " + trace +"\n");}
+			if(gui != null && guiOutput) {gui.writeLogger("DEBUG " + trace +"\n");}
 		}
 	}
 	// stream handling
