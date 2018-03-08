@@ -22,7 +22,8 @@ public class EZKlogger {
 	
 	// setter
 	public static void setLoglevel(int newLoglevel){
-		loglevel = newLoglevel;
+		if(newLoglevel < 0) loglevel = 0;
+		else loglevel = newLoglevel;
 		info("log level set to " + loglevel);
 	}
 	
@@ -41,6 +42,7 @@ public class EZKlogger {
 	
 	public static void setConsoleOutput(boolean newConsoleOutput) {
 		consoleOutput = newConsoleOutput;
+		info("console output set " + consoleOutput);
 	}
 	
 	public static void setFileOutput(boolean newFileOutput) {
@@ -69,6 +71,19 @@ public class EZKlogger {
 	}
 	
 	// logging methods
+	public static void CLIinput(String message) { // input from CLI
+		if(loglevel >=0) {
+			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " CLI *** " + message); fileOut.flush();}
+		}
+	}
+	
+	public static void CLIerror(String message) { // errors from CLI
+		if(loglevel >=0) {
+			if(consoleOutput) {System.err.println("CLI *** " + message);}
+			if(fileOutput) {fileOut.println(ZonedDateTime.now().format(formatter) + " CLI *** ERROR: " + message); fileOut.flush();}
+		}
+	}
+	
 	public static void info(String message) { // output to user
 		if(loglevel >=0) {
 			String trace = new Throwable().getStackTrace()[1].getClassName() + "." +
@@ -131,5 +146,13 @@ public class EZKlogger {
 			fw.close();
 			fw = null;
 		}
+	}
+	// functions
+	public static String show() {
+		String x = 	"loglevel = " + loglevel +
+					"\nconsole output = " + consoleOutput +
+					"\nfile output = " + fileOutput +
+					"\nlog file" + logfile; 
+		return x;
 	}
 }

@@ -16,7 +16,7 @@ public class ConnectionToClient implements Runnable {
 	private InputStreamSet netInput;
 	private Socket socket;
 	private User user;
-	private Eizikiu_Server_GUI gui;
+//	private Eizikiu_Server_GUI gui;
 	
 	// constructors
 	public ConnectionToClient(){EZKlogger.debug();}
@@ -31,7 +31,7 @@ public class ConnectionToClient implements Runnable {
 		this.user = new User("name", "password");
 		this.netInput = new InputStreamSet(socket);
 		this.netOutput = new OutputStreamSet(socket);
-		this.gui = gui;
+//		this.gui = gui;
 	}
 	
 	// functions
@@ -48,7 +48,7 @@ public class ConnectionToClient implements Runnable {
 			
 			if(loginUser()) {
 				
-				gui.actualizeUserJList();
+//				gui.actualizeUserJList();
 				// send new global user list to all clients
 				EZKlogger.debug(user.getName() + ": sending new global user list to all clients...");
 				String userListString = Eizikiu_Server.onlineUsersToString();
@@ -381,7 +381,7 @@ public class ConnectionToClient implements Runnable {
 			user.logOut();
 			
 			// update gui user list
-			gui.actualizeUserJList();
+//			gui.actualizeUserJList();
 
 			// send new global user list to all clients
 			EZKlogger.debug(user.getName() + ": sending new global user list to all clients...");
@@ -552,6 +552,11 @@ public class ConnectionToClient implements Runnable {
 		EZKlogger.debug();
 		netOutput.sendMessage(new Message("connection shut down by server", "Server---------->", 20, 0));
 		netOutput.sendMessage(new Message("exit", "Server---------->", 0, 0));
+	}
+	
+	@Override
+	public String toString() {
+		return user.getName();
 	}
 
 	// getter

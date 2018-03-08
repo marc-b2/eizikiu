@@ -80,8 +80,8 @@ public class Eizikiu_Server {
 			globalUserList.add(new User("admin", "admin"));
 		}
 
-		// create gui
-		gui = new Eizikiu_Server_GUI();
+//		// create gui
+//		gui = new Eizikiu_Server_GUI();
 		
 		// create NetListener and start as thread (daemon)
 		NetListener netListener;
@@ -91,9 +91,14 @@ public class Eizikiu_Server {
 		EZKlogger.log("NetListener started");
 		NLThread.start();
 		
-		// start GUI
-		EventQueue.invokeLater(gui);
-		EZKlogger.setGui(gui);
+//		// start GUI
+//		EventQueue.invokeLater(gui);
+//		EZKlogger.setGui(gui);
+		
+		// start CLI
+		EZKServerCLI cli = new EZKServerCLI();
+		Thread CLIthread = new Thread(cli);
+		CLIthread.start();
 		
 		try {
 			latch.await();
