@@ -329,6 +329,7 @@ public class Eizikiu_Server {
 		EZKlogger.debug();
 		try {
 			user.getConnection().getNetOutput().sendMessage(new Message(message, "Server", 29, 0));
+			EZKlogger.info("server sent warning '" + message + "' to user [" + user.getName() + "]");
 		} catch (Exception e) {
 			EZKlogger.debug(": ERROR: could not send warn message to user [" + user.getName() + "]");
 			e.printStackTrace();

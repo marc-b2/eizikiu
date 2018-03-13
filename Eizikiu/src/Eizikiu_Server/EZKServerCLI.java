@@ -38,10 +38,10 @@ public class EZKServerCLI implements Runnable {
 		Option<Boolean> file = parser.addBooleanOption("file");
 		Option<String> fileName = parser.addStringOption("filename");
 		Option<Integer> logLevel = parser.addIntegerOption("loglevel");
-		Option<String> warn = parser.addStringOption("warn");
-		Option<String> kick = parser.addStringOption("kick");
-		Option<String> ban = parser.addStringOption("ban");
-		Option<String> unban = parser.addStringOption("unban");
+		Option<Boolean> warn = parser.addBooleanOption("warn");
+		Option<Boolean> kick = parser.addBooleanOption("kick");
+		Option<Boolean> ban = parser.addBooleanOption("ban");
+		Option<Boolean> unban = parser.addBooleanOption("unban");
 		Option<String> name = parser.addStringOption("name");
 		Option<String> password = parser.addStringOption("password");
 		Option<String> create = parser.addStringOption("create");
@@ -149,28 +149,113 @@ public class EZKServerCLI implements Runnable {
 					}
 					break;
 				}
-				if (parser.getOptionValue(warn) != null) {
-
+				if (parser.getOptionValue(warn, Boolean.FALSE)) {
+					User user = null;
+					for (User x : Eizikiu_Server.getGlobalUserList()) {
+						if (x.getName().equals(noOptionArgs[1])) {
+							user = x;
+							break;
+						}
+					}
+					if (user == null) {
+						EZKlogger.CLIerror("no user named '" + noOptionArgs[1] + "'!");
+					} else {
+						String message = "";
+						for (int i=1; i<noOptionArgs.length; i++) {
+							message += noOptionArgs[i] + " ";
+						}
+						if (!message.equals("")) {
+							Eizikiu_Server.warnUser(user, message);						
+						} else {
+							EZKlogger.CLIerror("You entered no message!");
+						}
+					}
 					break;
 				}
-				if (parser.getOptionValue(kick) != null) {
-
+				if (parser.getOptionValue(kick, Boolean.FALSE)) {
+					User user = null;
+					for (User x : Eizikiu_Server.getGlobalUserList()) {
+						if (x.getName().equals(noOptionArgs[1])) {
+							user = x;
+							break;
+						}
+					}
+					if (user == null) {
+						EZKlogger.CLIerror("no user named '" + noOptionArgs[1] + "'!");
+					} else {
+						Eizikiu_Server.warnUser(user, "You have been kicked from server!");
+						try {
+							user.getConnection().shutdown();
+						} catch (Exception e) {
+							EZKlogger.CLIerror(e.getMessage());
+						}
+					}
 					break;
 				}
-				if (parser.getOptionValue(ban) != null) {
-
+				if (parser.getOptionValue(ban, Boolean.FALSE)) {
+					User user = null;
+					for (User x : Eizikiu_Server.getGlobalUserList()) {
+						if (x.getName().equals(noOptionArgs[1])) {
+							user = x;
+							break;
+						}
+					}
+					if (user == null) {
+						EZKlogger.CLIerror("no user named '" + noOptionArgs[1] + "'!");
+					} else {
+						Eizikiu_Server.warnUser(user, "You have been banned from server!");
+						try {
+							user.getConnection().shutdown();
+						} catch (Exception e) {
+							EZKlogger.CLIerror(e.getMessage());
+						}
+						user.setBanned(true);
+					}
 					break;
 				}
-				if (parser.getOptionValue(unban) != null) {
-
+				if (parser.getOptionValue(unban, Boolean.FALSE)) {
+					User user = null;
+					for (User x : Eizikiu_Server.getGlobalUserList()) {
+						if (x.getName().equals(noOptionArgs[1])) {
+							user = x;
+							break;
+						}
+					}
+					if (user == null) {
+						EZKlogger.CLIerror("no user named '" + noOptionArgs[1] + "'!");
+					} else {
+						user.setBanned(false);
+					}
 					break;
 				}
 				if (parser.getOptionValue(name) != null) {
-
+					User user = null;
+					for (User x : Eizikiu_Server.getGlobalUserList()) {
+						if (x.getName().equals(noOptionArgs[1])) {
+							user = x;
+							break;
+						}
+					}
+					if (user == null) {
+						EZKlogger.CLIerror("no user named '" + noOptionArgs[1] + "'!");
+					} else {
+						user.setName(parser.getOptionValue(name, user.getName()));
+					}
 					break;
 				}
 				if (parser.getOptionValue(password) != null) {
-
+					User user = null;
+					for (User x : Eizikiu_Server.getGlobalUserList()) {
+						if (x.getName().equals(noOptionArgs[1])) {
+							user = x;
+							break;
+						}
+					}
+					if (user == null) {
+						EZKlogger.CLIerror("no user named '" + noOptionArgs[1] + "'!");
+					} else {
+						user.setPassword(parser.getOptionValue(password, user.getPassword()));
+					}
 					break;
 				}
 				

@@ -61,11 +61,13 @@ public class User implements Serializable{
 	// setter
 	public void setName(String name) {
 		EZKlogger.debug();
+		EZKlogger.info("name of user [" + this.name + "] set to ["+ name + "]");
 		this.name = name;
 	}
 	
 	public void setPassword(String password) {
 		EZKlogger.debug();
+		EZKlogger.info("password of user [" + name + "] set to ["+ password + "]");
 		this.password = password;
 	}
 
