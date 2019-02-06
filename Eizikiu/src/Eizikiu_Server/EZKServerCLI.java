@@ -48,7 +48,7 @@ public class EZKServerCLI implements Runnable {
 		Option<String> delete = parser.addStringOption("delete");
 		
 		do {
-			System.out.print("EZK>");
+			System.out.print("EZK> ");
 			// waiting on getting input from System.in
 			input = scanner.nextLine();
 			EZKlogger.CLIinput(input);
@@ -342,6 +342,7 @@ public class EZKServerCLI implements Runnable {
 			
 		} while (!shutdown);
 		
+		Eizikiu_Server.latch.countDown();
 	}
 	
 	// getter

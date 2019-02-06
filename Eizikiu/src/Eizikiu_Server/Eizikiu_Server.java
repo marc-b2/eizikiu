@@ -105,7 +105,7 @@ public class Eizikiu_Server {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		EZKlogger.debug("latch count down by GUI");
+		EZKlogger.debug("latch count down");
 		
 //		EZKlogger.info("Press Return to stop Server!");
 //		keyboardIn.nextLine();
@@ -263,9 +263,9 @@ public class Eizikiu_Server {
 			if(!publicRooms.isEmpty()) {
 				for(Room x : publicRooms) {
 					if(publicRooms.indexOf(x) == publicRooms.size()-1) { // last element
-						roomList = roomList + x.getName() + "§" + x.getID();
+						roomList = roomList + x.getName() + "ï¿½" + x.getID();
 					} else {
-						roomList = roomList + x.getName() + "§" + x.getID() + "§"; 								
+						roomList = roomList + x.getName() + "ï¿½" + x.getID() + "ï¿½"; 								
 					}
 				}
 			} else {
@@ -290,7 +290,7 @@ public class Eizikiu_Server {
 					if(userList.indexOf(x) == userList.size()-1) { // last element
 						userString = userString + x.getName();
 					} else {
-						userString = userString + x.getName() + "§";
+						userString = userString + x.getName() + "ï¿½";
 					}
 				}
 			} else {
@@ -316,7 +316,7 @@ public class Eizikiu_Server {
 			if(userList.indexOf(x) == userList.size()-1) { // last element
 				userString = userString + x.getName();
 			} else {
-				userString = userString + x.getName() + "§";
+				userString = userString + x.getName() + "ï¿½";
 			}
 		}
 		return userString;
